@@ -99,7 +99,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get registrationFailed => 'Ошибка регистрации';
 
   @override
-  String get registerToBuy => 'Зарегистрируйтесь для покупки';
+  String get registerToBuy => 'Регистрация для покупок';
 
   @override
   String get email => 'Email*';
@@ -144,7 +144,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get boo => 'БУ';
 
   @override
-  String get turnOnRussian => 'Использовать Русский';
+  String get turnOnRussian => 'Включить русский';
 
   @override
   String productNameUi(String productName) {
@@ -170,7 +170,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addImediatly => 'Добавить немедленно';
 
   @override
-  String get mockData => 'Моковые данные';
+  String get mockData => 'Тестовые данные';
 
   @override
   String get inputfield => 'Поле ввода';
@@ -209,7 +209,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noFieldsIsCreated => 'Поля не созданы';
 
   @override
-  String get howComeThereIsNot => 'Как так вышло, что нет ни одного поля с изображением';
+  String get howComeThereIsNot => 'Почему нет поля с изображением?';
 
   @override
   String get fillThePriceOptions => 'Заполните варианты цен';
@@ -259,7 +259,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dbErrorTryAgain => 'Ошибка БД, попробуйте снова';
 
   @override
-  String get adminPanel => 'Панель администратора';
+  String get adminPanel => 'Админ-панель';
 
   @override
   String get boop => 'Буп';
@@ -332,7 +332,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pleaseWait => 'Пожалуйста, подождите';
 
   @override
-  String get waitingYourPayment => 'Ожидают вашей оплаты';
+  String get waitingYourPayment => 'Ожидается ваша оплата';
 
   @override
   String get phew => 'Фух';
@@ -408,7 +408,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get somethingWentWrongWithDescription => 'Ой-йойю Что-то пошло не так с описанием';
+  String get somethingWentWrongWithDescription => 'Ой! Что-то пошло не так с описанием';
 
   @override
   String get chooseAproductToModify => 'Выберите товар для изменения';
@@ -582,7 +582,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get highGraphics => 'Высокая графика';
 
   @override
-  String get youMustRegisterToBuy => 'Вам нужно зарегистрироваться для покупки';
+  String get youMustRegisterToBuy => 'Нужно зарегистрироваться для покупок';
 
   @override
   String get shoppingCart => 'Корзина';
@@ -591,7 +591,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get confirmThePurchase => 'Подтвердите покупку';
 
   @override
-  String get contctOurSupportTeamFoAssistance => 'Свяжитесь с поддержкой\n для помощи';
+  String get contctOurSupportTeamFoAssistance => 'Свяжитесь с поддержкой\nдля помощи';
 
   @override
   String get heyYouHaven => 'Эй, вы не выбрали ничего';
@@ -603,7 +603,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get youHavenUnpaidOrdersSTART => 'У вас';
 
   @override
-  String get youHavenUnpaidOrdersEND => 'Неоплаченных заказов!';
+  String get youHavenUnpaidOrdersEND => 'неоплаченных заказов!';
 
   @override
   String get howDidYouGEtHere => 'Как вы сюда попали?!';
@@ -638,7 +638,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get featuredndeals => 'Рекомендуемые\nпредложения';
+  String get featuredndeals => 'Популярные\nДела';
 
   @override
   String get more => 'Ещё';
@@ -651,4 +651,45 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get startTheChat => 'Начать чат';
+
+  @override
+  String get crabPayDemo => '🦀 Crab Pay — Демо';
+
+  @override
+  String get verificationNeeded => 'Требуется подтверждение';
+
+  @override
+  String get verificationLinkSent => 'Ссылка для подтверждения отправлена на ваш email';
+
+  @override
+  String get lookForVerificationLink => 'Похоже, вы не подтвердили email. Ссылка для подтверждения должна быть в вашем почтовом ящике';
+
+  @override
+  String get resetLinkSent => 'Ссылка для сброса отправлена';
+
+  @override
+  String get resetInstructionsEmail => 'Введите email, и мы пришлём инструкции для сброса пароля';
+
+  @override
+  String fromCurrency(Object currency) {
+    return 'От $currency';
+  }
+
+  @override
+  String get ok => 'ОК';
+
+  @override
+  String get sendAgain => 'Отправить снова';
+
+  @override
+  String get deleteConfirmation => 'Подтверждение';
+
+  @override
+  String get deleteItemWarning => 'Действительно удалить этот элемент?';
+
+  @override
+  String get inputDialog => 'Ввод';
+
+  @override
+  String get checkEmailSent => 'Проверьте email для смены пароля';
 }

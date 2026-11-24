@@ -147,7 +147,7 @@ class _MaterialProductCardHorizontal extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Text(
-                      'Battle Pass & Credits',
+                      context.l10n.battlePassCredits,
                       maxLines: 1,
                       overflow: .ellipsis,
                       style: TextStyle(
@@ -165,7 +165,7 @@ class _MaterialProductCardHorizontal extends StatelessWidget {
                       vertical: 4,
                     ),
                     child: Text(
-                      '\$2.49',
+                      context.l10n.price249,
                       maxLines: 1,
                       overflow: .ellipsis,
                       style: TextStyle(

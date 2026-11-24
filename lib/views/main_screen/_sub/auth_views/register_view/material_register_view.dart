@@ -43,7 +43,7 @@ class MaterialRegisterView extends StatelessWidget {
           crossAxisAlignment: .stretch,
           children: [
             Text(
-              'Create Account',
+              context.l10n.createAccount,
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 30,
@@ -53,7 +53,7 @@ class MaterialRegisterView extends StatelessWidget {
             ),
             Container(height: 10),
             Text(
-              'Create an account to shop, top up your ballance, and get support.',
+              context.l10n.createAnAccountToShop,
             ),
             Container(height: 40),
             BlocBuilder<AuthBloc, AuthState>(
@@ -120,7 +120,7 @@ class MaterialRegisterView extends StatelessWidget {
                 minimumSize: Size(double.infinity, 50),
               ),
               child: Text(
-                'Submit',
+                context.l10n.submit,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
@@ -152,7 +152,7 @@ class MaterialRegisterView extends StatelessWidget {
                 minimumSize: Size(double.infinity, 50),
               ),
               child: Text(
-                'Sign In',
+                context.l10n.signIn,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),

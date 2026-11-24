@@ -1,5 +1,6 @@
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:crabpay/core/extensions/l10n_extension.dart';
 
 class MaterialPasswordForgotView extends StatelessWidget {
   final TextEditingController emailControler;
@@ -35,7 +36,7 @@ class MaterialPasswordForgotView extends StatelessWidget {
           crossAxisAlignment: .stretch,
           children: [
             Text(
-              'Reset Password',
+              context.l10n.resetPassword,
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 30,
@@ -45,7 +46,7 @@ class MaterialPasswordForgotView extends StatelessWidget {
             ),
             Container(height: 10),
             Text(
-              'Enter your email address and we\'ll send you instructions to reset your password',
+              context.l10n.resetInstructionsEmail,
             ),
             Container(height: 40),
             TextField(
@@ -55,7 +56,7 @@ class MaterialPasswordForgotView extends StatelessWidget {
               onChanged: (_) => onCorrectingCredentials(),
               decoration: InputDecoration(
                 filled: true,
-                label: Text('Email'),
+                label: Text(context.l10n.email),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
@@ -81,7 +82,7 @@ class MaterialPasswordForgotView extends StatelessWidget {
               child: isSubmitting
                   ? CircularProgressIndicator()
                   : Text(
-                      'Send Reset Link',
+                      context.l10n.sendResetLink,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,

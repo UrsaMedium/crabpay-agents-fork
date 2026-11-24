@@ -57,7 +57,7 @@ class ChooseThreadView extends StatelessWidget {
                           pathParameters: {'threadId': allThreads[index].id},
                         );
                       },
-                      child: Text('Chat with user ${allThreads[index].userId}'),
+                      child: Text(context.l10n.chatWithUser(allThreads[index].userId)),
                     );
                   },
                 ),

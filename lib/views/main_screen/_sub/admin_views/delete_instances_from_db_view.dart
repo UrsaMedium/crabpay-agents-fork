@@ -151,7 +151,7 @@ class _DeleteInstancesFromDbViewState extends State<DeleteInstancesFromDbView> {
               ),
               Column(
                 children: [
-                  Text('field'),
+                  Text(context.l10n.field),
                   Row(
                     children: [
                       Flexible(child: TextField(controller: _fieldControler)),

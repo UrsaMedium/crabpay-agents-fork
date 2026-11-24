@@ -87,7 +87,7 @@ Widget _fieldsOverview(
                     horizontal: 12.0,
                     vertical: 2,
                   ),
-                  child: Text('Field Name: ${field.fieldName}'),
+                  child: Text(context.l10n.fieldName(field.fieldName)),
                 ),
               ),
               Column(
@@ -251,7 +251,7 @@ Widget _productOverview(BuildContext context, Product appProduct) {
                     child: Row(
                       mainAxisAlignment: .spaceBetween,
                       children: [
-                        Text('Description'),
+                        Text(context.l10n.description),
                         ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 180),
                           child: Text(appProduct.description),

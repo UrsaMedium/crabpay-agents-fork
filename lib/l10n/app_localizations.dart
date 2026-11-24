@@ -1267,6 +1267,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start The Chat'**
   String get startTheChat;
+
+  /// No description provided for @crabPayDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'CrabPay Demo'**
+  String get crabPayDemo;
+
+  /// No description provided for @verificationNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Needed'**
+  String get verificationNeeded;
+
+  /// No description provided for @verificationLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'We have sent you the verification link to your email'**
+  String get verificationLinkSent;
+
+  /// No description provided for @lookForVerificationLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Seems like you have not confirmed your email. There should be a verification link in your inbox'**
+  String get lookForVerificationLink;
+
+  /// No description provided for @resetLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Link Sent'**
+  String get resetLinkSent;
+
+  /// No description provided for @resetInstructionsEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address, and we\'ll send you instructions to reset your password'**
+  String get resetInstructionsEmail;
+
+  /// No description provided for @fromCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'From {currency}'**
+  String fromCurrency(Object currency);
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @sendAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Again'**
+  String get sendAgain;
+
+  /// No description provided for @deleteConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmation'**
+  String get deleteConfirmation;
+
+  /// No description provided for @deleteItemWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the item?'**
+  String get deleteItemWarning;
+
+  /// No description provided for @inputDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Input'**
+  String get inputDialog;
+
+  /// No description provided for @checkEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the email we have sent you to change the password'**
+  String get checkEmailSent;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

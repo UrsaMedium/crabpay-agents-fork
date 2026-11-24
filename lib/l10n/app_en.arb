@@ -574,5 +574,18 @@
   "oopsNoChatThread": "Oops, no chat thread",
   "@oopsNoChatThread": {},
   "startTheChat": "Start The Chat",
-  "@startTheChat": {}
+  "@startTheChat": {},
+  "crabPayDemo": "CrabPay Demo",
+  "verificationNeeded": "Verification Needed",
+  "verificationLinkSent": "We have sent you the verification link to your email",
+  "lookForVerificationLink": "Seems like you have not confirmed your email. There should be a verification link in your inbox",
+  "resetLinkSent": "Reset Link Sent",
+  "resetInstructionsEmail": "Enter your email address, and we'll send you instructions to reset your password",
+  "fromCurrency": "From {currency}",
+  "ok": "OK",
+  "sendAgain": "Send Again",
+  "deleteConfirmation": "Confirmation",
+  "deleteItemWarning": "Are you sure you want to delete the item?",
+  "inputDialog": "Input",
+  "checkEmailSent": "Check the email we have sent you to change the password"
 }

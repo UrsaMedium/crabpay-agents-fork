@@ -145,7 +145,7 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                         Padding(
                           padding: const EdgeInsets.all(32),
                           child: Text(
-                            'Edit The Field: its id - ${widget.fieldId}',
+                            context.l10n.editField(widget.fieldId ?? ''),
                           ),
                         ),
                         Container(
@@ -154,7 +154,7 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                             children: [
                               Divider(thickness: 3),
                               Text(
-                                'Field Name. OG name: ${_currentField?.fieldName}',
+                                context.l10n.fieldNameOg(_currentField?.fieldName ?? ''),
                               ),
                               TextField(
                                 controller: _fieldName,
@@ -165,7 +165,7 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                                   ),
                                 ),
                               ),
-                              Text('The name will be ${_fieldName.text}'),
+                              Text(context.l10n.theNameWillBe(_fieldName.text)),
                             ],
                           ),
                         ),
@@ -175,7 +175,7 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                             children: [
                               Divider(thickness: 3),
                               Text(
-                                'Order of the field. OG order: ${_currentField?.order}',
+                                context.l10n.orderOfTheFieldOg(_currentField?.order.toString() ?? ''),
                               ),
                               Text(context.l10n.mustBeInteger),
                               TextField(
@@ -188,7 +188,7 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                                   ),
                                 ),
                               ),
-                              Text('The order will be ${_fieldOrder.text}'),
+                              Text(context.l10n.theOrderWillBe(_fieldOrder.text)),
                             ],
                           ),
                         ),

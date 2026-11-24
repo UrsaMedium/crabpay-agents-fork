@@ -1,11 +1,12 @@
 import 'package:crabpay/views/custom_ui_elements/dialogs/generic_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:crabpay/core/extensions/l10n_extension.dart';
 
 Future<void> showOnRegisterDialog(BuildContext context) {
   return showAppGenericDialog(
     context: context,
-    title: 'Verification Needed',
-    message: 'We have sent you the verification link to your email',
-    optionBuilder: () => {'OK': null},
+    title: context.l10n.verificationNeeded,
+    message: context.l10n.verificationLinkSent,
+    optionBuilder: () => {context.l10n.ok: null},
   );
 }

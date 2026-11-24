@@ -97,7 +97,7 @@ class _AddCompleteProductProductViewState extends State<AddCompleteProductProduc
               children: [
                 InkWell(
                   onTap: () async {
-                    _imageUrl = await showOnInputDialog(context, 'Image URL');
+                    _imageUrl = await showOnInputDialog(context, context.l10n.imageUrl);
                     if (_imageUrl == '') _imageUrl = null;
                   },
                   child: Stack(
@@ -120,7 +120,7 @@ class _AddCompleteProductProductViewState extends State<AddCompleteProductProduc
                     onPressed: () async {
                       _productNameUI = await showOnInputDialog(
                         context,
-                        'Product Name',
+                        context.l10n.productName,
                       );
                       if (_productNameUI == '') {
                         _productNameUI = null;
@@ -129,7 +129,7 @@ class _AddCompleteProductProductViewState extends State<AddCompleteProductProduc
                       }
                     },
                     child: Text(
-                      'Product Name: $_productNameUI',
+                      context.l10n.productNameUi(_productNameUI ?? ''),
                       style: TextStyle(
                         backgroundColor: context.appColorScheme.onPrimary,
                       ),
@@ -148,7 +148,7 @@ class _AddCompleteProductProductViewState extends State<AddCompleteProductProduc
                           currencies.add(
                             DropdownMenuEntry(
                               value: currencyTable.name,
-                              label: 'From ${currencyTable.name}',
+                              label: context.l10n.fromCurrency(currencyTable.name),
                             ),
                           );
                         }

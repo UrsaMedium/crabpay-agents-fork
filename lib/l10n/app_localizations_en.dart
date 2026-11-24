@@ -651,4 +651,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startTheChat => 'Start The Chat';
+
+  @override
+  String get crabPayDemo => 'CrabPay Demo';
+
+  @override
+  String get verificationNeeded => 'Verification Needed';
+
+  @override
+  String get verificationLinkSent => 'We have sent you the verification link to your email';
+
+  @override
+  String get lookForVerificationLink => 'Seems like you have not confirmed your email. There should be a verification link in your inbox';
+
+  @override
+  String get resetLinkSent => 'Reset Link Sent';
+
+  @override
+  String get resetInstructionsEmail => 'Enter your email address, and we\'ll send you instructions to reset your password';
+
+  @override
+  String fromCurrency(Object currency) {
+    return 'From $currency';
+  }
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get sendAgain => 'Send Again';
+
+  @override
+  String get deleteConfirmation => 'Confirmation';
+
+  @override
+  String get deleteItemWarning => 'Are you sure you want to delete the item?';
+
+  @override
+  String get inputDialog => 'Input';
+
+  @override
+  String get checkEmailSent => 'Check the email we have sent you to change the password';
 }

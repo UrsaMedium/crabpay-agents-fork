@@ -22,6 +22,7 @@ migrate_working_dir/
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
 #.vscode/
+.vscode/settings.json
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -30,8 +31,9 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+**/build/
 /coverage/
+**/.sentry-native/
 
 # Symbolication related
 app.*.symbols
@@ -47,5 +49,25 @@ app.*.map.json
 # Specific files i don't want to add
 /lib/core/backend/supabase/supabase_conf.dart
 /lib/core/backend/pyament_services/payment_server_conf.dart
-android/app/google-services.json
-sentry.properties
+
+# Secrets and local credentials
+.env
+.env.*
+!.env.example
+**/google-services.json
+**/GoogleService-Info.plist
+**/key.properties
+**/local.properties
+**/sentry.properties
+**/*.keystore
+**/*.jks
+**/*.p12
+**/*.pfx
+**/*.p8
+**/*.pem
+**/*.key
+**/*.mobileprovision
+**/*.provisionprofile
+**/service-account*.json
+**/credentials.json
+**/*-credentials.json

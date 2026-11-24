@@ -149,7 +149,7 @@ class _MaterialProfileSheet extends StatelessWidget {
                               mainAxisAlignment: .spaceBetween,
                               children: [
                                 Text(
-                                  'Admin Menu',
+                                  context.l10n.adminMenu,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,

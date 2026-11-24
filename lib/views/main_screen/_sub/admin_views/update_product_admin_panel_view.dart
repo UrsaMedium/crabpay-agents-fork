@@ -246,7 +246,7 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
                                             ),
                                           ),
                                           Text(
-                                            'Current image name: ${_selectedProduct!.image}',
+                                            context.l10n.currentImageName(_selectedProduct!.image),
                                           ),
                                         ],
                                       ),
@@ -273,7 +273,7 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
                                             ),
                                           ),
                                           Text(
-                                            'Current product name: ${_selectedProduct!.name}',
+                                            context.l10n.currentProductName(_selectedProduct!.name),
                                           ),
                                         ],
                                       ),
@@ -285,7 +285,7 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
                                       child: Column(
                                         children: [
                                           Divider(),
-                                          Text('Description'),
+                                          Text(context.l10n.description),
                                           TextField(
                                             controller: _descriptionController,
                                             onChanged: (value) {
@@ -300,7 +300,7 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
                                             ),
                                           ),
                                           Text(
-                                            'Current description: ${_selectedProduct!.description}',
+                                            context.l10n.currentDescription(_selectedProduct!.description),
                                           ),
                                         ],
                                       ),

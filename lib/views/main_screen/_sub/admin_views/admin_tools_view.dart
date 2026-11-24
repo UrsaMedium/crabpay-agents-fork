@@ -111,7 +111,14 @@ class _AdminToolsViewState extends State<AdminToolsView> {
                     ),
                   ),
                   Text(
-                    'Id: ${user?.id}\nemail: ${user?.email}\nver: ${user?.isEmailVerified}\nanon: ${user?.isAnonymous}\nadmin: ${user?.isAdmin}\nlimbo: ${user?.isLimbo}',
+                    context.l10n.userInfoDebug(
+                      user?.id ?? '',
+                      user?.email ?? '',
+                      user?.isEmailVerified.toString() ?? '',
+                      user?.isAnonymous.toString() ?? '',
+                      user?.isAdmin.toString() ?? '',
+                      user?.isLimbo.toString() ?? '',
+                    ),
                   ),
                 ],
               ),

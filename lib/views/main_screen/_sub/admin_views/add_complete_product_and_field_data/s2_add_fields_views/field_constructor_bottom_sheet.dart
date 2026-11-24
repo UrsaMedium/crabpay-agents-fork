@@ -88,7 +88,7 @@ class _AddFieldBottomSheetState extends State<AddFieldBottomSheet> {
                 },
                 decoration: InputDecoration(
                   hint: Text(
-                    'Name The Field/Data',
+                    context.l10n.nameTheFielddata,
                     style: TextStyle(
                       color: context.appColorScheme.outlineVariant,
                     ),
@@ -110,7 +110,7 @@ class _AddFieldBottomSheetState extends State<AddFieldBottomSheet> {
               elevation: 5,
               hint: DropdownMenuItem(
                 child: Text(
-                  'handler',
+                  context.l10n.handler,
                   style: TextStyle(
                     color: context.appColorScheme.outlineVariant,
                   ),
@@ -240,7 +240,7 @@ class _OptionFieldState extends State<OptionField> {
               },
               decoration: InputDecoration(
                 hint: Text(
-                  'Name The Option',
+                  context.l10n.nameTheOption,
                   style: TextStyle(
                     color: context.appColorScheme.outlineVariant,
                   ),

@@ -2,28 +2,39 @@
 
 Flutter storefront + admin app (`crabpay`) backed by Supabase (Auth, pg_graphql, Realtime) and an external payment server.
 
+Only Android and web are supported targets. Treat `linux/`, `macos/`, `windows/`, and `ios/` as out of scope; don't build or fix them.
+
 ## Required local config (gitignored)
 A fresh clone does not compile until these exist:
 - `lib/core/backend/supabase/supabase_conf.dart` → `const Map<String, String> supabaseAccessConf = {'url': ..., 'publishableKey': ...};`
 - `lib/core/backend/pyament_services/payment_server_conf.dart` → `final String linkToThePaymentServer = '...';`
 
-Never commit real keys or print their values.
+Never commit or print real keys.
+
+## Secrets
+- `.gitignore` covers `.env*`, `google-services.json`, `key.properties`, keystores, `sentry.properties`, and the two `*_conf.dart` files. Keep it that way.
+- `android/app/google-services.json` was committed in old history (removed from HEAD). The repo is public; rotate/restrict its Firebase API key and consider history rewriting.
 
 ## Commands
-- `flutter pub get` — installs deps and regenerates l10n (`generate: true`).
-- `flutter analyze` — primary verification. The analyzer excludes `build/` and all platform directories.
+- `flutter pub get` — installs deps. After ARB edits run `flutter gen-l10n` to regenerate the committed `lib/l10n/app_localizations*.dart`.
+- `flutter analyze` — primary verification; excludes `build/` and all platform directories. Baseline is 0 errors/warnings but ~100 `deprecated_member_use` infos for `package:flutter/material.dart`. Don't chase that noise or bulk-migrate to `material_ui`.
+- `flutter build web` — web compile check.
+- `flutter build apk --debug` — Android compile check.
 - `dart format .` — style is non-default: `page_width: 256`, `trailing_commas: preserve` from `analysis_options.yaml`. Don't reflow long lines by hand.
 - `flutter test` — currently fails: the only test, `test/widget_test.dart`, is the stale counter template and doesn't match the app. Don't chase it or break unrelated code for it.
 - No CI, Makefile, build_runner, or codegen besides l10n.
 
 ## Architecture
 - Backend splits into `*_inner_circle` (abstract handler interfaces, models, blocs/events/states) and `*_outer_circle` (Supabase/HTTP implementations). Depend on the inner interface; implementations are registered in `lib/core/set_up/get_it.dart`.
-- `lib/core/set_up/app_providers.dart` exposes handlers via `RepositoryProvider` and creates the global blocs (`AuthBloc`, `DatabaseBloc`, `CartBloc`, `ChatBloc`, admin variants, `PaymentBloc`). Read with `context.read`/`context.watch`.
+- `lib/core/set_up/app_providers.dart` exposes handlers via `RepositoryProvider` and creates the global blocs (`AuthBloc`, `DatabaseBloc`, `CartBloc`, `ChatBloc`, admin variants, `PaymentBloc`). Read with `context.read`/`context.watch`. A new handler/bloc must be wired here too; get_it registration alone does not put it in the widget tree.
 - Screens use `driver/` + `view/material/`: the `*Driver` is a `StatefulWidget` that owns the page cubit and wires blocs; the material view is pure UI. Routes point at drivers.
 - Postgres CRUD goes through pg_graphql (`SupabaseGraphQLClient`; camelCase collections such as `productCollection`, `cartItemCollection`, `userPreferenceCollection`). Realtime `.from(...).stream(...)` is used for cart counters and pending payments. Supabase Auth sits behind `AuthInnerInterface`.
 - All route paths/names live in the `AppRoutes` enum (`lib/core/app_routes/app_routes.dart`). Add a route there, then register it in `main_screen_routes.dart`, `admin_routes.dart`, `auth_routes.dart`, or `other_routes.dart`; `app_router.dart` composes them.
 - Use `context.appColorScheme` (`views/custom_ui_elements/utilities/ui_utilities.dart`). `AppTheme.light/dark` exist, but `theme:`/`darkTheme:` are commented out in `main.dart`.
-- Admin UI lives under `views/main_screen/_sub/admin_views` and shares `AdminBloc` from `admin_routes.dart`.
+- Admin UI lives under `views/main_screen/_sub/admin_views`; `adminShellRoute` in `admin_routes.dart` wraps it in `AdminBloc`.
+
+## Tooling
+- The Dart MCP server is configured globally (`opencode mcp list` shows `dart connected`). In Code Mode use `tools.dart.*`; connect to a DTD instance before hot reload, runtime-error, or widget-inspector tools.
 
 ## Localization
 - ARBs: `lib/l10n/app_en.arb` (template) and `app_ru.arb`. Add every key to both.
@@ -34,5 +45,7 @@ Never commit real keys or print their values.
 
 ## Gotchas
 - Anonymous auth is the default: `AppLocalStorage` creates a temp user id, and `AuthBloc` may hold an anonymous/temp user while "logged out".
-- `build/` at the repo root is generated (Android Gradle redirects there); never edit it.
-- Some legacy code hardcodes the Supabase host (`supabase/supanase_server.dart`); prefer `supabaseAccessConf`.
+- All `build/` directories are generated; never edit them.
+- Markdown uses `flutter_markdown` because `flutter_markdown_latex` depends on it. `flutter_markdown` is discontinued in favor of `flutter_markdown_plus`, but migrating requires replacing the LaTeX extension; don't swap it casually.
+- Before commercial release: replace the debug signing config in `android/app/build.gradle.kts` with a real keystore, change the `com.example.crabpay` application ID/namespace, and review `android:usesCleartextTraffic="true"` in `AndroidManifest.xml`.
+- Some legacy code hardcodes the Supabase host (`supabase/supanase_server.dart`); prefer `SupabaseGraphQLClient`/`supabaseAccessConf`. The repo also misspells `pyament_services` and `supanase_server.dart`; don't rename them casually.

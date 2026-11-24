@@ -1,6 +1,5 @@
 import 'package:crabpay/core/set_up/app_bootstrap.dart';
 import 'package:crabpay/core/set_up/app_providers.dart';
-import 'package:crabpay/core/set_up/theme/app_theme.dart';
 import 'package:crabpay/core/app_routes/app_router.dart';
 import 'package:crabpay/l10n/app_localizations.dart';
 import 'package:crabpay/views/custom_ui_elements/widgets/global_loading_screen.dart';
