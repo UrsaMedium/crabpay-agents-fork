@@ -84,7 +84,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToAddTheCart => 'Failed to add the cart item';
 
   @override
-  String get failedToFetchPendingOrders => 'Failed to fetch pending orders cart items';
+  String get failedToFetchPendingOrders => 'Failed to fetch pending orders';
 
   @override
   String get orders => 'Orders';
@@ -167,7 +167,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get next => 'Next';
 
   @override
-  String get addImediatly => 'Add imediatly';
+  String get addImediatly => 'Add immediately';
 
   @override
   String get mockData => 'Mock Data';
@@ -203,10 +203,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorAFieldWithThe => 'ERROR A field with the same name already exists';
 
   @override
-  String get everyFieldMustHasA => 'Every field must has a name and a handler';
+  String get everyFieldMustHasA => 'Every field must have a name and a handler';
 
   @override
-  String get noFieldsIsCreated => 'No fields is created';
+  String get noFieldsIsCreated => 'No fields are created';
 
   @override
   String get howComeThereIsNot => 'How come there is not just one image field';
@@ -241,7 +241,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get name => 'Name';
 
   @override
-  String get imageUrl => 'Image Url';
+  String get imageUrl => 'Image URL';
 
   @override
   String get description => '   Description';
@@ -271,7 +271,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pushTheFields => 'Push The Fields';
 
   @override
-  String get somethingWentWronNoProduct => 'Something went wron. No product id :()';
+  String get somethingWentWronNoProduct => 'Something went wrong. No product id :()';
 
   @override
   String get typeYourQuestion => 'Type your question...';
@@ -411,7 +411,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get somethingWentWrongWithDescription => 'Oh-oh. Something went wrong with the description';
 
   @override
-  String get chooseAproductToModify => 'Choose aproduct to modify';
+  String get chooseAproductToModify => 'Choose a product to modify';
 
   @override
   String get pushTheChanges => 'Push the changes';
@@ -450,7 +450,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccount => 'Create Account';
 
   @override
-  String get createAnAccountToShop => 'Create an account to shop, top up your ballance, and get support.';
+  String get createAnAccountToShop => 'Create an account to shop, top up your balance, and get support.';
 
   @override
   String get submit => 'Submit';

@@ -417,7 +417,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pushTheChanges => 'Применить изменения';
 
   @override
-  String get wrongCredentialsPleaseTryAgain => 'Неверные учетные данные. Пожалуйста, попробуйте снова.';
+  String get wrongCredentialsPleaseTryAgain => 'Неверные учётные данные. Пожалуйста, попробуйте снова.';
 
   @override
   String get pleaseSignIn => 'Пожалуйста, войдите';

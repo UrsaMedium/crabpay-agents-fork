@@ -245,7 +245,7 @@ abstract class AppLocalizations {
   /// No description provided for @failedToFetchPendingOrders.
   ///
   /// In en, this message translates to:
-  /// **'Failed to fetch pending orders cart items'**
+  /// **'Failed to fetch pending orders'**
   String get failedToFetchPendingOrders;
 
   /// No description provided for @orders.
@@ -407,7 +407,7 @@ abstract class AppLocalizations {
   /// No description provided for @addImediatly.
   ///
   /// In en, this message translates to:
-  /// **'Add imediatly'**
+  /// **'Add immediately'**
   String get addImediatly;
 
   /// No description provided for @mockData.
@@ -479,13 +479,13 @@ abstract class AppLocalizations {
   /// No description provided for @everyFieldMustHasA.
   ///
   /// In en, this message translates to:
-  /// **'Every field must has a name and a handler'**
+  /// **'Every field must have a name and a handler'**
   String get everyFieldMustHasA;
 
   /// No description provided for @noFieldsIsCreated.
   ///
   /// In en, this message translates to:
-  /// **'No fields is created'**
+  /// **'No fields are created'**
   String get noFieldsIsCreated;
 
   /// No description provided for @howComeThereIsNot.
@@ -551,7 +551,7 @@ abstract class AppLocalizations {
   /// No description provided for @imageUrl.
   ///
   /// In en, this message translates to:
-  /// **'Image Url'**
+  /// **'Image URL'**
   String get imageUrl;
 
   /// No description provided for @description.
@@ -611,7 +611,7 @@ abstract class AppLocalizations {
   /// No description provided for @somethingWentWronNoProduct.
   ///
   /// In en, this message translates to:
-  /// **'Something went wron. No product id :()'**
+  /// **'Something went wrong. No product id :()'**
   String get somethingWentWronNoProduct;
 
   /// No description provided for @typeYourQuestion.
@@ -851,7 +851,7 @@ abstract class AppLocalizations {
   /// No description provided for @chooseAproductToModify.
   ///
   /// In en, this message translates to:
-  /// **'Choose aproduct to modify'**
+  /// **'Choose a product to modify'**
   String get chooseAproductToModify;
 
   /// No description provided for @pushTheChanges.
@@ -929,7 +929,7 @@ abstract class AppLocalizations {
   /// No description provided for @createAnAccountToShop.
   ///
   /// In en, this message translates to:
-  /// **'Create an account to shop, top up your ballance, and get support.'**
+  /// **'Create an account to shop, top up your balance, and get support.'**
   String get createAnAccountToShop;
 
   /// No description provided for @submit.

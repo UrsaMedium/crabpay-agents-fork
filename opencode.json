@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    { "action": "shell", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "git push *", "effect": "ask" },
+    { "action": "shell", "resource": "sudo *", "effect": "ask" },
+    { "action": "shell", "resource": "rm *", "effect": "ask" },
+    { "action": "shell", "resource": "curl *", "effect": "ask" },
+    { "action": "shell", "resource": "wget *", "effect": "ask" },
+    { "action": "shell", "resource": "pip install *", "effect": "ask" },
+    { "action": "shell", "resource": "npm install -g *", "effect": "ask" },
+    { "action": "shell", "resource": "apt *", "effect": "ask" },
+    { "action": "shell", "resource": "apt-get *", "effect": "ask" },
+    { "action": "shell", "resource": "dart pub global *", "effect": "ask" },
+    { "action": "shell", "resource": "systemctl *", "effect": "ask" },
+    { "action": "external_directory", "resource": "*", "effect": "ask" }
+  ]
+}

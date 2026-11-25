@@ -49,6 +49,16 @@ app.*.map.json
 # Specific files i don't want to add
 /lib/core/backend/supabase/supabase_conf.dart
 /lib/core/backend/pyament_services/payment_server_conf.dart
+# Any local config file that may hold keys/URLs
+**/*_conf.dart
+
+# Local secret/define files
+**/secrets.dart
+**/secrets.json
+**/env.json
+**/dart_defines*.json
+**/firebase_options.dart
+.firebaserc
 
 # Secrets and local credentials
 .env
@@ -71,3 +81,10 @@ app.*.map.json
 **/service-account*.json
 **/credentials.json
 **/*-credentials.json
+# Sentry CLI auth token (holds auth token)
+**/.sentryclirc
+# Supabase CLI local state
+.supabase/
+supabase/.temp/
+supabase/.branches/
+
