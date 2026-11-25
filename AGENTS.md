@@ -33,6 +33,24 @@ Never commit or print real keys.
 - Use `context.appColorScheme` (`views/custom_ui_elements/utilities/ui_utilities.dart`). `AppTheme.light/dark` exist, but `theme:`/`darkTheme:` are commented out in `main.dart`.
 - Admin UI lives under `views/main_screen/_sub/admin_views`; `adminShellRoute` in `admin_routes.dart` wraps it in `AdminBloc`.
 
+## Engineering standards
+- **Preserve and enforce layer boundaries.**
+  - Backend: new features follow `<domain>_inner_circle` (`Inner<Domain>Handler`, models, `<domain>_bloc/`) and `<domain>_outer_circle` (`Outer<Domain>HandlerWithSupabase` or outer impl). Never import Supabase/HTTP/storage details into inner circles or views. Wire new handlers/blocs in both `get_it.dart` and `app_providers.dart`.
+  - UI: screens use `<feature>/driver/<feature>_driver.dart` (`<Feature>Driver` + `<Feature>Cubit`) and `<feature>/view/material/material_<feature>.dart` (`Material<Feature>`), with sub-features under `_sub/`.
+  - `Driver` owns cubit/bloc wiring, side effects, navigation, and controller disposal (read global blocs via `context.read`/`context.watch`, not constructor passing). `Material*` views stay pure UI—receive state and callbacks, never talk to services or blocs directly.
+- **Canonical naming (new code).**
+  - Follow `<feature>_driver.dart` / `material_<feature>.dart` / `<feature>_cubit.dart` and `<domain>_bloc.dart` / `<domain>_event.dart` / `<domain>_state.dart` (singular).
+  - Do not copy legacy quirks (`*_og.dart`, `dbBLoc` params, global `supabase` variable, misspelled paths), and do not rename existing legacy files unless asked.
+- **Senior UI/UX bar (Android + Web).**
+  - Reuse `views/custom_ui_elements/` (`widgets/`, `dialogs/`, shimmer/pulsing placeholders, `app_layout.dart`'s `maxWidth`, `globalCornerRadius`/`inRadius`), `context.appColorScheme`, and `context.l10n`. No hardcoded colors, raw user-facing strings, or one-off duplicates.
+  - Handle all four UI states explicitly: **loading** (shimmer/placeholder, no blank flash), **empty** (clear guidance + action), **error** (friendly message + retry/recovery, never raw exceptions), and **content**.
+  - Protect mutations: immediate visual feedback, prevent duplicate submits while in flight, preserve user input/cart on failure.
+  - Polish layout & ergonomics: responsive on narrow Android screens and wide web viewports, respect `SafeArea`/keyboard insets, no overflow at larger text scales, 48×48 min tap targets, and visible hover/focus states on web.
+- **Clean, maintainable code.**
+  - Keep `build()` methods small and composable (split into private widgets or `_sub/`). Use `BlocSelector` / scoped builders to avoid unnecessary rebuilds.
+  - Keep changes minimal and scoped; don't introduce speculative abstractions or unrelated refactors.
+  - Verify with `dart format` on changed files, `flutter analyze`, and targeted tests (`flutter test test/<file>_test.dart`) for non-trivial logic (cart totals, pricing, payment/order state).
+
 ## Tooling
 - The Dart MCP server is configured globally (`opencode mcp list` shows `dart connected`). In Code Mode use `tools.dart.*`; connect to a DTD instance before hot reload, runtime-error, or widget-inspector tools.
 
