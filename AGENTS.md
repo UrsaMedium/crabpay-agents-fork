@@ -21,7 +21,7 @@ Never commit or print real keys.
 - `flutter build web` — web compile check.
 - `flutter build apk --debug` — Android compile check.
 - `dart format .` — style is non-default: `page_width: 256`, `trailing_commas: preserve` from `analysis_options.yaml`. Don't reflow long lines by hand.
-- `flutter test` — currently fails: the only test, `test/widget_test.dart`, is the stale counter template and doesn't match the app. Don't chase it or break unrelated code for it.
+- `flutter test` — 286 unit tests (blocs, cubits, outer handlers, models) all pass. Uses `bloc_test` + `mocktail`; helpers live in `test/helpers/`. Outer handlers accept optional injected clients for testing; production wiring in `get_it.dart` uses the defaults.
 - No CI, Makefile, build_runner, or codegen besides l10n.
 
 ## Architecture

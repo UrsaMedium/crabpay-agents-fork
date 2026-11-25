@@ -9,11 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:retry/retry.dart';
 
 class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
-  final SupabaseClient _client = Supabase.instance.client;
-  final retryer = const RetryOptions(
-    maxAttempts: 3,
-    delayFactor: Duration(microseconds: 500),
-  );
+  final SupabaseClient _client;
+  final RetryOptions retryer;
+
+  AdminOuterChatHandlerWithSupabase({SupabaseClient? client, RetryOptions? retryOptions}) : _client = client ?? Supabase.instance.client, retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(microseconds: 500));
 
   @override
   Future<SupportThread?> getOrCreateThreadAdmin({

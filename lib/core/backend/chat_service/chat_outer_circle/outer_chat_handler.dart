@@ -13,11 +13,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:retry/retry.dart';
 
 class OuterChatHandlerWithSupabase implements InnerChatHandler {
-  final SupabaseClient _client = Supabase.instance.client;
-  final retryer = const RetryOptions(
-    maxAttempts: 3,
-    delayFactor: Duration(microseconds: 500),
-  );
+  final SupabaseClient _client;
+  final RetryOptions retryer;
 
   //streaming--------------------------------------------------------------------
   final InnerConnectionMonitor _connectionMonitor;
@@ -34,8 +31,12 @@ class OuterChatHandlerWithSupabase implements InnerChatHandler {
   OuterChatHandlerWithSupabase({
     required AppLifecycleService appLifecycleService,
     required InnerConnectionMonitor connectionMonitor,
+    SupabaseClient? client,
+    RetryOptions? retryOptions,
   }) : _appLifecycleService = appLifecycleService,
-       _connectionMonitor = connectionMonitor {
+       _connectionMonitor = connectionMonitor,
+       _client = client ?? Supabase.instance.client,
+       retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(microseconds: 500)) {
     _initConncetionMonitor();
     _initAppLifecycleService();
   }

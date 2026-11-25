@@ -9,11 +9,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart'; // For debugPrint
 
 class SupabaseOuterAuthInterface implements AuthInnerInterface {
-  SupabaseClient get _supabase => Supabase.instance.client;
-  final retryer = const RetryOptions(
-    maxAttempts: 3,
-    delayFactor: Duration(milliseconds: 500),
-  );
+  final SupabaseClient? _supabaseClient;
+  final RetryOptions retryer;
+
+  SupabaseOuterAuthInterface({SupabaseClient? supabaseClient, RetryOptions? retryOptions}) : _supabaseClient = supabaseClient, retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500));
+
+  SupabaseClient get _supabase => _supabaseClient ?? Supabase.instance.client;
   @override
   Future<AppAuthUser> createUser({
     required String email,

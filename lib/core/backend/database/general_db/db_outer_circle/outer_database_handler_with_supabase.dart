@@ -12,11 +12,10 @@ import 'package:retry/retry.dart';
 import 'package:flutter/foundation.dart';
 
 class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
-  final GraphQLClient _client = SupabaseGraphQLClient.client;
-  final retryer = const RetryOptions(
-    maxAttempts: 3,
-    delayFactor: Duration(milliseconds: 500),
-  );
+  final GraphQLClient _client;
+  final RetryOptions retryer;
+
+  OuterDatabaseHandlerWithSupabase({GraphQLClient? client, RetryOptions? retryOptions}) : _client = client ?? SupabaseGraphQLClient.client, retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500));
 
   Future<QueryResult> _mutateAndCheck(MutationOptions options) async {
     getIt<InnerLoggerHandler>().logBreadcrumb(

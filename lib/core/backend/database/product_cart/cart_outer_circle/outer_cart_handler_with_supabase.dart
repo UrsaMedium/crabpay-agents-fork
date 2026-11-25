@@ -17,11 +17,9 @@ import 'package:retry/retry.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OuterCartHandlerWithSupabase implements InnerCartHandler {
-  final GraphQLClient _client = SupabaseGraphQLClient.client;
-  final retryer = const RetryOptions(
-    maxAttempts: 3,
-    delayFactor: Duration(milliseconds: 500),
-  );
+  final GraphQLClient _client;
+  final RetryOptions retryer;
+  final SupabaseClient? _supabaseClient;
 
   //streaming---------------------------------------------
   StreamSubscription? _appLifecycleSub;
@@ -39,8 +37,14 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     required AppLifecycleService appLifecycleService,
 
     required InnerConnectionMonitor connectionMonitor,
+    GraphQLClient? client,
+    SupabaseClient? supabaseClient,
+    RetryOptions? retryOptions,
   }) : _appLifecycleService = appLifecycleService,
-       _connectionMonitor = connectionMonitor {
+       _connectionMonitor = connectionMonitor,
+       _client = client ?? SupabaseGraphQLClient.client,
+       _supabaseClient = supabaseClient,
+       retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500)) {
     _initConncetionMonitor();
     _initAppLifecycleService();
   }
@@ -82,7 +86,7 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     if (_pendingOrderSub != null) return;
 
     try {
-      final supabase = Supabase.instance.client;
+      final supabase = _supabaseClient ?? Supabase.instance.client;
       _pendingOrderSub = supabase
           .from('user_pending_payments_table')
           .stream(primaryKey: ['paymentId', 'userId'])
@@ -134,7 +138,7 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     if (_supabaseSubToStreamUserCartItemAmount != null) return;
 
     try {
-      final supabase = Supabase.instance.client;
+      final supabase = _supabaseClient ?? Supabase.instance.client;
 
       _supabaseSubToStreamUserCartItemAmount = supabase
           .from('ofUserCartItemCounter')
