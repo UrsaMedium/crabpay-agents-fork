@@ -60,6 +60,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   syncfusion_flutter_datepicker: ^35.1.39
   flutter_markdown_plus: ^1.0.12
+  material_ui: ^1.11.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

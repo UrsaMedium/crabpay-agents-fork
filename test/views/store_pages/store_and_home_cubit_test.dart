@@ -140,16 +140,16 @@ void main() {
       final cubit = HomePageCubit(dbBloc: dbBloc, layoutCubit: layoutCubit);
       addTearDown(cubit.close);
 
-      expect(cubit.state.containerWidth, closeTo(512 - 512 * config.screenEdgePaddingCoeff * 2, 1e-9));
-      expect(cubit.state.containerPadding, closeTo(512 * config.standardPaddingCoeff, 1e-9));
-      expect(cubit.state.outerCornerRadius, closeTo(512 * config.cornerRadiusCoeff, 1e-9));
+      expect(cubit.state.layout.outerWidth, closeTo(512 - 512 * config.screenEdgePaddingCoeff * 2, 1e-9));
+      expect(cubit.state.layout.padding, closeTo(512 * config.standardPaddingCoeff, 1e-9));
+      expect(cubit.state.layout.outerCornerRadius, closeTo(512 * config.cornerRadiusCoeff, 1e-9));
 
       layoutCubit.updateMetrics(rawWidth: 300);
       await pumpEventQueue();
 
-      expect(cubit.state.containerWidth, closeTo(300 - 300 * config.screenEdgePaddingCoeff * 2, 1e-9));
-      expect(cubit.state.containerPadding, closeTo(300 * config.standardPaddingCoeff, 1e-9));
-      expect(cubit.state.outerCornerRadius, closeTo(300 * config.cornerRadiusCoeff, 1e-9));
+      expect(cubit.state.layout.outerWidth, closeTo(300 - 300 * config.screenEdgePaddingCoeff * 2, 1e-9));
+      expect(cubit.state.layout.padding, closeTo(300 * config.standardPaddingCoeff, 1e-9));
+      expect(cubit.state.layout.outerCornerRadius, closeTo(300 * config.cornerRadiusCoeff, 1e-9));
     });
 
     test('precalculates featured layout and page padding on layout sync', () async {
@@ -161,24 +161,22 @@ void main() {
       addTearDown(cubit.close);
 
       void expectMatchesState() {
-        final padding = cubit.state.containerPadding;
-        final innerWidth = cubit.state.containerWidth - padding * 2;
+        final layout = cubit.state.layout;
+        final padding = layout.padding;
+        final innerWidth = layout.outerWidth - padding * 2;
         final colWidth = (innerWidth - padding) / 2;
-        final layout = cubit.state.featuredLayout;
 
-        expect(layout.outerWidth, closeTo(cubit.state.containerWidth, 1e-9));
-        expect(layout.padding, closeTo(padding, 1e-9));
         expect(layout.gap, closeTo(padding, 1e-9));
         expect(layout.innerWidth, closeTo(innerWidth, 1e-9));
         expect(layout.colWidth, closeTo(colWidth, 1e-9));
         expect(layout.topRowHeight, closeTo(colWidth * 1.5 + 2, 1e-9));
         expect(layout.smallCardHeight, closeTo(colWidth * 1.25, 1e-9));
         expect(layout.horizontalHeight, closeTo(colWidth, 1e-9));
-        expect(layout.innerCornerRadius, closeTo(cubit.state.outerCornerRadius - padding, 1e-9));
+        expect(layout.innerCornerRadius, closeTo(layout.outerCornerRadius - padding, 1e-9));
         expect(layout.smallCardPadding, 4.0);
         expect(layout.bannerPadding, EdgeInsets.symmetric(horizontal: padding, vertical: padding / 2));
-        expect(cubit.state.pagePadding.left, closeTo(cubit.state.pagePadding.right, 1e-9));
-        expect(cubit.state.topPadding, 0.0);
+        expect(layout.pagePadding.left, closeTo(layout.pagePadding.right, 1e-9));
+        expect(layout.topPadding, 0.0);
       }
 
       expectMatchesState();
@@ -201,8 +199,7 @@ void main() {
       await pumpEventQueue();
 
       const AppLayoutConfig config = AppLayoutConfig();
-      expect(cubit.state.containerWidth, closeTo(128 - 128 * config.screenEdgePaddingCoeff * 2, 1e-9));
-      expect(cubit.state.featuredLayout.outerWidth, closeTo(cubit.state.containerWidth, 1e-9));
+      expect(cubit.state.layout.outerWidth, closeTo(128 - 128 * config.screenEdgePaddingCoeff * 2, 1e-9));
     });
 
     test('syncs featuredProducts and sets isInitialized from DatabaseBloc', () async {

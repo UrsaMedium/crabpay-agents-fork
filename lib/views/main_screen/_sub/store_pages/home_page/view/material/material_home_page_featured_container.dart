@@ -17,9 +17,7 @@ class MaterialHomePageFeaturedContainer extends StatelessWidget {
     final featuredProducts = context.select<HomePageCubit, List<Product>>(
       (cubit) => cubit.state.featuredProducts ?? [],
     );
-    final layout = context.select<HomePageCubit, HomeFeaturedLayout>(
-      (cubit) => cubit.state.featuredLayout,
-    );
+    final layout = context.read<HomePageCubit>().state.layout;
 
     return Container(
       width: layout.outerWidth,
@@ -54,7 +52,7 @@ class MaterialHomePageFeaturedContainer extends StatelessWidget {
 }
 
 class _FeaturedTopRow extends StatelessWidget {
-  final HomeFeaturedLayout layout;
+  final HomePageLayout layout;
   final List<Product> featuredProducts;
   const _FeaturedTopRow({required this.layout, required this.featuredProducts});
 
@@ -98,7 +96,7 @@ class _FeaturedTopRow extends StatelessWidget {
 }
 
 class _FeaturedTitleBanner extends StatelessWidget {
-  final HomeFeaturedLayout layout;
+  final HomePageLayout layout;
   const _FeaturedTitleBanner({required this.layout});
 
   @override
@@ -129,7 +127,7 @@ class _FeaturedTitleBanner extends StatelessWidget {
 }
 
 class _PlaceHolder extends StatelessWidget {
-  final HomeFeaturedLayout layout;
+  final HomePageLayout layout;
   const _PlaceHolder({required this.layout});
 
   @override

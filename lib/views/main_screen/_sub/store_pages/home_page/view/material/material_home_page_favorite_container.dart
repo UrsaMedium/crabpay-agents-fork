@@ -18,18 +18,19 @@ class MaterialHomePageFavoriteContainer extends StatelessWidget {
     final isInitialized = context.select<HomePageCubit, bool>(
       (cubit) => cubit.state.isInitialized,
     );
+    final layout = context.read<HomePageCubit>().state.layout;
+
     return Container(
       decoration: BoxDecoration(
         color: context.appColorScheme.surfaceContainer,
-        borderRadius: .circular(24),
+        borderRadius: .circular(layout.outerCornerRadius),
       ),
-      width: context.read<HomePageCubit>().state.containerWidth,
-      // height: 400,
+      width: layout.outerWidth,
       child: Padding(
-        padding: .all(context.read<HomePageCubit>().state.containerPadding),
+        padding: .all(layout.padding),
         child: Row(
           crossAxisAlignment: .start,
-          spacing: context.read<HomePageCubit>().state.containerPadding / 2,
+          spacing: layout.gap,
           children: [
             userPreferences.isNotEmpty
                 ? Column(
@@ -38,42 +39,42 @@ class MaterialHomePageFavoriteContainer extends StatelessWidget {
                       ...List.generate(
                         (userPreferences.length + 1) ~/ 2,
                         (index) => Padding(
-                          padding: EdgeInsets.only(top: index == 0 ? 0 : 8.0),
+                          padding: EdgeInsets.only(
+                            top: index == 0 ? 0 : layout.gap,
+                          ),
                           child: ProductCardDriver(
                             product: userPreferences[index * 2],
                             tag: '${userPreferences[index * 2].id}-favorite-$index',
-                            width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-                            cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
+                            width: layout.colWidth,
+                            cornerRadius: layout.innerCornerRadius,
                           ),
                         ),
                       ),
                     ],
                   )
                 : !isInitialized
-                ? _PlaceHolder()
+                ? _PlaceHolder(layout: layout)
                 : SizedBox(),
             Column(
               mainAxisSize: .min,
               children: [
                 Container(
-                  width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
+                  width: layout.colWidth,
                   margin: .only(
-                    bottom: (isInitialized && userPreferences.isEmpty) ? 0 : 8,
+                    bottom: (isInitialized && userPreferences.isEmpty) ? 0 : layout.gap,
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: .circular(
-                      context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
-                    ),
+                    borderRadius: .circular(layout.innerCornerRadius),
                     color: context.appColorScheme.surfaceContainerHighest,
                   ),
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: layout.bannerPadding,
                       child: Text(
                         (isInitialized && userPreferences.isEmpty) ? context.l10n.favoriteEmpty : context.l10n.favorite,
                         textAlign: .center,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: layout.bannerFontSize,
                           fontWeight: .w700,
                           color: context.appColorScheme.onSurface,
                         ),
@@ -85,16 +86,18 @@ class MaterialHomePageFavoriteContainer extends StatelessWidget {
                   ...List.generate(
                     userPreferences.length ~/ 2,
                     (index) => Padding(
-                      padding: EdgeInsets.only(top: index == 0 ? 0 : 8.0),
+                      padding: EdgeInsets.only(
+                        top: index == 0 ? 0 : layout.gap,
+                      ),
                       child: ProductCardDriver(
                         product: userPreferences[index * 2 + 1],
                         tag: '${userPreferences[index * 2 + 1].id}-favorite-$index',
-                        width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-                        cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
+                        width: layout.colWidth,
+                        cornerRadius: layout.innerCornerRadius,
                       ),
                     ),
                   ),
-                if (userPreferences.isEmpty && !isInitialized) _PlaceHolder(),
+                if (userPreferences.isEmpty && !isInitialized) _PlaceHolder(layout: layout),
               ],
             ),
           ],
@@ -105,7 +108,8 @@ class MaterialHomePageFavoriteContainer extends StatelessWidget {
 }
 
 class _PlaceHolder extends StatelessWidget {
-  const _PlaceHolder();
+  final HomePageLayout layout;
+  const _PlaceHolder({required this.layout});
 
   @override
   Widget build(BuildContext context) {
@@ -113,9 +117,9 @@ class _PlaceHolder extends StatelessWidget {
       color: context.appColorScheme.surfaceContainerHigh,
       shimeringColor: context.appColorScheme.outline,
       cycleLongevityFactor: 278 * 10,
-      height: 256,
-      width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-      cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
+      height: layout.topRowHeight,
+      width: layout.colWidth,
+      cornerRadius: layout.innerCornerRadius,
     );
   }
 }

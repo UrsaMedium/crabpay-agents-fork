@@ -30,7 +30,7 @@ class AppLayoutConfig {
   final double largeFontCoeff;
 
   const AppLayoutConfig({
-    this.minWidth = 128.0,
+    this.minWidth = 320.0,
     this.maxWidth = 512.0,
     this.fallbackWidth = 390.0,
     this.standardPaddingCoeff = 0.02,

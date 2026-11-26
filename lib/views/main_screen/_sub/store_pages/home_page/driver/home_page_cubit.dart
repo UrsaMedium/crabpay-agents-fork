@@ -9,10 +9,16 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
-/// Layout values for the home page's featured bento, derived once per layout
-/// sync so the view can render them without any arithmetic.
+/// Every layout value the home page needs, derived once per layout sync so the
+/// views can render them without any arithmetic.
 @immutable
-class HomeFeaturedLayout extends Equatable {
+class HomePageLayout extends Equatable {
+  /// Padding from the page edges, including the platform safe area.
+  final EdgeInsets pagePadding;
+
+  /// Platform safe area at the top of the screen.
+  final double topPadding;
+
   /// Outer card width, equal to the page's content width.
   final double outerWidth;
   final double outerCornerRadius;
@@ -45,7 +51,9 @@ class HomeFeaturedLayout extends Equatable {
   final EdgeInsets bannerPadding;
   final double bannerFontSize;
 
-  const HomeFeaturedLayout({
+  const HomePageLayout({
+    required this.pagePadding,
+    required this.topPadding,
     required this.outerWidth,
     required this.outerCornerRadius,
     required this.padding,
@@ -61,7 +69,7 @@ class HomeFeaturedLayout extends Equatable {
     required this.bannerFontSize,
   });
 
-  factory HomeFeaturedLayout.fromAppLayout(AppLayoutState layout) {
+  factory HomePageLayout.fromAppLayout(AppLayoutState layout) {
     final double padding = math.max(0.0, layout.standardPadding);
     final double outerWidth = math.max(0.0, layout.width - layout.screenEdgePadding * 2);
     final double innerWidth = math.max(0.0, outerWidth - padding * 2);
@@ -70,7 +78,14 @@ class HomeFeaturedLayout extends Equatable {
     final double smallCardHeight = colWidth * 1.25;
     final double bannerFontSize = (math.max(0.0, topRowHeight - smallCardHeight - padding) * 0.34).clamp(10.0, 16.0).toDouble();
 
-    return HomeFeaturedLayout(
+    return HomePageLayout(
+      pagePadding: EdgeInsets.fromLTRB(
+        layout.screenEdgePadding,
+        layout.topPadding + layout.screenEdgePadding,
+        layout.screenEdgePadding,
+        layout.bottomPadding + layout.screenEdgePadding,
+      ),
+      topPadding: layout.topPadding,
       outerWidth: outerWidth,
       outerCornerRadius: math.max(0.0, layout.cornerRadius),
       padding: padding,
@@ -89,6 +104,8 @@ class HomeFeaturedLayout extends Equatable {
 
   @override
   List<Object?> get props => [
+    pagePadding,
+    topPadding,
     outerWidth,
     outerCornerRadius,
     padding,
@@ -110,64 +127,34 @@ class HomePageState extends Equatable {
   final List<Product>? featuredProducts;
   final List<Product>? userPreferences;
   final bool isLoading;
-  final double outerCornerRadius;
-  final double containerWidth;
-  final double containerPadding;
-  final EdgeInsets pagePadding;
-  final double topPadding;
-  final HomeFeaturedLayout featuredLayout;
   final bool isInitialized;
+  final HomePageLayout layout;
 
   const HomePageState({
     this.featuredProducts,
     this.userPreferences,
     this.isLoading = true,
     this.isInitialized = false,
-    required this.outerCornerRadius,
-    required this.containerWidth,
-    required this.containerPadding,
-    required this.pagePadding,
-    required this.topPadding,
-    required this.featuredLayout,
+    required this.layout,
   });
 
-  /// Builds the page state and every derived layout value from [layout].
+  /// Builds the state with every derived layout value from [layout].
   factory HomePageState.fromLayout(AppLayoutState layout) => HomePageState(
-    containerWidth: layout.width - layout.screenEdgePadding * 2,
-    outerCornerRadius: layout.cornerRadius,
-    containerPadding: layout.standardPadding,
-    pagePadding: EdgeInsets.fromLTRB(
-      layout.screenEdgePadding,
-      layout.topPadding + layout.screenEdgePadding,
-      layout.screenEdgePadding,
-      layout.bottomPadding + layout.screenEdgePadding,
-    ),
-    topPadding: layout.topPadding,
-    featuredLayout: HomeFeaturedLayout.fromAppLayout(layout),
+    layout: HomePageLayout.fromAppLayout(layout),
   );
 
   HomePageState copyWith({
     List<Product>? featuredProducts,
     List<Product>? userPreferences,
-    double? outerCornerRadius,
-    double? containerWidth,
-    double? containerPadding,
-    EdgeInsets? pagePadding,
-    double? topPadding,
-    HomeFeaturedLayout? featuredLayout,
     bool? isLoading,
     bool? isInitialized,
+    HomePageLayout? layout,
   }) => HomePageState(
     featuredProducts: featuredProducts ?? this.featuredProducts,
     userPreferences: userPreferences ?? this.userPreferences,
     isLoading: isLoading ?? this.isLoading,
     isInitialized: isInitialized ?? this.isInitialized,
-    containerWidth: containerWidth ?? this.containerWidth,
-    outerCornerRadius: outerCornerRadius ?? this.outerCornerRadius,
-    containerPadding: containerPadding ?? this.containerPadding,
-    pagePadding: pagePadding ?? this.pagePadding,
-    topPadding: topPadding ?? this.topPadding,
-    featuredLayout: featuredLayout ?? this.featuredLayout,
+    layout: layout ?? this.layout,
   );
 
   @override
@@ -176,12 +163,7 @@ class HomePageState extends Equatable {
     userPreferences,
     isLoading,
     isInitialized,
-    outerCornerRadius,
-    containerWidth,
-    containerPadding,
-    pagePadding,
-    topPadding,
-    featuredLayout,
+    layout,
   ];
 }
 
@@ -212,12 +194,7 @@ class HomePageCubit extends Cubit<HomePageState> {
   }
 
   void _syncLayout(AppLayoutState layout) => emit(
-    HomePageState.fromLayout(layout).copyWith(
-      featuredProducts: state.featuredProducts,
-      userPreferences: state.userPreferences,
-      isLoading: state.isLoading,
-      isInitialized: state.isInitialized,
-    ),
+    state.copyWith(layout: HomePageLayout.fromAppLayout(layout)),
   );
 
   @override

@@ -11,31 +11,29 @@ class MaterialHomePageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pagePadding = context.select<HomePageCubit, EdgeInsets>(
-      (cubit) => cubit.state.pagePadding,
-    );
-    final topPadding = context.select<HomePageCubit, double>(
-      (cubit) => cubit.state.topPadding,
-    );
+    final layout = context.read<HomePageCubit>().state.layout;
 
     return RefreshIndicator(
-      edgeOffset: topPadding,
+      edgeOffset: layout.topPadding,
       onRefresh: reFresher,
       child: Scaffold(
         body: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
-            padding: pagePadding,
+            padding: layout.pagePadding,
             child: Center(
-              child: Column(
-                children: [
-                  MaterialHomePageFeaturedContainer(),
-                  Padding(
-                    padding: .symmetric(horizontal: 22, vertical: 6),
-                    child: Divider(),
-                  ),
-                  MaterialHomePageFavoriteContainer(),
-                ],
+              child: SizedBox(
+                width: layout.outerWidth,
+                child: Column(
+                  children: [
+                    MaterialHomePageFeaturedContainer(),
+                    Padding(
+                      padding: .symmetric(horizontal: 22, vertical: 6),
+                      child: Divider(),
+                    ),
+                    MaterialHomePageFavoriteContainer(),
+                  ],
+                ),
               ),
             ),
           ),

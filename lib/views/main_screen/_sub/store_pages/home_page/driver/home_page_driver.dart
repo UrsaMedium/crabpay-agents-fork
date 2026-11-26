@@ -65,8 +65,8 @@ class _HomePageDriverState extends State<HomePageDriver> with AutomaticKeepAlive
         },
         child: Builder(
           builder: (context) {
-            context.select<HomePageCubit, double>(
-              (cubit) => cubit.state.containerWidth,
+            context.select<HomePageCubit, HomePageLayout>(
+              (cubit) => cubit.state.layout,
             );
             if (defaultTargetPlatform == TargetPlatform.iOS) {
               // cupertino
