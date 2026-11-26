@@ -7,7 +7,7 @@ import 'package:crabpay/views/main_screen/_sub/product_view/driver/product_cubit
 import 'package:crabpay/views/main_screen/_sub/product_view/view/material/material_product_buy_layer.dart';
 import 'package:crabpay/views/main_screen/_sub/product_view/view/material/material_product_description_layer.dart';
 import 'package:crabpay/views/main_screen/_sub/product_view/view/material/material_product_view_appbar.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialProductView extends StatelessWidget {
@@ -103,7 +103,8 @@ class MaterialProductView extends StatelessWidget {
                               width: MediaQuery.widthOf(context),
                               height: isPageReady ? descPosition! + 24 : MediaQuery.widthOf(context),
                               child: CachedNetworkImage(
-                                imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/${context.read<ProductViewCubit>().state.product!.image}.png',
+                                imageUrl:
+                                    'https://regred-rainbowbridge.ru/crabpay/images/products/${context.read<ProductViewCubit>().state.product!.image}.png',
                                 fit: BoxFit.cover,
                                 errorWidget: (context, error, stackTrace) => Container(
                                   color: context.appColorScheme.onInverseSurface,
@@ -131,7 +132,9 @@ class MaterialProductView extends StatelessWidget {
                 ),
 
                 AnimatedPositioned(
-                  top: (isPageReady ? descPosition : buyPosition)! - keyboardHeight < MediaQuery.paddingOf(context).top ? MediaQuery.paddingOf(context).top : (isPageReady ? descPosition : buyPosition)! - keyboardHeight,
+                  top: (isPageReady ? descPosition : buyPosition)! - keyboardHeight < MediaQuery.paddingOf(context).top
+                      ? MediaQuery.paddingOf(context).top
+                      : (isPageReady ? descPosition : buyPosition)! - keyboardHeight,
                   left: 0,
                   right: 0,
                   duration: const Duration(milliseconds: 250),
@@ -143,7 +146,11 @@ class MaterialProductView extends StatelessWidget {
                 ),
 
                 AnimatedPositioned(
-                  top: (isPageReady ? buyPosition : MediaQuery.heightOf(context))! - keyboardHeight < MediaQuery.paddingOf(context).top ? MediaQuery.paddingOf(context).top + 54 : (isPageReady ? buyPosition : MediaQuery.heightOf(context))! - keyboardHeight,
+                  top:
+                      (isPageReady ? buyPosition : MediaQuery.heightOf(context))! - keyboardHeight <
+                          MediaQuery.paddingOf(context).top
+                      ? MediaQuery.paddingOf(context).top + 54
+                      : (isPageReady ? buyPosition : MediaQuery.heightOf(context))! - keyboardHeight,
                   left: 0,
                   right: 0,
                   height: context.read<ProductViewCubit>().state.buyLayerHeight,

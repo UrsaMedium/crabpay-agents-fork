@@ -1,5 +1,5 @@
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:crabpay/core/extensions/l10n_extension.dart';
 

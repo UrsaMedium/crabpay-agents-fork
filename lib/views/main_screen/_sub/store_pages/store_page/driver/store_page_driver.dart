@@ -7,7 +7,7 @@ import 'package:crabpay/core/backend/database/general_db/db_inner_circle/databas
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_state.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/driver/store_page_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/view/material/material_store_page.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -72,16 +72,10 @@ class _StorePageDriverState extends State<StorePageDriver> with AutomaticKeepAli
         value: _storePageCubit,
         child: Builder(
           builder: (context) {
-            return Scaffold(
-              body: Stack(
-                children: [
-                  MaterialStorePage(
-                    reFresher: () => _reFresher(context),
-                    onCategoryViewOpen: (tag) => _onCategoryViewOpen(context, tag),
-                    onSearchSubmitedCallBack: (p0) => _onSearchSubmitedCallBack(p0),
-                  ),
-                ],
-              ),
+            return MaterialStorePage(
+              reFresher: () => _reFresher(context),
+              onCategoryViewOpen: (tag) => _onCategoryViewOpen(context, tag),
+              onSearchSubmitedCallBack: (p0) => _onSearchSubmitedCallBack(p0),
             );
             // if (newPage) {
             //   return MaterialStorePage(

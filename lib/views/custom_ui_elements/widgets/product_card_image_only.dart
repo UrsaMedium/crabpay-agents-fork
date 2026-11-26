@@ -4,7 +4,7 @@ import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/views/custom_ui_elements/widgets/material_shimering_place_holder.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ProductCardImageOnly extends StatelessWidget {
   final Product product;

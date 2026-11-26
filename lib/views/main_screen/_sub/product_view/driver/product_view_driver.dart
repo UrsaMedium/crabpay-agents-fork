@@ -8,7 +8,7 @@ import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/dat
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/main_screen/_sub/product_view/driver/product_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/product_view/view/material/material_product_view_ground.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -34,7 +34,12 @@ class _ProductViewDriverState extends State<ProductViewDriver> {
   @override
   void initState() {
     heroTag = widget.tag;
-    final theProduct = context.read<DatabaseBloc>().state.products?.where((aProduct) => aProduct.id == widget.productId).firstOrNull;
+    final theProduct = context
+        .read<DatabaseBloc>()
+        .state
+        .products
+        ?.where((aProduct) => aProduct.id == widget.productId)
+        .firstOrNull;
 
     if (theProduct == null) {
       context.go(AppRoutes.home.path);
@@ -111,7 +116,8 @@ class _ProductViewDriverState extends State<ProductViewDriver> {
       if ((details.primaryVelocity ?? 0) < -200) {
         _productViewCubit.setLayer(true);
       } else if ((details.primaryVelocity ?? 0) > 200) {
-        if (_productViewCubit.state.layer == ProductViewLayers.descriptionLayer || _productViewCubit.state.layer == ProductViewLayers.groundLayer) {
+        if (_productViewCubit.state.layer == ProductViewLayers.descriptionLayer ||
+            _productViewCubit.state.layer == ProductViewLayers.groundLayer) {
           context.pop();
         }
         _productViewCubit.setLayer(false);
@@ -183,7 +189,8 @@ class _ProductViewDriverState extends State<ProductViewDriver> {
       CartItem cartItem = CartItem(
         id: '',
         userId: context.read<AuthBloc>().state.currentUser.id,
-        userName: context.read<AuthBloc>().state.currentUser.email ?? 'AnonUser-id:${context.read<AuthBloc>().state.currentUser.id}',
+        userName:
+            context.read<AuthBloc>().state.currentUser.email ?? 'AnonUser-id:${context.read<AuthBloc>().state.currentUser.id}',
         productId: _productViewCubit.state.product?.id ?? 'error',
         productName: _productViewCubit.state.product?.name ?? 'error',
         purchaseData: _productViewCubit.state.retrievedData ?? {},

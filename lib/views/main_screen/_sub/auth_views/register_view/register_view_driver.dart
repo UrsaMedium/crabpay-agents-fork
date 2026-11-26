@@ -5,7 +5,7 @@ import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_ha
 import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/main_screen/_sub/auth_views/register_view/material_register_view.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';

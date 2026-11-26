@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class MainScreenDriver extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -51,7 +51,9 @@ class _MainScreenDriverState extends State<MainScreenDriver> {
   @override
   void didUpdateWidget(covariant MainScreenDriver oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (_pageController.hasClients && _pageController.page?.round() != widget.navigationShell.currentIndex && !_mainScreenCubit.state.isSyncingByNavBarTap) {
+    if (_pageController.hasClients &&
+        _pageController.page?.round() != widget.navigationShell.currentIndex &&
+        !_mainScreenCubit.state.isSyncingByNavBarTap) {
       _mainScreenCubit.onPageSwipe(widget.navigationShell.currentIndex);
       _pageController.animateToPage(
         widget.navigationShell.currentIndex,

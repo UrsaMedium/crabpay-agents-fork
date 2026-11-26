@@ -7,7 +7,7 @@ import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/core/global_graphic_driver.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class MaterialStorePage extends StatelessWidget {
   final Future<void> Function() reFresher;
@@ -118,7 +118,10 @@ class _CategoryCard extends StatelessWidget {
               height: context.read<StorePageCubit>().state.containerWidth * 1.6 / 8,
               width: MediaQuery.widthOf(context) - 32,
               child: Padding(
-                padding: .symmetric(vertical:  context.read<StorePageCubit>().state.outerCornerRadius/3, horizontal: context.read<StorePageCubit>().state.outerCornerRadius/3),
+                padding: .symmetric(
+                  vertical: context.read<StorePageCubit>().state.outerCornerRadius / 3,
+                  horizontal: context.read<StorePageCubit>().state.outerCornerRadius / 3,
+                ),
                 child: Stack(
                   alignment: .bottomEnd,
                   children: [
@@ -128,7 +131,7 @@ class _CategoryCard extends StatelessWidget {
                       itemBuilder: (context, index) => ProductCardSmallDriver(
                         product: products[index],
                         tag: subTag,
-                        width: context.read<StorePageCubit>().state.containerWidth/8,
+                        width: context.read<StorePageCubit>().state.containerWidth / 8,
                         // cornerRadius: 4,
                         padding: 0,
                         margin: 2,

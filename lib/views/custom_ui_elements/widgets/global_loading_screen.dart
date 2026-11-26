@@ -3,9 +3,7 @@ import 'dart:developer' as developer;
 import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/core/utilities.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class GlobalLoadingScreen {
   static final GlobalLoadingScreen _instance = GlobalLoadingScreen._internal();
@@ -57,15 +55,11 @@ class GlobalLoaderStack extends StatelessWidget {
                   color: context.appColorScheme.primary,
                 ),
                 Center(
-                  child: defaultTargetPlatform == TargetPlatform.iOS
-                      ? CupertinoActivityIndicator(
-                          color: context.appColorScheme.onPrimary,
-                        )
-                      : CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            context.appColorScheme.onPrimary,
-                          ),
-                        ),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      context.appColorScheme.onPrimary,
+                    ),
+                  ),
                 ),
               ],
             );

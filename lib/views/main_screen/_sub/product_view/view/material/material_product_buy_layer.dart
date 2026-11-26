@@ -5,7 +5,7 @@ import 'package:crabpay/core/global_graphic_driver.dart';
 import 'package:crabpay/views/custom_ui_elements/widgets/material_shimering_place_holder.dart';
 import 'package:crabpay/views/main_screen/_sub/product_view/driver/product_cubit.dart';
 import 'package:crabpay/views/custom_ui_elements/widgets/widget_factory.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -408,7 +408,9 @@ class MaterialBuyLayerButtonRow extends StatelessWidget {
                                   : context.appColorScheme.onPrimary.withValues(
                                       alpha: highGraphics ? .5 : .95,
                                     ),
-                              foregroundColor: isEveryFieldSatisfied ? context.appColorScheme.onPrimary : context.appColorScheme.primary,
+                              foregroundColor: isEveryFieldSatisfied
+                                  ? context.appColorScheme.onPrimary
+                                  : context.appColorScheme.primary,
                               minimumSize: Size(double.maxFinite, 45),
                               side: BorderSide(
                                 color: isEveryFieldSatisfied
@@ -506,7 +508,9 @@ class MaterialBuyLayerCostDisplay extends StatelessWidget {
                             ),
                       borderRadius: BorderRadius.circular(30),
                       border: BoxBorder.all(
-                        color: precalculatedPrice == 0 ? context.appColorScheme.surfaceContainer.withValues(alpha: highGraphics ? .5 : .95) : context.appColorScheme.onPrimary,
+                        color: precalculatedPrice == 0
+                            ? context.appColorScheme.surfaceContainer.withValues(alpha: highGraphics ? .5 : .95)
+                            : context.appColorScheme.onPrimary,
                       ),
                     ),
                     child: Text(

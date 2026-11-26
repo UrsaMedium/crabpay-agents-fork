@@ -3,7 +3,7 @@ import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/core/global_graphic_driver.dart';
 import 'package:crabpay/views/main_screen/driver/main_screen_cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialMainScreenCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -66,9 +66,13 @@ class MaterialMainScreenCustomAppBar extends StatelessWidget implements Preferre
                       child: Container(
                         height: 48,
                         decoration: BoxDecoration(
-                          color: (connectionStatus ? context.appColorScheme.surfaceContainerHigh : context.appColorScheme.errorContainer).withValues(
-                            alpha: highGraphics ? .5 : .97,
-                          ),
+                          color:
+                              (connectionStatus
+                                      ? context.appColorScheme.surfaceContainerHigh
+                                      : context.appColorScheme.errorContainer)
+                                  .withValues(
+                                    alpha: highGraphics ? .5 : .97,
+                                  ),
                         ),
                       ),
                     ),

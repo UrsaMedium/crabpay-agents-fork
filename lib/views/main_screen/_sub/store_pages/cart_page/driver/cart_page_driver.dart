@@ -14,7 +14,7 @@ import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/views/custom_ui_elements/dialogs/on_unauth_buy_to_register.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/driver/cart_page_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/material_cart_page_view.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';

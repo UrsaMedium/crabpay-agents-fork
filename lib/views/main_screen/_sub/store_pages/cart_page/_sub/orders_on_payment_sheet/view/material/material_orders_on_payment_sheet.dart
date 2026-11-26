@@ -1,58 +1,24 @@
-import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
-import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
-import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/data_models/cart_item_model.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/data_models/pending_order_model.dart';
-import 'package:crabpay/core/backend/pyament_services/payment_bloc/payment_bloc.dart';
-import 'package:crabpay/core/backend/pyament_services/payment_bloc/payment_event.dart';
+import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/core/global_graphic_driver.dart';
 import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/views/custom_ui_elements/widgets/material_shimering_place_holder.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
-class OrdersOnPaymentSheetDriver extends StatelessWidget {
-  const OrdersOnPaymentSheetDriver({super.key});
-
-  void _onPaymentLinkPressed(BuildContext context, String? link) {
-    if (link != null) {
-      context.read<PaymentBloc>().add(PaymentEventReturnToProvider(link: link));
-      context.pop();
-    }
-  }
-
-  void _onOrderDetailsPressed(
-    BuildContext context,
-    List<Product> products,
-    PendingOrder order,
-  ) async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return _OrderDetails(order: order, products: products);
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final pendingOrders = context.select<CartBloc, List<PendingOrder>>(
-      (bloc) => bloc.state.pendingOrders ?? [],
-    );
-    return MaterialOrdersOnPaymentSheet(
-      orders: pendingOrders,
-      onPaymentLinkPressed: (paymentLink) => _onPaymentLinkPressed(context, paymentLink),
-      onOrderDetailsPressed: (order) => _onOrderDetailsPressed(
-        context,
-        context.read<DatabaseBloc>().state.products ?? [],
-        order,
-      ),
-    );
-  }
+Future<void> showMaterialPendingOrderDetailsDialog({
+  required BuildContext context,
+  required PendingOrder order,
+  required List<Product> products,
+}) {
+  return showDialog<void>(
+    context: context,
+    builder: (context) => _OrderDetails(order: order, products: products),
+  );
 }
 
 class MaterialOrdersOnPaymentSheet extends StatelessWidget {
@@ -302,7 +268,8 @@ class _OrderDetails extends StatelessWidget {
                                   ),
                                   clipBehavior: .antiAlias,
                                   child: CachedNetworkImage(
-                                    imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/${(products.firstWhere((element) => element.id == order.cartItems[index].productId)).image}.png',
+                                    imageUrl:
+                                        'https://regred-rainbowbridge.ru/crabpay/images/products/${(products.firstWhere((element) => element.id == order.cartItems[index].productId)).image}.png',
                                     fit: .cover,
                                     errorWidget: (context, error, stackTrace) => Container(
                                       color: context.appColorScheme.onInverseSurface,

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 class AppExpandingCircleTransitionClipper extends CustomClipper<Path> {
@@ -42,7 +42,8 @@ class AppExpandingCircleTransitionClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(covariant AppExpandingCircleTransitionClipper oldClipper) => oldClipper.transitionFraction != transitionFraction || oldClipper.center != center;
+  bool shouldReclip(covariant AppExpandingCircleTransitionClipper oldClipper) =>
+      oldClipper.transitionFraction != transitionFraction || oldClipper.center != center;
 }
 
 class AppExpandingCircleTransitionRoute {
@@ -52,7 +53,7 @@ class AppExpandingCircleTransitionRoute {
     required Widget child,
   }) {
     if (defaultTargetPlatform != TargetPlatform.android && defaultTargetPlatform != TargetPlatform.iOS) {
-      return MaterialPage<void>(key: state.pageKey, child: child);
+      return NoTransitionPage<void>(key: state.pageKey, child: child);
     }
 
     final Offset tapPosition =

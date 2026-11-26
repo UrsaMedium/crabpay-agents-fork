@@ -2,42 +2,14 @@ import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/core/global_graphic_driver.dart';
 import 'package:crabpay/core/global_language_driver.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 
-class SettingsSheetDriver extends StatefulWidget {
-  const SettingsSheetDriver({super.key});
-
-  @override
-  State<SettingsSheetDriver> createState() => _SettingsSheetDriverState();
-}
-
-class _SettingsSheetDriverState extends State<SettingsSheetDriver> {
-  void _onGraphicsToggled(BuildContext context, bool toggle) {
-    if (toggle) {
-      context.read<GlobalGraphicBloc>().add(GlobalGraphicEventSetHigh());
-    } else {
-      context.read<GlobalGraphicBloc>().add(GlobalGraphicEventSetLow());
-    }
-  }
-
-  void _onLangChange(BuildContext context, bool isRu) {
-    context.read<GlobalLanguageCubit>().setRuLang(isRu: isRu);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _MaterialSettingsSheet(
-      onGraphicsToggled: (toggle) => _onGraphicsToggled(context, toggle),
-      onLangChange: (isRu) => _onLangChange(context, isRu),
-    );
-  }
-}
-
-class _MaterialSettingsSheet extends StatelessWidget {
+class MaterialSettingsSheet extends StatelessWidget {
   final Function(bool) onGraphicsToggled;
   final Function(bool) onLangChange;
-  const _MaterialSettingsSheet({
+  const MaterialSettingsSheet({
+    super.key,
     required this.onGraphicsToggled,
     required this.onLangChange,
   });

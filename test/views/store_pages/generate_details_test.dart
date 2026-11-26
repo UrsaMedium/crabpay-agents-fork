@@ -1,4 +1,4 @@
-import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/orders_on_payment_sheet.dart';
+import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/_sub/orders_on_payment_sheet/view/material/material_orders_on_payment_sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/test_fixtures.dart';

@@ -1,6 +1,6 @@
-import 'package:crabpay/core/set_up/theme/app_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:crabpay/views/app/view/material/material_app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   group('AppTheme', () {

@@ -1,7 +1,7 @@
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_user.dart';
 import 'package:crabpay/core/backend/chat_service/chat_inner_circle/data_models/chat_message_model.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ChatBubbleDriver extends StatefulWidget {
   final ChatMessage message;

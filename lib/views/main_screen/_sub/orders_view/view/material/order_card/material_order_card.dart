@@ -4,7 +4,7 @@ import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/views/custom_ui_elements/widgets/material_shimering_place_holder.dart';
 import 'package:crabpay/views/main_screen/_sub/orders_view/driver/crab_order_model.dart';
 import 'package:crabpay/views/main_screen/_sub/orders_view/driver/cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialOrderCard extends StatelessWidget {

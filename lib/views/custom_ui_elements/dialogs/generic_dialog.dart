@@ -1,5 +1,5 @@
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 typedef DialogOptionBulder<T> = Map<String, T> Function();

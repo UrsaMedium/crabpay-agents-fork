@@ -2,7 +2,7 @@ import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_mo
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_fields_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart' show immutable;
+import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/widgets.dart';
 
 enum DatabaseStates {

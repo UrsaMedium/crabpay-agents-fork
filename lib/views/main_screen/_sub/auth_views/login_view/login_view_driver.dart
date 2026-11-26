@@ -7,7 +7,6 @@ import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/main_screen/_sub/auth_views/login_view/material_login_view.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';

@@ -5,14 +5,16 @@ import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_ha
 import 'package:crabpay/core/utilities.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:retry/retry.dart';
 
 class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
   final SupabaseClient _client;
   final RetryOptions retryer;
 
-  AdminOuterChatHandlerWithSupabase({SupabaseClient? client, RetryOptions? retryOptions}) : _client = client ?? Supabase.instance.client, retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(microseconds: 500));
+  AdminOuterChatHandlerWithSupabase({SupabaseClient? client, RetryOptions? retryOptions})
+    : _client = client ?? Supabase.instance.client,
+      retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(microseconds: 500));
 
   @override
   Future<SupportThread?> getOrCreateThreadAdmin({
@@ -117,22 +119,27 @@ class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
         category: 'Chat Service',
         data: {'threadId': threadId},
       );
-      return _client.from('chat_messages').stream(primaryKey: ['id']).eq('thread_id', threadId).order('created_at', ascending: true).map((
-        List<Map<String, dynamic>> data,
-      ) {
-        return data
-            .map(
-              (json) => ChatMessage(
-                id: json['id'] as String,
-                threadId: json['thread_id'] as String,
-                senderId: json['sender_id'] as String,
-                content: json['content'] as String,
-                isRead: json['is_read'] as bool? ?? false,
-                createdAt: DateTime.parse(json['created_at'] as String),
-              ),
-            )
-            .toList();
-      });
+      return _client
+          .from('chat_messages')
+          .stream(primaryKey: ['id'])
+          .eq('thread_id', threadId)
+          .order('created_at', ascending: true)
+          .map((
+            List<Map<String, dynamic>> data,
+          ) {
+            return data
+                .map(
+                  (json) => ChatMessage(
+                    id: json['id'] as String,
+                    threadId: json['thread_id'] as String,
+                    senderId: json['sender_id'] as String,
+                    content: json['content'] as String,
+                    isRead: json['is_read'] as bool? ?? false,
+                    createdAt: DateTime.parse(json['created_at'] as String),
+                  ),
+                )
+                .toList();
+          });
     } catch (e) {
       getIt<InnerLoggerHandler>().recordException(
         error: 'failed exe: subscribeToMessages',

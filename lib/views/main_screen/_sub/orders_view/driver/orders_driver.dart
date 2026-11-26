@@ -15,7 +15,7 @@ import 'package:crabpay/views/main_screen/_sub/orders_view/view/material/deliver
 import 'package:crabpay/views/main_screen/_sub/orders_view/view/material/main_orders_view/material_orders_view.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/main_screen/_sub/orders_view/view/material/search/material_searched_orders_page.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:crabpay/core/utilities.dart';
 import 'package:go_router/go_router.dart';
@@ -190,14 +190,10 @@ class _OrdersViewDriverState extends State<OrdersViewDriver> {
   }
 
   void _onOpenCardDetails(BuildContext context, CrabOrder order) async {
-    await showDialog(
+    await showMaterialOrderDetailsDialog(
       context: context,
-      builder: (context) {
-        return MaterialOrderDetails(
-          order: order,
-          onSupportSendMessagePressed: (message) => _onSupportSendMessagePressed(context, message),
-        );
-      },
+      order: order,
+      onSupportSendMessagePressed: (message) => _onSupportSendMessagePressed(context, message),
     );
   }
 

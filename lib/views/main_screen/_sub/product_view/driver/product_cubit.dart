@@ -7,7 +7,7 @@ import 'package:crabpay/core/backend/database/general_db/db_inner_circle/databas
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc_state.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -308,7 +308,11 @@ class ProductViewCubit extends Cubit<ProductViewState> {
       switch (state.layer) {
         case ProductViewLayers.groundLayer:
           if (isUp) {
-            final descTopPosition = state.layoutBoundries!['height']! - state.layoutBoundries!['paddingBottom']! - (descLayerHeight > state.descMinPosition! ? descLayerHeight : state.descMinPosition!) - 64;
+            final descTopPosition =
+                state.layoutBoundries!['height']! -
+                state.layoutBoundries!['paddingBottom']! -
+                (descLayerHeight > state.descMinPosition! ? descLayerHeight : state.descMinPosition!) -
+                64;
             emit(
               state.copyWith(
                 layer: ProductViewLayers.descriptionLayer,
@@ -320,7 +324,8 @@ class ProductViewCubit extends Cubit<ProductViewState> {
           break;
         case ProductViewLayers.descriptionLayer:
           if (isUp) {
-            final buyTopPosition = state.layoutBoundries!['height']! - state.layoutBoundries!['paddingBottom']! - buyLayerHeight;
+            final buyTopPosition =
+                state.layoutBoundries!['height']! - state.layoutBoundries!['paddingBottom']! - buyLayerHeight;
             final descTopPosition = buyTopPosition - 46;
             emit(
               state.copyWith(
@@ -331,7 +336,8 @@ class ProductViewCubit extends Cubit<ProductViewState> {
             );
           } else {
             final buyTopPosition = state.layoutBoundries!['height']! - state.layoutBoundries!['paddingBottom']! - 54;
-            final descTopPosition = state.layoutBoundries!['height']! - state.layoutBoundries!['paddingBottom']! - state.layoutBoundries!['width']!;
+            final descTopPosition =
+                state.layoutBoundries!['height']! - state.layoutBoundries!['paddingBottom']! - state.layoutBoundries!['width']!;
             emit(
               state.copyWith(
                 layer: ProductViewLayers.groundLayer,
@@ -343,7 +349,11 @@ class ProductViewCubit extends Cubit<ProductViewState> {
           break;
         case ProductViewLayers.buyLayer:
           if (!isUp) {
-            final descTopPosition = state.layoutBoundries!['height']! - state.layoutBoundries!['paddingBottom']! - (descLayerHeight > state.descMinPosition! ? descLayerHeight : state.descMinPosition!) - 64;
+            final descTopPosition =
+                state.layoutBoundries!['height']! -
+                state.layoutBoundries!['paddingBottom']! -
+                (descLayerHeight > state.descMinPosition! ? descLayerHeight : state.descMinPosition!) -
+                64;
             final buyTopPosition = state.layoutBoundries!['height']! - state.layoutBoundries!['paddingBottom']! - 54;
             emit(
               state.copyWith(

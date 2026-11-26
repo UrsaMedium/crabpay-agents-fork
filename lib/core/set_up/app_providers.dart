@@ -22,7 +22,7 @@ import 'package:crabpay/core/global_language_driver.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:crabpay/core/utilities.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class AppProviders extends StatelessWidget {
   final Widget child;

@@ -5,7 +5,7 @@ import 'package:crabpay/core/backend/chat_service/chat_inner_circle/chat_bloc/ch
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/support_page/driver/support_page_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/support_page/material_support_page_view.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

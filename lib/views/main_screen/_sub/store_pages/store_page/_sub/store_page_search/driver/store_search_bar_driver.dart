@@ -3,7 +3,7 @@ import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_ha
 import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/_sub/store_page_search/material_store_search_bar_view.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:keyboard_detection/keyboard_detection.dart';
 
 class MaterialStoreSearchBarDriver extends StatefulWidget {

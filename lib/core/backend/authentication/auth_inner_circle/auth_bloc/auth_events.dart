@@ -1,5 +1,5 @@
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_user.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 @immutable
 abstract class AuthEvent {

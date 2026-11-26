@@ -5,7 +5,7 @@ import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/core/global_graphic_driver.dart';
 import 'package:crabpay/views/custom_ui_elements/widgets/cart_item_widget.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/driver/cart_page_cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialCartPageView extends StatelessWidget {
@@ -217,7 +217,9 @@ class _BuyPannelWidget extends StatelessWidget {
                               minimumSize: Size(double.maxFinite, 50),
                             ),
                             child: Text(
-                              pendingOrders.length == 1 ? context.l10n.youHave1UnpaidOrder : '${context.l10n.youHavenUnpaidOrdersSTART} ${pendingOrders.length} ${context.l10n.youHavenUnpaidOrdersEND}',
+                              pendingOrders.length == 1
+                                  ? context.l10n.youHave1UnpaidOrder
+                                  : '${context.l10n.youHavenUnpaidOrdersSTART} ${pendingOrders.length} ${context.l10n.youHavenUnpaidOrdersEND}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,

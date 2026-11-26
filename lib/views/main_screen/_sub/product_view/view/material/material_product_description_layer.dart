@@ -1,7 +1,7 @@
 import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/views/main_screen/_sub/product_view/driver/product_cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_markdown_latex/flutter_markdown_latex.dart';
@@ -69,7 +69,9 @@ class MaterialProductDescriptionLayer extends StatelessWidget {
                               ),
                               MarkdownBody(
                                 selectable: true,
-                                data: context.read<ProductViewCubit>().state.product!.description.isEmpty ? context.l10n.somethingWentWrongWithDescription : context.read<ProductViewCubit>().state.product!.description,
+                                data: context.read<ProductViewCubit>().state.product!.description.isEmpty
+                                    ? context.l10n.somethingWentWrongWithDescription
+                                    : context.read<ProductViewCubit>().state.product!.description,
                                 builders: {'latex': LatexElementBuilder()},
                                 extensionSet: md.ExtensionSet(
                                   [LatexBlockSyntax()],

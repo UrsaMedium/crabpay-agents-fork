@@ -3,7 +3,7 @@ import 'package:crabpay/core/backend/supabase/supabase_conf.dart';
 import 'package:crabpay/core/set_up/get_it.dart';
 import 'package:crabpay/core/local_storage/local_storage.dart';
 import 'package:crabpay/core/utilities.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -40,9 +40,9 @@ class AppBootstrap {
 
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarDividerColor: Colors.transparent,
+        statusBarColor: Color(0x00000000),
+        systemNavigationBarColor: Color(0x00000000),
+        systemNavigationBarDividerColor: Color(0x00000000),
       ),
     );
   }

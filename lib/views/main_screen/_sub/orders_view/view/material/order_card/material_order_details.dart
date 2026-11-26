@@ -4,8 +4,22 @@ import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/dat
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/views/custom_ui_elements/widgets/material_shimering_place_holder.dart';
 import 'package:crabpay/views/main_screen/_sub/orders_view/driver/crab_order_model.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+
+Future<void> showMaterialOrderDetailsDialog({
+  required BuildContext context,
+  required CrabOrder order,
+  required Function(String) onSupportSendMessagePressed,
+}) {
+  return showDialog<void>(
+    context: context,
+    builder: (context) => MaterialOrderDetails(
+      order: order,
+      onSupportSendMessagePressed: onSupportSendMessagePressed,
+    ),
+  );
+}
 
 String generateDetails(CartItem cartItem) {
   String result = '';
@@ -150,7 +164,8 @@ class MaterialOrderDetails extends StatelessWidget {
                                   ),
                                   clipBehavior: .antiAlias,
                                   child: CachedNetworkImage(
-                                    imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/${order.itemsToImagesMap.values.toList()[index]}.png',
+                                    imageUrl:
+                                        'https://regred-rainbowbridge.ru/crabpay/images/products/${order.itemsToImagesMap.values.toList()[index]}.png',
                                     fit: .cover,
                                     errorWidget: (context, error, stackTrace) => Container(
                                       color: context.appColorScheme.onInverseSurface,

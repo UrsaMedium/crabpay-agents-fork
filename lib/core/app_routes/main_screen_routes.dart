@@ -1,31 +1,31 @@
 import 'package:crabpay/core/app_routes/app_routes.dart';
-import 'package:crabpay/views/main_screen/_sub/settings_sheet.dart';
+import 'package:crabpay/views/main_screen/_sub/settings_sheet/driver/settings_sheet_driver.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/_sub/store_category_view/store_category_driver.dart';
 import 'package:crabpay/views/main_screen/driver/main_screen_driver.dart';
-import 'package:crabpay/views/main_screen/_sub/profile_sheet.dart';
+import 'package:crabpay/views/main_screen/_sub/profile_sheet/driver/profile_sheet_driver.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/driver/cart_page_driver.dart';
-import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/orders_on_payment_sheet.dart';
+import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/_sub/orders_on_payment_sheet/driver/orders_on_payment_sheet_driver.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/home_page/driver/home_page_driver.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/driver/store_page_driver.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/support_page/driver/support_page_driver.dart';
-import 'package:crabpay/views/custom_ui_elements/widgets/material_bottom_sheet_page_gorouter_interface.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_sheet_page.dart';
 import 'package:go_router/go_router.dart';
 
 final List<RouteBase> mainScreenShellRoutes = [
   GoRoute(
     path: AppRoutes.profileSheet.path,
     name: AppRoutes.profileSheet.name,
-    pageBuilder: (context, state) => BottomSheetPage(key: state.pageKey, child: const ProfileSheetDriver()),
+    pageBuilder: (context, state) => buildAppSheetPage(key: state.pageKey, child: const ProfileSheetDriver()),
   ),
   GoRoute(
     path: AppRoutes.settingsSheet.path,
     name: AppRoutes.settingsSheet.name,
-    pageBuilder: (context, state) => BottomSheetPage(key: state.pageKey, child: const SettingsSheetDriver()),
+    pageBuilder: (context, state) => buildAppSheetPage(key: state.pageKey, child: const SettingsSheetDriver()),
   ),
   GoRoute(
     path: AppRoutes.itemsOnPaymentSheet.path,
     name: AppRoutes.itemsOnPaymentSheet.name,
-    pageBuilder: (context, state) => BottomSheetPage(
+    pageBuilder: (context, state) => buildAppSheetPage(
       key: state.pageKey,
       child: const OrdersOnPaymentSheetDriver(),
     ),
