@@ -662,7 +662,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get verificationLinkSent => 'Ссылка для подтверждения отправлена на ваш email';
 
   @override
-  String get lookForVerificationLink => 'Похоже, вы не подтвердили email. Ссылка для подтверждения должна быть в вашем почтовом ящике';
+  String get lookForVerificationLink =>
+      'Похоже, вы не подтвердили email. Ссылка для подтверждения должна быть в вашем почтовом ящике';
 
   @override
   String get resetLinkSent => 'Ссылка для сброса отправлена';

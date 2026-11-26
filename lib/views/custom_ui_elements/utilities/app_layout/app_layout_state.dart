@@ -48,15 +48,15 @@ class AppLayoutState extends Equatable {
 
   /// Builds a state from a raw width and the platform safe area insets.
   ///
-  /// [rawWidth] is capped to [AppLayoutConfig.maxWidth] and floored at zero;
-  /// negative insets are clamped to zero.
+  /// [rawWidth] is clamped to the range `minWidth..maxWidth` from
+  /// [AppLayoutConfig] and negative insets are clamped to zero.
   factory AppLayoutState.fromMetrics({
     required double rawWidth,
     double topPadding = 0.0,
     double bottomPadding = 0.0,
     AppLayoutConfig config = const AppLayoutConfig(),
   }) {
-    final double safeWidth = rawWidth.isFinite ? rawWidth.clamp(0.0, config.maxWidth).toDouble() : 0.0;
+    final double safeWidth = rawWidth.isFinite ? rawWidth.clamp(config.minWidth, config.maxWidth).toDouble() : config.minWidth;
 
     return AppLayoutState(
       width: safeWidth,

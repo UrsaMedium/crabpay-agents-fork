@@ -40,6 +40,16 @@ void main() {
       expect(AppLayoutState.initial().bottomPadding, 0.0);
     });
 
+    test('clamps widths below the minimum up to minWidth', () {
+      const AppLayoutConfig config = AppLayoutConfig();
+
+      expect(config.minWidth, 128.0);
+      expect(AppLayoutState.fromMetrics(rawWidth: 50).width, 128.0);
+      expect(AppLayoutState.fromMetrics(rawWidth: 0).width, 128.0);
+      expect(AppLayoutState.fromMetrics(rawWidth: -10).width, 128.0);
+      expect(AppLayoutState.fromMetrics(rawWidth: 100).standardPadding, closeTo(128 * config.standardPaddingCoeff, 1e-9));
+    });
+
     test('inner corner radius stays inside the outer radius', () {
       final AppLayoutState state = AppLayoutState.fromMetrics(rawWidth: 390);
 
@@ -82,7 +92,10 @@ void main() {
     });
 
     test('does not emit for equivalent metrics above the width cap', () async {
-      final AppLayoutCubit cubit = AppLayoutCubit(observeBinding: false, metricsReader: () => (width: 800, topPadding: 0, bottomPadding: 0));
+      final AppLayoutCubit cubit = AppLayoutCubit(
+        observeBinding: false,
+        metricsReader: () => (width: 800, topPadding: 0, bottomPadding: 0),
+      );
       addTearDown(cubit.close);
 
       // The first emit always happens: the initial state was never streamed.
@@ -105,6 +118,29 @@ void main() {
 
       expect(states.length, 1);
       expect(states.single.width, 400.0);
+    });
+
+    test('clamps positive widths below the minimum and deduplicates', () async {
+      final AppLayoutCubit cubit = AppLayoutCubit(
+        observeBinding: false,
+        metricsReader: () => (width: 400, topPadding: 0, bottomPadding: 0),
+      );
+      addTearDown(cubit.close);
+
+      final List<AppLayoutState> states = <AppLayoutState>[];
+      final StreamSubscription<AppLayoutState> subscription = cubit.stream.listen(states.add);
+      addTearDown(subscription.cancel);
+
+      cubit.updateMetrics(rawWidth: 80);
+      await pumpEventQueue();
+
+      expect(cubit.state.width, 128.0);
+      expect(states.length, 1);
+
+      cubit.updateMetrics(rawWidth: 100);
+      await pumpEventQueue();
+
+      expect(states.length, 1);
     });
 
     test('syncFromPlatform updates the state when metrics change', () {

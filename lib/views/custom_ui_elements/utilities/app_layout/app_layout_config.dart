@@ -3,6 +3,10 @@
 /// Every metric is derived as `cappedWidth * coefficient`, so changing a value
 /// here changes it consistently for every screen in the app.
 class AppLayoutConfig {
+  /// Lower bound applied to the resolved width, so very small windows still
+  /// get a usable layout.
+  final double minWidth;
+
   /// Width used for every calculation. Wider windows (web, tablets in
   /// landscape) are treated as if they were this wide.
   final double maxWidth;
@@ -26,11 +30,12 @@ class AppLayoutConfig {
   final double largeFontCoeff;
 
   const AppLayoutConfig({
+    this.minWidth = 128.0,
     this.maxWidth = 512.0,
     this.fallbackWidth = 390.0,
-    this.standardPaddingCoeff = 0.032,
+    this.standardPaddingCoeff = 0.02,
     this.screenEdgePaddingCoeff = 0.042,
-    this.cornerRadiusCoeff = 0.047,
+    this.cornerRadiusCoeff = 0.05,
     this.tinyFontCoeff = 0.026,
     this.smallFontCoeff = 0.031,
     this.mediumFontCoeff = 0.036,

@@ -17,175 +17,188 @@ class MaterialHomePageFeaturedContainer extends StatelessWidget {
     final featuredProducts = context.select<HomePageCubit, List<Product>>(
       (cubit) => cubit.state.featuredProducts ?? [],
     );
+    final layout = context.select<HomePageCubit, HomeFeaturedLayout>(
+      (cubit) => cubit.state.featuredLayout,
+    );
+
     return Container(
+      width: layout.outerWidth,
       decoration: BoxDecoration(
         color: context.appColorScheme.tertiaryContainer,
-        // color: Colors.black,
-        borderRadius: .circular(
-          context.read<HomePageCubit>().state.outerCornerRadius,
-        ),
+        borderRadius: .circular(layout.outerCornerRadius),
       ),
-      // height: context.read<HomePageCubit>().state.containerWidth,
-      width: context.read<HomePageCubit>().state.containerWidth,
       child: featuredProducts.isNotEmpty
           ? Padding(
-              padding: .all(
-                context.read<HomePageCubit>().state.containerPadding,
-              ),
+              padding: .all(layout.padding),
               child: Column(
-                spacing: context.read<HomePageCubit>().state.containerPadding / 2,
+                spacing: layout.gap,
                 children: [
-                  SizedBox(
-                    width: context.read<HomePageCubit>().state.containerWidth,
-                    height: ((context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2) * 1.5 + 2,
-                    child: Row(
-                      crossAxisAlignment: .start,
-                      spacing: context.read<HomePageCubit>().state.containerPadding / 2,
-                      children: [
-                        Column(
-                          mainAxisAlignment: .spaceBetween,
-                          children: [
-                            Container(
-                              width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-                              height:
-                                  (((context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2) * 1.5 + 2) -
-                                  (((context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2) * 1.25) -
-                                  (context.read<HomePageCubit>().state.containerPadding / 2),
-                              decoration: BoxDecoration(
-                                borderRadius: .circular(
-                                  context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
-                                ),
-                                color: context.appColorScheme.onTertiaryContainer,
-                              ),
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    context.l10n.featuredndeals,
-                                    textAlign: .center,
-                                    style: TextStyle(
-                                      fontSize: (context.read<HomePageCubit>().state.containerWidth - 24) / 36,
-                                      fontWeight: .w700,
-                                      color: context.appColorScheme.tertiaryContainer,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            ProductCardSmallDriver(
-                              padding: 4,
-                              product: featuredProducts[0],
-                              tag: '${featuredProducts[0].id}-featuredProduct-0',
-                              width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-                              cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
-                            ),
-                          ],
-                        ),
-                        if (featuredProducts.length > 1)
-                          ProductCardDriver(
-                            product: featuredProducts[2],
-                            tag: '${featuredProducts[2].id}-featuredProduct-2',
-                            width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-                            cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
-                          ),
-                      ],
+                  _FeaturedTopRow(
+                    layout: layout,
+                    featuredProducts: featuredProducts,
+                  ),
+                  if (featuredProducts.length > 1)
+                    ProductCardHorizontalDriver(
+                      product: featuredProducts[1],
+                      tag: '${featuredProducts[1].id}-featuredProduct-1',
+                      height: layout.horizontalHeight,
+                      width: layout.innerWidth,
+                      cornerRadius: layout.innerCornerRadius,
                     ),
-                  ),
-                  ProductCardHorizontalDriver(
-                    product: featuredProducts[1],
-                    tag: '${featuredProducts[1].id}-featuredProduct-1',
-                    height: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2) / 2,
-                    width: context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2,
-                    cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
-                  ),
                 ],
               ),
             )
-          : _PlaceHolder(),
+          : _PlaceHolder(layout: layout),
+    );
+  }
+}
+
+class _FeaturedTopRow extends StatelessWidget {
+  final HomeFeaturedLayout layout;
+  final List<Product> featuredProducts;
+  const _FeaturedTopRow({required this.layout, required this.featuredProducts});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: layout.innerWidth,
+      height: layout.topRowHeight,
+      child: Row(
+        crossAxisAlignment: .start,
+        spacing: layout.gap,
+        children: [
+          SizedBox(
+            width: layout.colWidth,
+            height: layout.topRowHeight,
+            child: Column(
+              spacing: layout.gap,
+              children: [
+                Expanded(child: _FeaturedTitleBanner(layout: layout)),
+                ProductCardSmallDriver(
+                  padding: layout.smallCardPadding,
+                  product: featuredProducts[0],
+                  tag: '${featuredProducts[0].id}-featuredProduct-0',
+                  width: layout.colWidth,
+                  cornerRadius: layout.innerCornerRadius,
+                ),
+              ],
+            ),
+          ),
+          if (featuredProducts.length > 2)
+            ProductCardDriver(
+              product: featuredProducts[2],
+              tag: '${featuredProducts[2].id}-featuredProduct-2',
+              width: layout.colWidth,
+              cornerRadius: layout.innerCornerRadius,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeaturedTitleBanner extends StatelessWidget {
+  final HomeFeaturedLayout layout;
+  const _FeaturedTitleBanner({required this.layout});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: layout.bannerPadding,
+      decoration: BoxDecoration(
+        borderRadius: .circular(layout.innerCornerRadius),
+        color: context.appColorScheme.onTertiaryContainer,
+      ),
+      child: Center(
+        child: FittedBox(
+          fit: .scaleDown,
+          child: Text(
+            context.l10n.featuredndeals,
+            textAlign: .center,
+            style: TextStyle(
+              fontSize: layout.bannerFontSize,
+              height: 1.05,
+              fontWeight: .w700,
+              color: context.appColorScheme.tertiaryContainer,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
 
 class _PlaceHolder extends StatelessWidget {
-  const _PlaceHolder();
+  final HomeFeaturedLayout layout;
+  const _PlaceHolder({required this.layout});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: .all(
-        context.read<HomePageCubit>().state.containerPadding,
-      ),
+      padding: .all(layout.padding),
       child: Column(
-        spacing: context.read<HomePageCubit>().state.containerPadding / 2,
+        spacing: layout.gap,
         children: [
           SizedBox(
-            width: context.read<HomePageCubit>().state.containerWidth,
-            height: ((context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2) * 1.5 + 2,
+            width: layout.innerWidth,
+            height: layout.topRowHeight,
             child: Row(
               crossAxisAlignment: .start,
-              spacing: context.read<HomePageCubit>().state.containerPadding / 2,
+              spacing: layout.gap,
               children: [
-                Column(
-                  mainAxisAlignment: .spaceBetween,
-                  children: [
-                    Container(
-                      width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-                      height:
-                          (((context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2) * 1.5 + 2) -
-                          (((context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2) * 1.25) -
-                          (context.read<HomePageCubit>().state.containerPadding / 2),
-                      decoration: BoxDecoration(
-                        borderRadius: .circular(
-                          context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
-                        ),
-                        color: context.appColorScheme.onTertiaryContainer,
+                SizedBox(
+                  width: layout.colWidth,
+                  height: layout.topRowHeight,
+                  child: Column(
+                    spacing: layout.gap,
+                    children: [
+                      Expanded(child: _FeaturedTitleBanner(layout: layout)),
+                      _ShimmerTile(
+                        width: layout.colWidth,
+                        height: layout.smallCardHeight,
+                        cornerRadius: layout.innerCornerRadius,
                       ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            context.l10n.featuredndeals,
-                            textAlign: .center,
-                            style: TextStyle(
-                              fontSize: (context.read<HomePageCubit>().state.containerWidth - 24) / 36,
-                              fontWeight: .w700,
-                              color: context.appColorScheme.tertiaryContainer,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    MaterialShimeringPlaceHolder(
-                      color: context.appColorScheme.surfaceContainerHigh,
-                      shimeringColor: context.appColorScheme.outline,
-                      cycleLongevityFactor: 278 * 10,
-                      height: ((context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2) * 1.25,
-                      width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-                      cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                MaterialShimeringPlaceHolder(
-                  color: context.appColorScheme.surfaceContainerHigh,
-                  shimeringColor: context.appColorScheme.outline,
-                  cycleLongevityFactor: 278 * 10,
-                  height: ((context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2) * 1.5 + 2,
-                  width: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2.5) / 2,
-                  cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
+                _ShimmerTile(
+                  width: layout.colWidth,
+                  height: layout.topRowHeight,
+                  cornerRadius: layout.innerCornerRadius,
                 ),
               ],
             ),
           ),
-          MaterialShimeringPlaceHolder(
-            color: context.appColorScheme.surfaceContainerHigh,
-            shimeringColor: context.appColorScheme.outline,
-            cycleLongevityFactor: 278 * 10,
-            height: (context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2) / 2,
-            width: context.read<HomePageCubit>().state.containerWidth - context.read<HomePageCubit>().state.containerPadding * 2,
-            cornerRadius: context.read<HomePageCubit>().state.outerCornerRadius - context.read<HomePageCubit>().state.containerPadding / 2,
+          _ShimmerTile(
+            width: layout.innerWidth,
+            height: layout.horizontalHeight,
+            cornerRadius: layout.innerCornerRadius,
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ShimmerTile extends StatelessWidget {
+  final double width;
+  final double height;
+  final double cornerRadius;
+  const _ShimmerTile({
+    required this.width,
+    required this.height,
+    required this.cornerRadius,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialShimeringPlaceHolder(
+      color: context.appColorScheme.surfaceContainerHigh,
+      shimeringColor: context.appColorScheme.outline,
+      cycleLongevityFactor: 278 * 10,
+      width: width,
+      height: height,
+      cornerRadius: cornerRadius,
     );
   }
 }

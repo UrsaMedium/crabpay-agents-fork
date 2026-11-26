@@ -662,7 +662,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verificationLinkSent => 'We have sent you the verification link to your email';
 
   @override
-  String get lookForVerificationLink => 'Seems like you have not confirmed your email. There should be a verification link in your inbox';
+  String get lookForVerificationLink =>
+      'Seems like you have not confirmed your email. There should be a verification link in your inbox';
 
   @override
   String get resetLinkSent => 'Reset Link Sent';

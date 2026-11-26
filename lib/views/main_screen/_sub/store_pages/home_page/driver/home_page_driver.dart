@@ -4,10 +4,11 @@ import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_event.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_state.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/home_page/driver/home_page_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/home_page/view/material/material_home_page_view.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePageDriver extends StatefulWidget {
@@ -27,15 +28,10 @@ class _HomePageDriverState extends State<HomePageDriver> with AutomaticKeepAlive
   @override
   void initState() {
     super.initState();
-    _homePageCubit = HomePageCubit(dbBloc: context.read<DatabaseBloc>());
-  }
-
-  @override
-  void didChangeDependencies() {
-    _homePageCubit.setLayouts(
-      containerWidth: MediaQuery.widthOf(context) - 32,
+    _homePageCubit = HomePageCubit(
+      dbBloc: context.read<DatabaseBloc>(),
+      layoutCubit: context.read<AppLayoutCubit>(),
     );
-    super.didChangeDependencies();
   }
 
   @override
@@ -60,7 +56,8 @@ class _HomePageDriverState extends State<HomePageDriver> with AutomaticKeepAlive
     return BlocProvider.value(
       value: _homePageCubit,
       child: BlocListener<DatabaseBloc, DatabaseState>(
-        listenWhen: (previous, current) => previous.states == DatabaseStates.dbLoading && current.states != DatabaseStates.dbLoading,
+        listenWhen: (previous, current) =>
+            previous.states == DatabaseStates.dbLoading && current.states != DatabaseStates.dbLoading,
         listener: (context, dbState) {
           if (!(_refreshCompleter?.isCompleted ?? true)) {
             _refreshCompleter!.complete();
@@ -68,6 +65,9 @@ class _HomePageDriverState extends State<HomePageDriver> with AutomaticKeepAlive
         },
         child: Builder(
           builder: (context) {
+            context.select<HomePageCubit, double>(
+              (cubit) => cubit.state.containerWidth,
+            );
             if (defaultTargetPlatform == TargetPlatform.iOS) {
               // cupertino
             }

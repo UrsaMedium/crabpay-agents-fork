@@ -1,7 +1,9 @@
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_event.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/home_page/driver/home_page_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/driver/store_page_cubit.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -26,6 +28,13 @@ void main() {
     final dbBloc = DatabaseBloc(databaseHandler: dbHandler, authInnerface: authInterface);
     dbBloc.add(DatabaseEventInitialize(currentUser: makeAuthUser()));
     return dbBloc;
+  }
+
+  AppLayoutCubit buildLayoutCubit() {
+    return AppLayoutCubit(
+      observeBinding: false,
+      metricsReader: () => (width: 800, topPadding: 0, bottomPadding: 0),
+    );
   }
 
   group('StorePageCubit', () {
@@ -122,27 +131,86 @@ void main() {
   });
 
   group('HomePageCubit', () {
-    test('setLayouts caps width at 600 with radius 5% and padding 2%', () async {
+    test('syncs layout metrics from AppLayoutCubit', () async {
+      const AppLayoutConfig config = AppLayoutConfig();
       final dbBloc = buildDbBloc();
       addTearDown(dbBloc.close);
-      final cubit = HomePageCubit(dbBloc: dbBloc);
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = HomePageCubit(dbBloc: dbBloc, layoutCubit: layoutCubit);
       addTearDown(cubit.close);
 
-      cubit.setLayouts(containerWidth: 800);
-      expect(cubit.state.containerWidth, 600);
-      expect(cubit.state.outerCornerRadius, 30);
-      expect(cubit.state.containerPadding, 12);
+      expect(cubit.state.containerWidth, closeTo(512 - 512 * config.screenEdgePaddingCoeff * 2, 1e-9));
+      expect(cubit.state.containerPadding, closeTo(512 * config.standardPaddingCoeff, 1e-9));
+      expect(cubit.state.outerCornerRadius, closeTo(512 * config.cornerRadiusCoeff, 1e-9));
 
-      cubit.setLayouts(containerWidth: 300);
-      expect(cubit.state.containerWidth, 300);
-      expect(cubit.state.outerCornerRadius, 15);
-      expect(cubit.state.containerPadding, 6);
+      layoutCubit.updateMetrics(rawWidth: 300);
+      await pumpEventQueue();
+
+      expect(cubit.state.containerWidth, closeTo(300 - 300 * config.screenEdgePaddingCoeff * 2, 1e-9));
+      expect(cubit.state.containerPadding, closeTo(300 * config.standardPaddingCoeff, 1e-9));
+      expect(cubit.state.outerCornerRadius, closeTo(300 * config.cornerRadiusCoeff, 1e-9));
+    });
+
+    test('precalculates featured layout and page padding on layout sync', () async {
+      final dbBloc = buildDbBloc();
+      addTearDown(dbBloc.close);
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = HomePageCubit(dbBloc: dbBloc, layoutCubit: layoutCubit);
+      addTearDown(cubit.close);
+
+      void expectMatchesState() {
+        final padding = cubit.state.containerPadding;
+        final innerWidth = cubit.state.containerWidth - padding * 2;
+        final colWidth = (innerWidth - padding) / 2;
+        final layout = cubit.state.featuredLayout;
+
+        expect(layout.outerWidth, closeTo(cubit.state.containerWidth, 1e-9));
+        expect(layout.padding, closeTo(padding, 1e-9));
+        expect(layout.gap, closeTo(padding, 1e-9));
+        expect(layout.innerWidth, closeTo(innerWidth, 1e-9));
+        expect(layout.colWidth, closeTo(colWidth, 1e-9));
+        expect(layout.topRowHeight, closeTo(colWidth * 1.5 + 2, 1e-9));
+        expect(layout.smallCardHeight, closeTo(colWidth * 1.25, 1e-9));
+        expect(layout.horizontalHeight, closeTo(colWidth, 1e-9));
+        expect(layout.innerCornerRadius, closeTo(cubit.state.outerCornerRadius - padding, 1e-9));
+        expect(layout.smallCardPadding, 4.0);
+        expect(layout.bannerPadding, EdgeInsets.symmetric(horizontal: padding, vertical: padding / 2));
+        expect(cubit.state.pagePadding.left, closeTo(cubit.state.pagePadding.right, 1e-9));
+        expect(cubit.state.topPadding, 0.0);
+      }
+
+      expectMatchesState();
+
+      layoutCubit.updateMetrics(rawWidth: 300);
+      await pumpEventQueue();
+
+      expectMatchesState();
+    });
+
+    test('clamps the page width to the configured minimum', () async {
+      final dbBloc = buildDbBloc();
+      addTearDown(dbBloc.close);
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = HomePageCubit(dbBloc: dbBloc, layoutCubit: layoutCubit);
+      addTearDown(cubit.close);
+
+      layoutCubit.updateMetrics(rawWidth: 80);
+      await pumpEventQueue();
+
+      const AppLayoutConfig config = AppLayoutConfig();
+      expect(cubit.state.containerWidth, closeTo(128 - 128 * config.screenEdgePaddingCoeff * 2, 1e-9));
+      expect(cubit.state.featuredLayout.outerWidth, closeTo(cubit.state.containerWidth, 1e-9));
     });
 
     test('syncs featuredProducts and sets isInitialized from DatabaseBloc', () async {
       final dbBloc = buildDbBloc();
       addTearDown(dbBloc.close);
-      final cubit = HomePageCubit(dbBloc: dbBloc);
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = HomePageCubit(dbBloc: dbBloc, layoutCubit: layoutCubit);
       addTearDown(cubit.close);
       dbBloc.add(DatabaseEventInitialize(currentUser: makeAuthUser()));
       await pumpEventQueue();
@@ -154,7 +222,9 @@ void main() {
     test('close cancels subscriptions: no state is emitted from DatabaseBloc afterwards', () async {
       final dbBloc = buildDbBloc();
       addTearDown(dbBloc.close);
-      final cubit = HomePageCubit(dbBloc: dbBloc);
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = HomePageCubit(dbBloc: dbBloc, layoutCubit: layoutCubit);
       addTearDown(cubit.close);
       final emitted = <HomePageState>[];
       final subscription = cubit.stream.listen(emitted.add);
@@ -167,6 +237,7 @@ void main() {
       expect(cubit.isClosed, true);
 
       dbBloc.add(DatabaseEventFetchAllProducts());
+      layoutCubit.updateMetrics(rawWidth: 300);
       await pumpEventQueue();
 
       expect(emitted, isEmpty);
