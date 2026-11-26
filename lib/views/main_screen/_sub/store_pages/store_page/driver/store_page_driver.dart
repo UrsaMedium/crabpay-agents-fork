@@ -7,7 +7,6 @@ import 'package:crabpay/core/backend/database/general_db/db_inner_circle/databas
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_state.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/driver/store_page_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/view/material/material_store_page.dart';
-import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/view/material/material_store_page_og.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -25,8 +24,6 @@ class _StorePageDriverState extends State<StorePageDriver> with AutomaticKeepAli
 
   late final StorePageCubit _storePageCubit;
   Completer<void>? _refreshCompleter;
-
-  bool oldView = false;
 
   @override
   void initState() {
@@ -64,7 +61,8 @@ class _StorePageDriverState extends State<StorePageDriver> with AutomaticKeepAli
   Widget build(BuildContext context) {
     super.build(context);
     return BlocListener<DatabaseBloc, DatabaseState>(
-      listenWhen: (previous, current) => previous.states == DatabaseStates.dbLoading && current.states != DatabaseStates.dbLoading,
+      listenWhen: (previous, current) =>
+          previous.states == DatabaseStates.dbLoading && current.states != DatabaseStates.dbLoading,
       listener: (context, state) {
         if (!(_refreshCompleter?.isCompleted ?? true)) {
           _refreshCompleter!.complete();
@@ -77,25 +75,10 @@ class _StorePageDriverState extends State<StorePageDriver> with AutomaticKeepAli
             return Scaffold(
               body: Stack(
                 children: [
-                  oldView
-                      ? MaterialStorePageOG(
-                          reFresher: () => _reFresher(context),
-                          onSearchSubmitedCallBack: _onSearchSubmitedCallBack,
-                        )
-                      : MaterialStorePage(
-                          reFresher: () => _reFresher(context),
-                          onCategoryViewOpen: (tag) => _onCategoryViewOpen(context, tag),
-                          onSearchSubmitedCallBack: (p0) => _onSearchSubmitedCallBack(p0),
-                        ),
-                  Positioned(
-                    bottom: MediaQuery.paddingOf(context).bottom,
-                    right: 2,
-                    child: ElevatedButton(
-                      onPressed: () => setState(() {
-                        oldView = !oldView;
-                      }),
-                      child: Text(oldView ? 'New View' : 'Old View'),
-                    ),
+                  MaterialStorePage(
+                    reFresher: () => _reFresher(context),
+                    onCategoryViewOpen: (tag) => _onCategoryViewOpen(context, tag),
+                    onSearchSubmitedCallBack: (p0) => _onSearchSubmitedCallBack(p0),
                   ),
                 ],
               ),
