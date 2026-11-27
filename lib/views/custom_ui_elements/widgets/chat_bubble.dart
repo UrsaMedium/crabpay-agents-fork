@@ -6,10 +6,24 @@ import 'package:material_ui/material_ui.dart';
 class ChatBubbleDriver extends StatefulWidget {
   final ChatMessage message;
   final AppAuthUser author;
+  final double? cornerRadius;
+  final double? bottomMargin;
+  final double? nearHorizontalPadding;
+  final double? farHorizontalPadding;
+  final EdgeInsets? contentPadding;
+  final double? textFontSize;
+  final double? timestampFontSize;
   const ChatBubbleDriver({
     super.key,
     required this.message,
     required this.author,
+    this.cornerRadius,
+    this.bottomMargin,
+    this.nearHorizontalPadding,
+    this.farHorizontalPadding,
+    this.contentPadding,
+    this.textFontSize,
+    this.timestampFontSize,
   });
 
   @override
@@ -24,6 +38,13 @@ class _ChatBubbleDriverState extends State<ChatBubbleDriver> {
       isMe: widget.message.senderId == widget.author.id,
       createdAt: widget.message.createdAt,
       sending: widget.message.sending ?? false,
+      cornerRadius: widget.cornerRadius,
+      bottomMargin: widget.bottomMargin,
+      nearHorizontalPadding: widget.nearHorizontalPadding,
+      farHorizontalPadding: widget.farHorizontalPadding,
+      contentPadding: widget.contentPadding,
+      textFontSize: widget.textFontSize,
+      timestampFontSize: widget.timestampFontSize,
     );
   }
 }
@@ -33,31 +54,45 @@ class MaterialChatBubble extends StatelessWidget {
   final String content;
   final DateTime createdAt;
   final bool sending;
+  final double? cornerRadius;
+  final double? bottomMargin;
+  final double? nearHorizontalPadding;
+  final double? farHorizontalPadding;
+  final EdgeInsets? contentPadding;
+  final double? textFontSize;
+  final double? timestampFontSize;
   const MaterialChatBubble({
     super.key,
     required this.isMe,
     required this.content,
     required this.createdAt,
     required this.sending,
+    this.cornerRadius,
+    this.bottomMargin,
+    this.nearHorizontalPadding,
+    this.farHorizontalPadding,
+    this.contentPadding,
+    this.textFontSize,
+    this.timestampFontSize,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        bottom: 4.0,
-        right: isMe ? 8 : 64,
-        left: isMe ? 64 : 8,
+        bottom: bottomMargin ?? 4.0,
+        right: isMe ? (nearHorizontalPadding ?? 8) : (farHorizontalPadding ?? 64),
+        left: isMe ? (farHorizontalPadding ?? 64) : (nearHorizontalPadding ?? 8),
       ),
       child: Align(
         alignment: isMe ? AlignmentGeometry.centerRight : AlignmentGeometry.centerLeft,
         child: Container(
           decoration: BoxDecoration(
             color: isMe ? context.appColorScheme.primary : context.appColorScheme.secondary,
-            borderRadius: .circular(24),
+            borderRadius: .circular(cornerRadius ?? 24),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
+            padding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
             child: Wrap(
               alignment: .end,
               crossAxisAlignment: .end,
@@ -68,7 +103,7 @@ class MaterialChatBubble extends StatelessWidget {
                   content,
                   textAlign: .left,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: textFontSize ?? 16,
                     color: isMe ? context.appColorScheme.onPrimary : context.appColorScheme.onSecondary,
                   ),
                 ),
@@ -76,7 +111,7 @@ class MaterialChatBubble extends StatelessWidget {
                   '${createdAt.hour}:${createdAt.minute}',
                   style: TextStyle(
                     color: context.appColorScheme.onPrimary,
-                    fontSize: 10,
+                    fontSize: timestampFontSize ?? 10,
                   ),
                 ),
                 if (sending)

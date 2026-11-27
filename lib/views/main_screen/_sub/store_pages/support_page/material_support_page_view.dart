@@ -20,6 +20,9 @@ class MaterialSupportPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final layout = context.select<SupportPageCubit, SupportPageLayout>(
+      (cubit) => cubit.state.layout,
+    );
     final messages = context.select<SupportPageCubit, List<ChatMessage>>(
       (cubit) => cubit.state.messages ?? [],
     );
@@ -32,221 +35,237 @@ class MaterialSupportPageView extends StatelessWidget {
     final isGettingThread = context.select<SupportPageCubit, bool>(
       (cubit) => cubit.state.isGettingThread,
     );
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(left: 4, right: 4),
-        child: Stack(
-          children: [
-            ListView.builder(
-              controller: context.read<SupportPageCubit>().state.scrollController,
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              // addAutomaticKeepAlives: true,
-              reverse: true,
-              itemCount: messages.length,
-              padding: EdgeInsets.only(
-                top: MediaQuery.paddingOf(context).top + 102,
-                bottom: MediaQuery.paddingOf(context).bottom + 64, // - cornerRadius,
-              ),
-              itemBuilder: (context, index) {
-                return ChatBubbleDriver(
-                  message: messages[messages.length - 1 - index],
-                  author: context.read<SupportPageCubit>().state.currentUser,
-                );
-              },
-            ),
-            if (!isChatStarted && !isGettingThread)
-              Center(
-                child: TextButton(
-                  onPressed: () => onStartChatPressed(),
-                  child: Text(context.l10n.startTheChat),
+    return Center(
+      child: SizedBox(
+        width: layout.pageWidth,
+        child: Scaffold(
+          body: Padding(
+            padding: layout.pageHorizontalPadding,
+            child: Stack(
+              children: [
+                ListView.builder(
+                  controller: context.read<SupportPageCubit>().state.scrollController,
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  // addAutomaticKeepAlives: true,
+                  reverse: true,
+                  itemCount: messages.length,
+                  padding: layout.messagesListPadding,
+                  itemBuilder: (context, index) {
+                    return ChatBubbleDriver(
+                      message: messages[messages.length - 1 - index],
+                      author: context.read<SupportPageCubit>().state.currentUser,
+                      cornerRadius: layout.bubbleCornerRadius,
+                      bottomMargin: layout.bubbleBottomMargin,
+                      nearHorizontalPadding: layout.bubbleNearHorizontalPadding,
+                      farHorizontalPadding: layout.bubbleFarHorizontalPadding,
+                      contentPadding: layout.bubbleContentPadding,
+                      textFontSize: layout.bubbleTextFontSize,
+                      timestampFontSize: layout.bubbleTimestampFontSize,
+                    );
+                  },
                 ),
-              ),
-            if (isGettingThread) Center(child: CircularProgressIndicator()),
-            Positioned(
-              top: MediaQuery.paddingOf(context).top + 8,
-              right: 32,
-              left: 32,
-              child: Stack(
-                children: [
-                  Builder(
-                    builder: (context) {
-                      final highGraphics = context.select<GlobalGraphicBloc, bool>(
-                        (bloc) => bloc.state.highGraphics,
-                      );
-                      return Material(
-                        color: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: .circular(globalCornerRadius),
-                        ),
-                        clipBehavior: .antiAlias,
-                        child: BackdropFilter(
-                          enabled: highGraphics,
-                          filter: .blur(sigmaX: 12, sigmaY: 12),
-                          child: Container(
-                            height: 100,
-                            color: context.appColorScheme.surfaceContainer.withValues(alpha: highGraphics ? .5 : .97),
-                            // height: 64,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24.0,
-                                vertical: 8,
+                if (!isChatStarted && !isGettingThread)
+                  Center(
+                    child: TextButton(
+                      onPressed: () => onStartChatPressed(),
+                      child: Text(context.l10n.startTheChat),
+                    ),
+                  ),
+                if (isGettingThread) Center(child: CircularProgressIndicator()),
+                Positioned(
+                  top: layout.bannerTopOffset,
+                  right: layout.bannerHorizontalInset,
+                  left: layout.bannerHorizontalInset,
+                  child: Stack(
+                    children: [
+                      Builder(
+                        builder: (context) {
+                          final highGraphics = context.select<GlobalGraphicBloc, bool>(
+                            (bloc) => bloc.state.highGraphics,
+                          );
+                          return Material(
+                            color: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: .circular(layout.bannerCornerRadius),
+                            ),
+                            clipBehavior: .antiAlias,
+                            child: BackdropFilter(
+                              enabled: highGraphics,
+                              filter: .blur(sigmaX: 12, sigmaY: 12),
+                              child: Container(
+                                color: context.appColorScheme.surfaceContainer.withValues(
+                                  alpha: highGraphics ? .5 : .97,
+                                ),
+                                constraints: BoxConstraints(minHeight: layout.bannerMinHeight),
+                                child: Padding(
+                                  padding: layout.bannerContentPadding,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.support_agent_rounded,
+                                          size: layout.bannerIconSize,
+                                        ),
+                                        Text(
+                                          context.l10n.contctOurSupportTeamFoAssistance,
+                                          textAlign: .center,
+                                          style: TextStyle(
+                                            fontSize: layout.bannerFontSize,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                              child: Center(
-                                child: Column(
+                            ),
+                          );
+                        },
+                      ),
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: ShaderMask(
+                            shaderCallback: (bounds) => LinearGradient(
+                              begin: .topCenter,
+                              end: .bottomCenter,
+                              colors: [
+                                context.appColorScheme.outline.withValues(alpha: .2),
+                                context.appColorScheme.outline.withValues(alpha: .1),
+                                Colors.transparent,
+                                Colors.transparent,
+                                context.appColorScheme.outline.withValues(alpha: .1),
+                              ],
+                            ).createShader(bounds),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: .circular(layout.bannerCornerRadius),
+                                border: .all(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (showDownArrow)
+                  Positioned(
+                    bottom: layout.downArrowBottomOffset,
+                    right: layout.downArrowRightInset,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: context.appColorScheme.surface,
+                        borderRadius: .circular(layout.downArrowCornerRadius),
+                      ),
+                      child: Badge(
+                        isLabelVisible: true,
+                        smallSize: layout.downArrowBadgeSize,
+                        child: IconButton(
+                          onPressed: onDonwArrowPressed,
+                          icon: Icon(Icons.arrow_downward_rounded),
+                        ),
+                      ),
+                    ),
+                  ),
+                Positioned(
+                  bottom: layout.inputBarBottomOffset,
+                  right: layout.inputBarHorizontalInset,
+                  left: layout.inputBarHorizontalInset,
+                  child: Stack(
+                    children: [
+                      Builder(
+                        builder: (context) {
+                          final highGraphics = context.select<GlobalGraphicBloc, bool>(
+                            (bloc) => bloc.state.highGraphics,
+                          );
+                          return Material(
+                            color: Colors.transparent,
+                            borderRadius: .circular(layout.inputBarCornerRadius),
+                            clipBehavior: .antiAlias,
+                            child: BackdropFilter(
+                              enabled: highGraphics,
+                              filter: .blur(sigmaX: 12, sigmaY: 12),
+                              child: Container(
+                                color: context.appColorScheme.primaryContainer.withValues(
+                                  alpha: highGraphics ? .4 : .97,
+                                ),
+                                constraints: BoxConstraints(minHeight: layout.inputBarMinHeight),
+                                child: Row(
+                                  crossAxisAlignment: .end,
                                   children: [
-                                    Icon(Icons.support_agent_rounded),
-                                    Text(
-                                      context.l10n.contctOurSupportTeamFoAssistance,
-                                      textAlign: .center,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                    Expanded(
+                                      child: TextField(
+                                        enabled: isChatStarted,
+                                        controller: context.read<SupportPageCubit>().state.messageInputController,
+                                        style: TextStyle(fontSize: layout.inputFontSize),
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: 4,
+                                        minLines: 1,
+                                        decoration: InputDecoration(
+                                          fillColor: Colors.transparent,
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          errorBorder: InputBorder.none,
+                                          disabledBorder: InputBorder.none,
+                                          hint: Text(context.l10n.typeYourQuestion),
+                                          filled: true,
+                                        ),
                                       ),
+                                    ),
+                                    Builder(
+                                      builder: (context) {
+                                        final isSendingMessage = context.select<SupportPageCubit, bool>(
+                                          (cubit) => cubit.state.isSenndingMessage,
+                                        );
+                                        return IconButton(
+                                          onPressed: !isChatStarted
+                                              ? null
+                                              : isSendingMessage
+                                              ? null
+                                              : onSendPressed,
+                                          icon: isSendingMessage ? CircularProgressIndicator() : Icon(Icons.send),
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  IgnorePointer(
-                    child: ShaderMask(
-                      shaderCallback: (bounds) => LinearGradient(
-                        begin: .topCenter,
-                        end: .bottomCenter,
-                        colors: [
-                          context.appColorScheme.outline.withValues(alpha: .2),
-                          context.appColorScheme.outline.withValues(alpha: .1),
-                          Colors.transparent,
-                          Colors.transparent,
-                          context.appColorScheme.outline.withValues(alpha: .1),
-                        ],
-                      ).createShader(bounds),
-                      child: Container(
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: .circular(globalCornerRadius),
-                          border: .all(color: Colors.white),
-                        ),
+                          );
+                        },
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (showDownArrow)
-              Positioned(
-                bottom: MediaQuery.paddingOf(context).bottom + 84, // - cornerRadius,
-                right: 16,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: context.appColorScheme.surface,
-                    borderRadius: .circular(globalCornerRadius),
-                  ),
-                  child: Badge(
-                    isLabelVisible: true,
-                    smallSize: 10,
-                    child: IconButton(
-                      onPressed: onDonwArrowPressed,
-                      icon: Icon(Icons.arrow_downward_rounded),
-                    ),
-                  ),
-                ),
-              ),
-            Positioned(
-              bottom: MediaQuery.paddingOf(context).bottom + 10, // - cornerRadius,
-              right: 4,
-              left: 4,
-              child: Stack(
-                children: [
-                  Builder(
-                    builder: (context) {
-                      final highGraphics = context.select<GlobalGraphicBloc, bool>(
-                        (bloc) => bloc.state.highGraphics,
-                      );
-                      return Material(
-                        color: Colors.transparent,
-                        borderRadius: .circular(22),
-                        clipBehavior: .antiAlias,
-                        child: BackdropFilter(
-                          enabled: highGraphics,
-                          filter: .blur(sigmaX: 12, sigmaY: 12),
-                          child: Container(
-                            height: 48,
-                            color: context.appColorScheme.primaryContainer.withValues(alpha: highGraphics ? .4 : .97),
-                            child: Row(
-                              crossAxisAlignment: .end,
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    enabled: isChatStarted,
-                                    controller: context.read<SupportPageCubit>().state.messageInputController,
-                                    keyboardType: TextInputType.multiline,
-                                    maxLines: 4,
-                                    minLines: 1,
-                                    decoration: InputDecoration(
-                                      fillColor: Colors.transparent,
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                      hint: Text(context.l10n.typeYourQuestion),
-                                      filled: true,
-                                    ),
-                                  ),
-                                ),
-                                Builder(
-                                  builder: (context) {
-                                    final isSendingMessage = context.select<SupportPageCubit, bool>(
-                                      (cubit) => cubit.state.isSenndingMessage,
-                                    );
-                                    return IconButton(
-                                      onPressed: !isChatStarted
-                                          ? null
-                                          : isSendingMessage
-                                          ? null
-                                          : onSendPressed,
-                                      icon: isSendingMessage ? CircularProgressIndicator() : Icon(Icons.send),
-                                    );
-                                  },
-                                ),
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: ShaderMask(
+                            shaderCallback: (bounds) => LinearGradient(
+                              begin: .topCenter,
+                              end: .bottomCenter,
+                              colors: [
+                                context.appColorScheme.outline.withValues(alpha: .2),
+                                context.appColorScheme.outline.withValues(alpha: .1),
+                                Colors.transparent,
+                                Colors.transparent,
+                                context.appColorScheme.outline.withValues(alpha: .1),
                               ],
+                            ).createShader(bounds),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: .circular(layout.inputBarCornerRadius),
+                                border: .all(color: Colors.white),
+                              ),
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  IgnorePointer(
-                    child: ShaderMask(
-                      shaderCallback: (bounds) => LinearGradient(
-                        begin: .topCenter,
-                        end: .bottomCenter,
-                        colors: [
-                          context.appColorScheme.outline.withValues(alpha: .2),
-                          context.appColorScheme.outline.withValues(alpha: .1),
-                          Colors.transparent,
-                          Colors.transparent,
-                          context.appColorScheme.outline.withValues(alpha: .1),
-                        ],
-                      ).createShader(bounds),
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          borderRadius: .circular(22),
-                          border: .all(color: Colors.white),
-                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

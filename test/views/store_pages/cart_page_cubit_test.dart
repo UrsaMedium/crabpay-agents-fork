@@ -2,6 +2,8 @@ import 'package:crabpay/core/app_services/app_lifecycle.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc_event.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/data_models/cart_item_model.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
+import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/_sub/orders_on_payment_sheet/driver/orders_on_payment_sheet_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/cart_page/driver/cart_page_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -28,8 +30,22 @@ void main() {
     return (cartBloc: cartBloc, cartHandler: cartHandler);
   }
 
-  CartPageCubit buildCubit(CartBloc cartBloc, AppLifecycleService lifecycle) {
-    final cubit = CartPageCubit(cartBloc: cartBloc, products: [makeProduct()], appLifecycleService: lifecycle);
+  AppLayoutCubit buildLayoutCubit() {
+    return AppLayoutCubit(
+      observeBinding: false,
+      metricsReader: () => (width: 800, topPadding: 0, bottomPadding: 0),
+    );
+  }
+
+  CartPageCubit buildCubit(CartBloc cartBloc, AppLifecycleService lifecycle, {AppLayoutCubit? layoutCubit}) {
+    final layout = layoutCubit ?? buildLayoutCubit();
+    if (layoutCubit == null) addTearDown(layout.close);
+    final cubit = CartPageCubit(
+      cartBloc: cartBloc,
+      products: [makeProduct()],
+      appLifecycleService: lifecycle,
+      layoutCubit: layout,
+    );
     addTearDown(cubit.close);
     return cubit;
   }
@@ -127,6 +143,76 @@ void main() {
     });
   });
 
+  group('CartPageCubit layout', () {
+    test('derives layout metrics from AppLayoutCubit and syncs on changes', () async {
+      const AppLayoutConfig config = AppLayoutConfig();
+      final cart = createCartBloc(fetchResult: []);
+      final lifecycle = FakeAppLifecycleService();
+      addTearDown(lifecycle.dispose);
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = buildCubit(cart.cartBloc, lifecycle, layoutCubit: layoutCubit);
+
+      expect(cubit.state.layout.pageWidth, closeTo(512, 1e-9));
+      expect(
+        cubit.state.layout.outerWidth,
+        closeTo(512 - 512 * config.screenEdgePaddingCoeff * 2, 1e-9),
+      );
+      expect(cubit.state.layout.padding, closeTo(512 * config.standardPaddingCoeff, 1e-9));
+
+      layoutCubit.updateMetrics(rawWidth: 360, topPadding: 24, bottomPadding: 34);
+      await pumpEventQueue();
+
+      expect(cubit.state.layout.pageWidth, closeTo(360, 1e-9));
+      expect(cubit.state.layout.topPadding, closeTo(layoutCubit.state.pageTopPadding, 1e-9));
+      expect(cubit.state.layout.bottomPadding, closeTo(layoutCubit.state.pageBottomPadding, 1e-9));
+      expect(
+        cubit.state.layout.listBottomPaddingWithPending,
+        greaterThan(cubit.state.layout.listBottomPaddingWithoutPending),
+      );
+      expect(
+        cubit.state.layout.listBottomPaddingWithoutPending,
+        greaterThan(cubit.state.layout.bottomPadding),
+      );
+      expect(
+        cubit.state.layout.buyPanelBottomOffset,
+        closeTo(cubit.state.layout.bottomPadding + cubit.state.layout.padding, 1e-9),
+      );
+    });
+
+    test('clamps the page width to the configured minimum', () async {
+      final cart = createCartBloc(fetchResult: []);
+      final lifecycle = FakeAppLifecycleService();
+      addTearDown(lifecycle.dispose);
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = buildCubit(cart.cartBloc, lifecycle, layoutCubit: layoutCubit);
+
+      layoutCubit.updateMetrics(rawWidth: 80);
+      await pumpEventQueue();
+
+      expect(cubit.state.layout.pageWidth, closeTo(320, 1e-9));
+    });
+
+    test('close cancels layout updates', () async {
+      final cart = createCartBloc(fetchResult: []);
+      final lifecycle = FakeAppLifecycleService();
+      addTearDown(lifecycle.dispose);
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = buildCubit(cart.cartBloc, lifecycle, layoutCubit: layoutCubit);
+      final emitted = <CartPageState>[];
+      final subscription = cubit.stream.listen(emitted.add);
+      addTearDown(subscription.cancel);
+
+      await cubit.close();
+      layoutCubit.updateMetrics(rawWidth: 300);
+      await pumpEventQueue();
+
+      expect(emitted, isEmpty);
+    });
+  });
+
   group('CartPageCubit.close', () {
     test('cancels subscriptions: no state is emitted from CartBloc afterwards', () async {
       final cart = createCartBloc(fetchResult: []);
@@ -151,6 +237,46 @@ void main() {
 
       expect(emitted, isEmpty);
       expect(cubit.state.totalPrice, isNull);
+    });
+  });
+
+  group('OrdersOnPaymentSheetCubit', () {
+    test('derives the sheet layout and syncs on layout changes', () async {
+      const AppLayoutConfig config = AppLayoutConfig();
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = OrdersOnPaymentSheetCubit(layoutCubit: layoutCubit);
+      addTearDown(cubit.close);
+
+      expect(cubit.state.layout.sheetWidth, closeTo(512, 1e-9));
+      expect(
+        cubit.state.layout.dialogWidth,
+        closeTo(512 - 512 * config.screenEdgePaddingCoeff * 2, 1e-9),
+      );
+      expect(cubit.state.layout.headerCornerRadius, closeTo(cubit.state.layout.headerHeight / 2, 1e-9));
+
+      layoutCubit.updateMetrics(rawWidth: 360, topPadding: 24, bottomPadding: 34);
+      await pumpEventQueue();
+
+      expect(cubit.state.layout.sheetWidth, closeTo(360, 1e-9));
+      expect(cubit.state.layout.sheetBottomPadding, greaterThan(0));
+      expect(cubit.state.layout.dialogMaxHeight, inInclusiveRange(320.0, 440.0));
+    });
+
+    test('close cancels layout updates', () async {
+      final layoutCubit = buildLayoutCubit();
+      addTearDown(layoutCubit.close);
+      final cubit = OrdersOnPaymentSheetCubit(layoutCubit: layoutCubit);
+      addTearDown(cubit.close);
+      final emitted = <OrdersOnPaymentSheetState>[];
+      final subscription = cubit.stream.listen(emitted.add);
+      addTearDown(subscription.cancel);
+
+      await cubit.close();
+      layoutCubit.updateMetrics(rawWidth: 300);
+      await pumpEventQueue();
+
+      expect(emitted, isEmpty);
     });
   });
 }

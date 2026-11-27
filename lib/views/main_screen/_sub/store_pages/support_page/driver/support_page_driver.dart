@@ -3,6 +3,7 @@ import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/
 import 'package:crabpay/core/backend/chat_service/chat_inner_circle/chat_bloc/chat_bloc.dart';
 import 'package:crabpay/core/backend/chat_service/chat_inner_circle/chat_bloc/chat_event.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/support_page/driver/support_page_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/support_page/material_support_page_view.dart';
 import 'package:flutter/widgets.dart';
@@ -30,6 +31,7 @@ class _SupportPageDriverState extends State<SupportPageDriver> with AutomaticKee
       chatBloc: context.read<ChatBloc>(),
       scrollController: ScrollController(),
       textEdditingController: TextEditingController(),
+      layoutCubit: context.read<AppLayoutCubit>(),
     );
     super.initState();
   }

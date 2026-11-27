@@ -13,12 +13,14 @@ class CartItemWidgetDriver extends StatefulWidget {
   final Function(CartItem) onACartItemDelete;
   final Product product;
   final CartItem cartItem;
+  final CartPageLayout? layout;
   // final bool isBeingDeleted;
   const CartItemWidgetDriver({
     super.key,
     required this.onACartItemDelete,
     required this.product,
     required this.cartItem,
+    this.layout,
     // required this.isBeingDeleted,
   });
 
@@ -63,6 +65,7 @@ class _CartItemWidgetDriverState extends State<CartItemWidgetDriver> {
       setExpanded: _setExpanded,
       details: details,
       surfaceTintColor: surfaceTintColor,
+      layout: widget.layout,
     );
   }
 }
@@ -76,6 +79,7 @@ class MaterialCartItemWidget extends StatelessWidget {
   final VoidCallback setExpanded;
   final String details;
   final Color? surfaceTintColor;
+  final CartPageLayout? layout;
   const MaterialCartItemWidget({
     super.key,
     required this.onACartItemDelete,
@@ -86,6 +90,7 @@ class MaterialCartItemWidget extends StatelessWidget {
     required this.setExpanded,
     required this.details,
     this.surfaceTintColor,
+    this.layout,
   });
 
   @override
@@ -94,8 +99,15 @@ class MaterialCartItemWidget extends StatelessWidget {
       (cubit) => cubit.state.itemToDelete,
     );
     final isBeingDeleted = cartItem.id == toDelete?.id;
+    final horizontalPadding = layout?.itemHorizontalPadding ?? 16.0;
+    final cornerRadius = layout?.itemCornerRadius ?? 39.0;
+    final innerPadding = layout?.itemInnerPadding ?? 12.0;
+    final imageSize = layout?.itemImageSize ?? 54.0;
+    final imageCornerRadius = layout?.itemImageCornerRadius ?? 30.0;
+    final priceFontSize = layout?.itemPriceFontSize ?? 14.0;
+    final deleteButtonSize = layout?.itemDeleteButtonSize ?? 40.0;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: GestureDetector(
         onTap: setExpanded,
         child: Card(
@@ -104,7 +116,7 @@ class MaterialCartItemWidget extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           color: context.appColorScheme.surfaceContainer,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(39),
+            borderRadius: BorderRadius.circular(cornerRadius),
             side: BorderSide(
               color: context.appColorScheme.surfaceContainerHigh,
             ),
@@ -112,7 +124,7 @@ class MaterialCartItemWidget extends StatelessWidget {
           child: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(innerPadding),
                 child: AnimatedSize(
                   duration: const Duration(milliseconds: 200),
                   alignment: Alignment.topCenter,
@@ -123,22 +135,22 @@ class MaterialCartItemWidget extends StatelessWidget {
                       Container(
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(imageCornerRadius),
                         ),
                         child: CachedNetworkImage(
                           imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/${product.image}.png',
                           fit: .cover,
-                          height: 54,
-                          width: 54,
+                          height: imageSize,
+                          width: imageSize,
                           errorWidget: (context, error, stackTrace) => Container(
                             color: context.appColorScheme.onInverseSurface,
                             alignment: Alignment.center,
                             child: Text(context.l10n.emptyKey),
                           ),
                           placeholder: (context, url) => MaterialShimeringPlaceHolder(
-                            width: 54,
-                            height: 54,
-                            cornerRadius: 30,
+                            width: imageSize,
+                            height: imageSize,
+                            cornerRadius: imageCornerRadius,
                             color: context.appColorScheme.surfaceContainerHigh,
                           ),
                         ),
@@ -156,7 +168,7 @@ class MaterialCartItemWidget extends StatelessWidget {
                               Text(
                                 '${cartItem.checkoutPrice}',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: priceFontSize,
                                   color: context.appColorScheme.primary,
                                   fontWeight: .w600,
                                 ),
@@ -167,16 +179,16 @@ class MaterialCartItemWidget extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        margin: .only(right: 14, top: isExpanded ? 7 : 0),
-                        height: 40,
-                        width: 40,
+                        margin: .only(right: innerPadding + 2, top: isExpanded ? innerPadding / 2 : 0),
+                        height: deleteButtonSize,
+                        width: deleteButtonSize,
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                           color: context.appColorScheme.onPrimary,
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(deleteButtonSize),
                         ),
                         child: IconButton(
-                          iconSize: 25,
+                          iconSize: deleteButtonSize * 0.62,
                           padding: .all(0),
                           onPressed: () => onACartItemDelete(cartItem),
                           icon: Icon(Icons.delete_outline_rounded),

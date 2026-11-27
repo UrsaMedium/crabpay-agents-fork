@@ -23,34 +23,34 @@ class MaterialCartPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      edgeOffset: MediaQuery.paddingOf(context).top,
-      onRefresh: reFresher,
-      child: Stack(
-        clipBehavior: .antiAlias,
-        children: [
-          Scaffold(
-            body: Column(
-              crossAxisAlignment: .stretch,
-              children: [
-                Expanded(
-                  child: Stack(
-                    children: [
-                      _ListOfCartItemsWidget(
-                        onACartItemDelete: (p0) => onACartItemDelete(p0),
-                      ),
-                      _BuyPannelWidget(
-                        onBuyPressed: onBuyPressed,
-                        onShowBottonSheet: onShowBottonSheet,
-                      ),
-                      SizedBox(height: MediaQuery.paddingOf(context).bottom),
-                    ],
+    final layout = context.select<CartPageCubit, CartPageLayout>(
+      (cubit) => cubit.state.layout,
+    );
+    return Center(
+      child: SizedBox(
+        width: layout.pageWidth,
+        child: Scaffold(
+          body: Stack(
+            clipBehavior: .antiAlias,
+            children: [
+              Positioned.fill(
+                child: RefreshIndicator(
+                  edgeOffset: layout.topPadding,
+                  onRefresh: reFresher,
+                  child: _ListOfCartItemsWidget(
+                    layout: layout,
+                    onACartItemDelete: (p0) => onACartItemDelete(p0),
                   ),
                 ),
-              ],
-            ),
+              ),
+              _BuyPannelWidget(
+                layout: layout,
+                onBuyPressed: onBuyPressed,
+                onShowBottonSheet: onShowBottonSheet,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -58,39 +58,53 @@ class MaterialCartPageView extends StatelessWidget {
 
 class _ListOfCartItemsWidget extends StatelessWidget {
   final Function(CartItem) onACartItemDelete;
-  const _ListOfCartItemsWidget({required this.onACartItemDelete});
+  final CartPageLayout layout;
+  const _ListOfCartItemsWidget({required this.onACartItemDelete, required this.layout});
 
   @override
   Widget build(BuildContext context) {
     final cartItemsToBuy = context.select<CartPageCubit, List<CartItem>>(
       (cubit) => cubit.state.cartItemsTuBuy ?? [],
     );
+    final hasPendingOrders = context.select<CartPageCubit, bool>(
+      (cubit) => (cubit.state.pendingOrder ?? []).isNotEmpty,
+    );
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.only(
+        bottom: hasPendingOrders ? layout.listBottomPaddingWithPending : layout.listBottomPaddingWithoutPending,
+      ),
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 8, left: 16),
+          padding: layout.titlePadding,
           child: Text(
             context.l10n.shoppingCart,
             textAlign: .left,
             style: TextStyle(
               color: context.appColorScheme.primaryFixedDim,
-              fontSize: 30,
+              fontSize: layout.titleFontSize,
               fontWeight: FontWeight.w900,
             ),
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: 16, bottom: 4.0),
-          child: Text(context.l10n.confirmThePurchase, textAlign: .left),
+          padding: layout.subtitlePadding,
+          child: Text(
+            context.l10n.confirmThePurchase,
+            textAlign: .left,
+            style: TextStyle(fontSize: layout.subtitleFontSize),
+          ),
         ),
         cartItemsToBuy.isEmpty
             ? Center(
                 child: Padding(
-                  padding: const .symmetric(vertical: 16),
+                  padding: layout.emptyStatePadding,
                   child: Text(
                     context.l10n.heyYouHaven,
+                    textAlign: .center,
                     style: TextStyle(
                       color: context.appColorScheme.secondary,
+                      fontSize: layout.emptyStateFontSize,
                       fontWeight: .bold,
                     ),
                   ),
@@ -99,14 +113,11 @@ class _ListOfCartItemsWidget extends StatelessWidget {
             : ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: cartItemsToBuy.length,
-                padding: .only(
-                  top: 8,
-                  bottom: MediaQuery.paddingOf(context).bottom + 64 - globalCornerRadius,
-                ),
+                padding: EdgeInsets.only(top: layout.itemListTopPadding),
                 shrinkWrap: true,
-                // itemExtent: 84,
                 itemBuilder: (context, index) {
                   return CartItemWidgetDriver(
+                    layout: layout,
                     onACartItemDelete: onACartItemDelete,
                     cartItem: cartItemsToBuy[index],
                     product: context.read<CartPageCubit>().state.products.firstWhere(
@@ -123,9 +134,11 @@ class _ListOfCartItemsWidget extends StatelessWidget {
 class _BuyPannelWidget extends StatelessWidget {
   final VoidCallback onBuyPressed;
   final VoidCallback onShowBottonSheet;
+  final CartPageLayout layout;
   const _BuyPannelWidget({
     required this.onBuyPressed,
     required this.onShowBottonSheet,
+    required this.layout,
   });
 
   @override
@@ -136,85 +149,81 @@ class _BuyPannelWidget extends StatelessWidget {
     final cartItemsToBuy = context.select<CartPageCubit, List<CartItem>>(
       (cubit) => cubit.state.cartItemsTuBuy ?? [],
     );
+    final totalPrice = context.select<CartPageCubit, double?>(
+      (cubit) => cubit.state.totalPrice,
+    );
     final highGraphics = context.select<GlobalGraphicBloc, bool>(
       (bloc) => bloc.state.highGraphics,
     );
     return Positioned(
-      bottom: MediaQuery.paddingOf(context).bottom + 8,
-      right: 16,
-      left: 16,
+      bottom: layout.buyPanelBottomOffset,
+      right: layout.buyPanelHorizontalInset,
+      left: layout.buyPanelHorizontalInset,
       child: Stack(
         children: [
           Material(
             color: Colors.transparent,
-            borderRadius: .circular(24),
+            borderRadius: .circular(layout.buyPanelCornerRadius),
             clipBehavior: .antiAlias,
             child: BackdropFilter(
               enabled: highGraphics,
               filter: .blur(sigmaX: 12, sigmaY: 12),
               child: Container(
-                height: pendingOrders.isNotEmpty ? 186 : 128,
                 color: context.appColorScheme.surfaceContainerHigh.withValues(
                   alpha: highGraphics ? .5 : .97,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: layout.buyPanelContentPadding,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 16,
-                          left: 18,
-                          right: 18,
-                        ),
+                        padding: layout.buyPanelTotalRowPadding,
                         child: Row(
                           children: [
                             Expanded(
                               child: Text(
                                 context.l10n.total,
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: layout.buyPanelTotalFontSize,
                                   fontWeight: .w500,
                                 ),
                               ),
                             ),
                             Text(
-                              '${context.read<CartPageCubit>().state.totalPrice}',
+                              '$totalPrice',
+                              style: TextStyle(fontSize: layout.buyPanelTotalFontSize),
                             ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: layout.buyPanelButtonHorizontalPadding,
                         child: ElevatedButton(
                           onPressed: cartItemsToBuy.isEmpty ? null : onBuyPressed,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.appColorScheme.primary,
                             foregroundColor: context.appColorScheme.onPrimary,
-                            minimumSize: Size(double.maxFinite, 50),
+                            minimumSize: Size(double.maxFinite, layout.buyPanelButtonHeight),
                           ),
                           child: Text(
                             context.l10n.checkout,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: layout.buyPanelButtonFontSize,
                             ),
                           ),
                         ),
                       ),
                       if (pendingOrders.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16.0,
-                            right: 16.0,
-                            top: 8,
-                          ),
+                          padding: layout.buyPanelPendingButtonPadding,
                           child: ElevatedButton(
                             onPressed: onShowBottonSheet,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: context.appColorScheme.primary,
                               foregroundColor: context.appColorScheme.onPrimary,
-                              minimumSize: Size(double.maxFinite, 50),
+                              minimumSize: Size(double.maxFinite, layout.buyPanelButtonHeight),
                             ),
                             child: Text(
                               pendingOrders.length == 1
@@ -222,7 +231,7 @@ class _BuyPannelWidget extends StatelessWidget {
                                   : '${context.l10n.youHavenUnpaidOrdersSTART} ${pendingOrders.length} ${context.l10n.youHavenUnpaidOrdersEND}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: layout.buyPanelButtonFontSize,
                               ),
                             ),
                           ),
@@ -233,24 +242,25 @@ class _BuyPannelWidget extends StatelessWidget {
               ),
             ),
           ),
-          IgnorePointer(
-            child: ShaderMask(
-              shaderCallback: (bounds) => LinearGradient(
-                begin: .topCenter,
-                end: .bottomCenter,
-                colors: [
-                  context.appColorScheme.outline.withValues(alpha: .2),
-                  context.appColorScheme.outline.withValues(alpha: .1),
-                  Colors.transparent,
-                  Colors.transparent,
-                  context.appColorScheme.outline.withValues(alpha: .1),
-                ],
-              ).createShader(bounds),
-              child: Container(
-                height: pendingOrders.isNotEmpty ? 186 : 128,
-                decoration: BoxDecoration(
-                  borderRadius: .circular(24),
-                  border: .all(color: Colors.white),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  begin: .topCenter,
+                  end: .bottomCenter,
+                  colors: [
+                    context.appColorScheme.outline.withValues(alpha: .2),
+                    context.appColorScheme.outline.withValues(alpha: .1),
+                    Colors.transparent,
+                    Colors.transparent,
+                    context.appColorScheme.outline.withValues(alpha: .1),
+                  ],
+                ).createShader(bounds),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: .circular(layout.buyPanelCornerRadius),
+                    border: .all(color: Colors.white),
+                  ),
                 ),
               ),
             ),
