@@ -29,6 +29,13 @@ class OrdersOnPaymentSheetLayout extends Equatable {
   final double orderCardSpacing;
   final double orderActionGap;
 
+  /// Size of the square action buttons inside an order card.
+  final double actionButtonSize;
+  final double actionButtonFontSize;
+
+  /// Font size of the order details dialog header rows.
+  final double dialogHeaderFontSize;
+
   final double dialogWidth;
   final double dialogMaxHeight;
   final double dialogCornerRadius;
@@ -57,6 +64,9 @@ class OrdersOnPaymentSheetLayout extends Equatable {
     required this.orderCardFontSize,
     required this.orderCardSpacing,
     required this.orderActionGap,
+    required this.actionButtonSize,
+    required this.actionButtonFontSize,
+    required this.dialogHeaderFontSize,
     required this.dialogWidth,
     required this.dialogMaxHeight,
     required this.dialogCornerRadius,
@@ -77,7 +87,7 @@ class OrdersOnPaymentSheetLayout extends Equatable {
     final double screenEdgePadding = math.max(0.0, layout.screenEdgePadding);
     final double padding = math.max(0.0, layout.standardPadding);
     final double cornerRadius = math.max(0.0, layout.cornerRadius);
-    final double headerHeight = math.max(40.0, layout.appBarHeight * 0.85);
+    final double headerHeight = layout.appBarHeight * 0.85;
 
     return OrdersOnPaymentSheetLayout(
       sheetWidth: width,
@@ -86,15 +96,18 @@ class OrdersOnPaymentSheetLayout extends Equatable {
       headerPadding: EdgeInsets.symmetric(horizontal: screenEdgePadding * 2, vertical: screenEdgePadding),
       headerHeight: headerHeight,
       headerCornerRadius: headerHeight / 2,
-      headerFontSize: layout.mediumFontSize.clamp(14.0, 18.0).toDouble(),
+      headerFontSize: layout.mediumFontSize,
       orderCardMargin: EdgeInsets.only(left: screenEdgePadding, right: screenEdgePadding, bottom: padding),
       orderCardPadding: EdgeInsets.all(screenEdgePadding),
       orderCardCornerRadius: cornerRadius,
-      orderCardFontSize: layout.mediumFontSize.clamp(13.0, 16.0).toDouble(),
+      orderCardFontSize: layout.mediumFontSize,
       orderCardSpacing: padding * 0.75,
       orderActionGap: padding / 2,
+      actionButtonSize: layout.appBarHeight,
+      actionButtonFontSize: layout.mediumFontSize,
+      dialogHeaderFontSize: layout.smallFontSize,
       dialogWidth: math.max(0.0, width - screenEdgePadding * 2),
-      dialogMaxHeight: (width * 0.92).clamp(320.0, 440.0).toDouble(),
+      dialogMaxHeight: width * 0.92,
       dialogCornerRadius: cornerRadius,
       dialogInnerCornerRadius: layout.innerCornerRadius(padding / 2),
       dialogOuterMargin: EdgeInsets.all(padding / 2),
@@ -102,10 +115,10 @@ class OrdersOnPaymentSheetLayout extends Equatable {
       dialogHeaderMargin: EdgeInsets.all(padding),
       dialogHeaderPadding: EdgeInsets.symmetric(horizontal: screenEdgePadding, vertical: padding / 2),
       dialogListPadding: EdgeInsets.all(padding * 1.5),
-      dialogThumbnailSize: (width * 0.10).clamp(36.0, 48.0).toDouble(),
+      dialogThumbnailSize: width * 0.10,
       dialogThumbnailCornerRadius: padding,
-      dialogPriceFontSize: layout.smallFontSize.clamp(13.0, 15.0).toDouble(),
-      dialogDetailsFontSize: layout.tinyFontSize.clamp(11.0, 13.0).toDouble(),
+      dialogPriceFontSize: layout.smallFontSize,
+      dialogDetailsFontSize: layout.tinyFontSize,
     );
   }
 
@@ -124,6 +137,9 @@ class OrdersOnPaymentSheetLayout extends Equatable {
     orderCardFontSize,
     orderCardSpacing,
     orderActionGap,
+    actionButtonSize,
+    actionButtonFontSize,
+    dialogHeaderFontSize,
     dialogWidth,
     dialogMaxHeight,
     dialogCornerRadius,

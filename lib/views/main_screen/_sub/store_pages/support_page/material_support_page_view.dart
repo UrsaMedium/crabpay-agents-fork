@@ -68,7 +68,10 @@ class MaterialSupportPageView extends StatelessWidget {
                   Center(
                     child: TextButton(
                       onPressed: () => onStartChatPressed(),
-                      child: Text(context.l10n.startTheChat),
+                      child: Text(
+                        context.l10n.startTheChat,
+                        style: TextStyle(fontSize: layout.bannerFontSize),
+                      ),
                     ),
                   ),
                 if (isGettingThread) Center(child: CircularProgressIndicator()),
@@ -164,6 +167,7 @@ class MaterialSupportPageView extends StatelessWidget {
                         smallSize: layout.downArrowBadgeSize,
                         child: IconButton(
                           onPressed: onDonwArrowPressed,
+                          iconSize: layout.actionIconSize,
                           icon: Icon(Icons.arrow_downward_rounded),
                         ),
                       ),
@@ -210,7 +214,10 @@ class MaterialSupportPageView extends StatelessWidget {
                                           focusedBorder: InputBorder.none,
                                           errorBorder: InputBorder.none,
                                           disabledBorder: InputBorder.none,
-                                          hint: Text(context.l10n.typeYourQuestion),
+                                          hint: Text(
+                                            context.l10n.typeYourQuestion,
+                                            style: TextStyle(fontSize: layout.inputFontSize),
+                                          ),
                                           filled: true,
                                         ),
                                       ),
@@ -226,7 +233,7 @@ class MaterialSupportPageView extends StatelessWidget {
                                               : isSendingMessage
                                               ? null
                                               : onSendPressed,
-                                          icon: isSendingMessage ? CircularProgressIndicator() : Icon(Icons.send),
+                                          icon: isSendingMessage ? CircularProgressIndicator() : Icon(Icons.send, size: layout.actionIconSize),
                                         );
                                       },
                                     ),

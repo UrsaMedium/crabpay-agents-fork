@@ -148,7 +148,10 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
                             maxLines: 1,
                             _isUserInputEmpty() ? context.l10n.search : widget.controller.text,
                             overflow: .ellipsis,
-                            style: const TextStyle(fontWeight: .w500),
+                            style: TextStyle(
+                              fontWeight: .w500,
+                              fontSize: widget.layout.textFontSize,
+                            ),
                           ),
                         ),
                       ),
@@ -213,13 +216,23 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.layout.barCornerRadius)),
         child: SearchAnchor.bar(
           searchController: _materialSearchController,
+          barTextStyle: WidgetStatePropertyAll(
+            TextStyle(fontSize: widget.layout.textFontSize),
+          ),
+          barHintStyle: WidgetStatePropertyAll(
+            TextStyle(fontSize: widget.layout.textFontSize),
+          ),
+          viewHeaderTextStyle: TextStyle(fontSize: widget.layout.textFontSize),
           suggestionsBuilder: (context, controller) {
             final query = controller.text.toLowerCase().trim();
             final suggestions = widget.products
                 .where((option) => option.name.toLowerCase().contains(query))
                 .map(
                   (option) => ListTile(
-                    title: Text(option.name),
+                    title: Text(
+                      option.name,
+                      style: TextStyle(fontSize: widget.layout.textFontSize),
+                    ),
                     onTap: () {
                       final index = widget.products.indexOf(option);
                       controller.closeView(option.name);

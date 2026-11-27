@@ -99,15 +99,15 @@ class StorePageLayout extends Equatable {
       searchBarPadding: EdgeInsets.only(top: topPadding + padding, left: screenEdgePadding),
       categoryCardMargin: EdgeInsets.only(bottom: screenEdgePadding * 2),
       categoryHeaderPadding: EdgeInsets.only(left: screenEdgePadding, right: screenEdgePadding, top: padding),
-      categoryTitleFontSize: layout.bigFontSize.clamp(16.0, 22.0).toDouble(),
+      categoryTitleFontSize: layout.bigFontSize,
       categoryCarouselHeight: outerWidth * 1.6 / 8,
       categoryCarouselPadding: EdgeInsets.all(outerCornerRadius / 3),
       categoryProductWidth: outerWidth / 8,
-      categoryProductMargin: 2.0,
-      categoryMoreButtonOuterPadding: EdgeInsets.symmetric(horizontal: padding, vertical: 2.0),
+      categoryProductMargin: padding / 4,
+      categoryMoreButtonOuterPadding: EdgeInsets.symmetric(horizontal: padding, vertical: padding / 4),
       categoryMoreButtonPadding: EdgeInsets.symmetric(horizontal: screenEdgePadding, vertical: padding),
-      categoryMoreButtonCornerRadius: 24.0,
-      categoryMoreButtonFontSize: layout.mediumFontSize.clamp(14.0, 18.0).toDouble(),
+      categoryMoreButtonCornerRadius: layout.cornerRadius,
+      categoryMoreButtonFontSize: layout.mediumFontSize,
     );
   }
 

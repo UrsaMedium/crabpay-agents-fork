@@ -30,7 +30,7 @@ class MaterialHomePageView extends StatelessWidget {
                   children: [
                     MaterialHomePageFeaturedContainer(),
                     Padding(
-                      padding: .symmetric(horizontal: 22, vertical: 6),
+                      padding: layout.dividerPadding,
                       child: Divider(),
                     ),
                     MaterialHomePageFavoriteContainer(),

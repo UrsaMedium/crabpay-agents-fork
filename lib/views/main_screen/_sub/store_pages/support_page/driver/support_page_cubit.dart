@@ -50,6 +50,9 @@ class SupportPageLayout extends Equatable {
   final double downArrowCornerRadius;
   final double downArrowBadgeSize;
 
+  /// Size of the standalone action icons (scroll-down arrow, send button).
+  final double actionIconSize;
+
   /// Padding that keeps messages clear of the floating banner and input bar.
   final EdgeInsets messagesListPadding;
 
@@ -85,6 +88,7 @@ class SupportPageLayout extends Equatable {
     required this.downArrowRightInset,
     required this.downArrowCornerRadius,
     required this.downArrowBadgeSize,
+    required this.actionIconSize,
     required this.messagesListPadding,
     required this.bubbleCornerRadius,
     required this.bubbleBottomMargin,
@@ -103,9 +107,9 @@ class SupportPageLayout extends Equatable {
     final double outerCornerRadius = math.max(0.0, layout.cornerRadius);
 
     final double bannerTopOffset = topPadding + padding;
-    final double bannerMinHeight = (layout.width * 0.24).clamp(88.0, 112.0).toDouble();
+    final double bannerMinHeight = layout.width * 0.24;
     final double inputBarBottomOffset = bottomPadding + padding;
-    final double inputBarMinHeight = math.max(48.0, layout.appBarHeight);
+    final double inputBarMinHeight = layout.appBarHeight;
 
     return SupportPageLayout(
       topPadding: topPadding,
@@ -120,17 +124,18 @@ class SupportPageLayout extends Equatable {
       bannerMinHeight: bannerMinHeight,
       bannerCornerRadius: outerCornerRadius,
       bannerContentPadding: EdgeInsets.symmetric(horizontal: screenEdgePadding, vertical: padding),
-      bannerIconSize: (layout.bigFontSize * 1.25).clamp(22.0, 28.0).toDouble(),
-      bannerFontSize: layout.mediumFontSize.clamp(13.0, 17.0).toDouble(),
+      bannerIconSize: layout.bigFontSize * 1.25,
+      bannerFontSize: layout.mediumFontSize,
       inputBarBottomOffset: inputBarBottomOffset,
       inputBarHorizontalInset: padding / 2,
       inputBarMinHeight: inputBarMinHeight,
       inputBarCornerRadius: inputBarMinHeight / 2,
-      inputFontSize: layout.mediumFontSize.clamp(14.0, 17.0).toDouble(),
+      inputFontSize: layout.mediumFontSize,
       downArrowBottomOffset: inputBarBottomOffset + inputBarMinHeight + padding * 2,
       downArrowRightInset: screenEdgePadding,
       downArrowCornerRadius: outerCornerRadius,
-      downArrowBadgeSize: (padding * 1.2).clamp(8.0, 12.0).toDouble(),
+      downArrowBadgeSize: padding * 1.2,
+      actionIconSize: layout.bigFontSize * 1.25,
       messagesListPadding: EdgeInsets.only(
         top: bannerTopOffset + bannerMinHeight + padding,
         bottom: inputBarBottomOffset + inputBarMinHeight + padding,
@@ -138,10 +143,10 @@ class SupportPageLayout extends Equatable {
       bubbleCornerRadius: outerCornerRadius,
       bubbleBottomMargin: padding / 2,
       bubbleNearHorizontalPadding: padding,
-      bubbleFarHorizontalPadding: (layout.width * 0.16).clamp(48.0, 80.0).toDouble(),
+      bubbleFarHorizontalPadding: layout.width * 0.16,
       bubbleContentPadding: EdgeInsets.symmetric(horizontal: screenEdgePadding, vertical: padding * 1.25),
-      bubbleTextFontSize: layout.mediumFontSize.clamp(14.0, 17.0).toDouble(),
-      bubbleTimestampFontSize: layout.tinyFontSize.clamp(10.0, 12.0).toDouble(),
+      bubbleTextFontSize: layout.mediumFontSize,
+      bubbleTimestampFontSize: layout.tinyFontSize,
     );
   }
 
@@ -170,6 +175,7 @@ class SupportPageLayout extends Equatable {
     downArrowRightInset,
     downArrowCornerRadius,
     downArrowBadgeSize,
+    actionIconSize,
     messagesListPadding,
     bubbleCornerRadius,
     bubbleBottomMargin,

@@ -20,6 +20,9 @@ class StoreSearchBarLayout extends Equatable {
   /// Maximum width of the collapsed search text before it ellipsizes.
   final double collapsedTextMaxWidth;
 
+  /// Font size of the search text and suggestions.
+  final double textFontSize;
+
   /// Height of the search bar, matching the main screen top bar.
   final double barHeight;
 
@@ -37,6 +40,7 @@ class StoreSearchBarLayout extends Equatable {
     required this.collapsedTextLeftMargin,
     required this.collapsedTextRightPadding,
     required this.collapsedTextMaxWidth,
+    required this.textFontSize,
     required this.barHeight,
     required this.barCornerRadius,
     required this.searchIconSize,
@@ -53,15 +57,16 @@ class StoreSearchBarLayout extends Equatable {
     return StoreSearchBarLayout(
       collapsedRightPadding: screenEdgePadding,
       collapsedTextLeftMargin: screenEdgePadding,
-      collapsedTextRightPadding: 2.0,
-      collapsedTextMaxWidth: math.max(48.0, layout.width / 2 - 110.0),
+      collapsedTextRightPadding: layout.standardPadding / 4,
+      collapsedTextMaxWidth: math.max(0.0, layout.width / 2 - barHeight - screenEdgePadding * 2),
+      textFontSize: layout.mediumFontSize,
       barHeight: barHeight,
       barCornerRadius: barHeight / 2,
-      searchIconSize: (barHeight * 0.6).clamp(22.0, 34.0).toDouble(),
+      searchIconSize: barHeight * 0.6,
       searchIconMinWidth: barHeight,
       expandedRightPadding: screenEdgePadding,
       expandedWidth: math.max(0.0, layout.width - screenEdgePadding * 2),
-      suggestionsMaxHeight: 314.0,
+      suggestionsMaxHeight: layout.width * 0.8,
     );
   }
 
@@ -71,6 +76,7 @@ class StoreSearchBarLayout extends Equatable {
     collapsedTextLeftMargin,
     collapsedTextRightPadding,
     collapsedTextMaxWidth,
+    textFontSize,
     barHeight,
     barCornerRadius,
     searchIconSize,

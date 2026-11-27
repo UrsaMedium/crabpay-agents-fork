@@ -163,13 +163,21 @@ class OrderContainerForOrdersOnPaymentSheet extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () => onDetailsPressed(order),
-                  style: ElevatedButton.styleFrom(minimumSize: Size(48, 48), padding: EdgeInsets.zero),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(layout.actionButtonSize, layout.actionButtonSize),
+                    padding: EdgeInsets.zero,
+                  ),
                   child: Icon(Icons.more_horiz_rounded),
                 ),
                 ElevatedButton(
                   onPressed: () => onPaymentLinkPressed(order.paymentLink),
-                  style: ElevatedButton.styleFrom(minimumSize: Size(48, 48)),
-                  child: Text(context.l10n.pay),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(layout.actionButtonSize, layout.actionButtonSize),
+                  ),
+                  child: Text(
+                    context.l10n.pay,
+                    style: TextStyle(fontSize: layout.actionButtonFontSize),
+                  ),
                 ),
               ],
             ),
@@ -226,9 +234,15 @@ class _OrderDetails extends StatelessWidget {
                               dateConversion(
                                 order.cartItems.last.createdAt.toString(),
                               ),
-                              style: const TextStyle(fontWeight: .w600),
+                              style: TextStyle(
+                                fontWeight: .w600,
+                                fontSize: layout.dialogHeaderFontSize,
+                              ),
                             ),
-                            Text('${context.l10n.order}: ${order.paymentId.substring(0, 7)}'),
+                            Text(
+                              '${context.l10n.order}: ${order.paymentId.substring(0, 7)}',
+                              style: TextStyle(fontSize: layout.dialogHeaderFontSize),
+                            ),
                           ],
                         ),
                       ],
@@ -241,15 +255,27 @@ class _OrderDetails extends StatelessWidget {
                           Row(
                             crossAxisAlignment: .start,
                             children: [
-                              Text(context.l10n.products),
-                              Text(' ${order.cartItems.length}'),
+                              Text(
+                                context.l10n.products,
+                                style: TextStyle(fontSize: layout.dialogHeaderFontSize),
+                              ),
+                              Text(
+                                ' ${order.cartItems.length}',
+                                style: TextStyle(fontSize: layout.dialogHeaderFontSize),
+                              ),
                             ],
                           ),
                           Row(
                             crossAxisAlignment: .start,
                             children: [
-                              Text(context.l10n.orderPrice),
-                              Text(' \$${order.totalPrice}'),
+                              Text(
+                                context.l10n.orderPrice,
+                                style: TextStyle(fontSize: layout.dialogHeaderFontSize),
+                              ),
+                              Text(
+                                ' \$${order.totalPrice}',
+                                style: TextStyle(fontSize: layout.dialogHeaderFontSize),
+                              ),
                             ],
                           ),
                         ],
@@ -293,7 +319,10 @@ class _OrderDetails extends StatelessWidget {
                                     errorWidget: (context, error, stackTrace) => Container(
                                       color: context.appColorScheme.onInverseSurface,
                                       alignment: Alignment.center,
-                                      child: Text(context.l10n.emptyKey),
+                                      child: Text(
+                                        context.l10n.emptyKey,
+                                        style: TextStyle(fontSize: layout.dialogDetailsFontSize),
+                                      ),
                                     ),
                                     placeholder: (context, url) => MaterialShimeringPlaceHolder(
                                       width: layout.dialogThumbnailSize,

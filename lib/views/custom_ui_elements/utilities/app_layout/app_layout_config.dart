@@ -42,8 +42,8 @@ class AppLayoutConfig {
   final double navBarBottomPaddingCoeff;
 
   const AppLayoutConfig({
-    this.minWidth = 320.0,
-    this.maxWidth = 512.0,
+    this.minWidth = 256.0,
+    this.maxWidth = 524.0,
     this.fallbackWidth = 390.0,
     this.standardPaddingCoeff = 0.02,
     this.screenEdgePaddingCoeff = 0.042,

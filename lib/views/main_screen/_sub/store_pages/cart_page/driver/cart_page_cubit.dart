@@ -133,8 +133,8 @@ class CartPageLayout extends Equatable {
     final double outerCornerRadius = math.max(0.0, layout.cornerRadius);
 
     final double buyPanelBottomOffset = bottomPadding + padding;
-    final double buyPanelButtonHeight = math.max(48.0, layout.appBarHeight);
-    final double buyPanelTotalFontSize = layout.mediumFontSize.clamp(14.0, 18.0).toDouble();
+    final double buyPanelButtonHeight = layout.appBarHeight;
+    final double buyPanelTotalFontSize = layout.mediumFontSize;
     final double listBottomPaddingWithoutPending =
         buyPanelBottomOffset + buyPanelButtonHeight + screenEdgePadding * 3 + buyPanelTotalFontSize + padding * 2;
 
@@ -147,18 +147,18 @@ class CartPageLayout extends Equatable {
       screenEdgePadding: screenEdgePadding,
       padding: padding,
       titlePadding: EdgeInsets.only(top: topPadding + padding, left: screenEdgePadding, right: screenEdgePadding),
-      titleFontSize: (layout.largeFontSize * 1.15).clamp(24.0, 32.0).toDouble(),
+      titleFontSize: layout.largeFontSize,
       subtitlePadding: EdgeInsets.only(left: screenEdgePadding, right: screenEdgePadding, bottom: padding / 2),
-      subtitleFontSize: layout.mediumFontSize.clamp(13.0, 17.0).toDouble(),
+      subtitleFontSize: layout.mediumFontSize,
       emptyStatePadding: EdgeInsets.symmetric(vertical: screenEdgePadding, horizontal: screenEdgePadding),
-      emptyStateFontSize: layout.mediumFontSize.clamp(13.0, 17.0).toDouble(),
+      emptyStateFontSize: layout.mediumFontSize,
       itemHorizontalPadding: screenEdgePadding,
       itemCornerRadius: outerCornerRadius,
       itemInnerPadding: padding * 1.5,
-      itemImageSize: (layout.width * 0.138).clamp(48.0, 60.0).toDouble(),
+      itemImageSize: layout.width * 0.138,
       itemImageCornerRadius: layout.innerCornerRadius(padding * 1.5),
-      itemPriceFontSize: layout.smallFontSize.clamp(13.0, 16.0).toDouble(),
-      itemDeleteButtonSize: 48.0,
+      itemPriceFontSize: layout.smallFontSize,
+      itemDeleteButtonSize: layout.appBarHeight,
       itemListTopPadding: padding,
       buyPanelBottomOffset: buyPanelBottomOffset,
       buyPanelHorizontalInset: screenEdgePadding,
@@ -169,7 +169,7 @@ class CartPageLayout extends Equatable {
       buyPanelButtonHorizontalPadding: EdgeInsets.symmetric(horizontal: padding),
       buyPanelPendingButtonPadding: EdgeInsets.only(left: padding, right: padding, top: padding),
       buyPanelButtonHeight: buyPanelButtonHeight,
-      buyPanelButtonFontSize: layout.mediumFontSize.clamp(14.0, 18.0).toDouble(),
+      buyPanelButtonFontSize: layout.mediumFontSize,
       listBottomPaddingWithoutPending: listBottomPaddingWithoutPending,
       listBottomPaddingWithPending: listBottomPaddingWithoutPending + buyPanelButtonHeight + padding,
     );

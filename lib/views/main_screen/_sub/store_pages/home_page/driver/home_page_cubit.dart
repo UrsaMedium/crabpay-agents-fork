@@ -51,6 +51,9 @@ class HomePageLayout extends Equatable {
   final EdgeInsets bannerPadding;
   final double bannerFontSize;
 
+  /// Padding around the divider between the featured and favorite sections.
+  final EdgeInsets dividerPadding;
+
   const HomePageLayout({
     required this.pagePadding,
     required this.topPadding,
@@ -67,6 +70,7 @@ class HomePageLayout extends Equatable {
     required this.smallCardPadding,
     required this.bannerPadding,
     required this.bannerFontSize,
+    required this.dividerPadding,
   });
 
   factory HomePageLayout.fromAppLayout(AppLayoutState layout) {
@@ -76,7 +80,6 @@ class HomePageLayout extends Equatable {
     final double colWidth = math.max(0.0, (innerWidth - padding) / 2);
     final double topRowHeight = colWidth * 1.5 + 2;
     final double smallCardHeight = colWidth * 1.25;
-    final double bannerFontSize = (math.max(0.0, topRowHeight - smallCardHeight - padding) * 0.34).clamp(10.0, 16.0).toDouble();
 
     return HomePageLayout(
       pagePadding: EdgeInsets.fromLTRB(
@@ -96,9 +99,10 @@ class HomePageLayout extends Equatable {
       topRowHeight: topRowHeight,
       smallCardHeight: smallCardHeight,
       horizontalHeight: colWidth,
-      smallCardPadding: 4.0,
+      smallCardPadding: padding / 2,
       bannerPadding: EdgeInsets.symmetric(horizontal: padding, vertical: padding / 2),
-      bannerFontSize: bannerFontSize,
+      bannerFontSize: layout.mediumFontSize,
+      dividerPadding: EdgeInsets.symmetric(horizontal: layout.screenEdgePadding, vertical: padding * 0.75),
     );
   }
 
@@ -119,6 +123,7 @@ class HomePageLayout extends Equatable {
     smallCardPadding,
     bannerPadding,
     bannerFontSize,
+    dividerPadding,
   ];
 }
 
