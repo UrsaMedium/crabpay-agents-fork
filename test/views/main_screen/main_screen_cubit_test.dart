@@ -2,6 +2,7 @@ import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_events.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc_event.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/driver/main_screen_cubit.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,9 +27,19 @@ void main() {
       authInterface: authInterface,
       appLifecycleService: lifecycle,
     );
-    final cubit = MainScreenCubit(authBloc: authBloc, cartBloc: cartBloc, globalKey: GlobalKey());
+    final layoutCubit = AppLayoutCubit(
+      observeBinding: false,
+      metricsReader: () => (width: 800, topPadding: 0, bottomPadding: 0),
+    );
+    final cubit = MainScreenCubit(
+      authBloc: authBloc,
+      cartBloc: cartBloc,
+      globalKey: GlobalKey(),
+      layoutCubit: layoutCubit,
+    );
     addTearDown(authBloc.close);
     addTearDown(cartBloc.close);
+    addTearDown(layoutCubit.close);
     addTearDown(cubit.close);
     return (authBloc: authBloc, cartBloc: cartBloc, cubit: cubit);
   }

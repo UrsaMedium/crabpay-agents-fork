@@ -1,6 +1,7 @@
 import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc_event.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/driver/main_screen_cubit.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_bloc.dart';
 import 'package:crabpay/views/main_screen/view/material/material_main_screen_view.dart';
@@ -37,6 +38,7 @@ class _MainScreenDriverState extends State<MainScreenDriver> {
       globalKey: GlobalKey(),
       authBloc: context.read<AuthBloc>(),
       cartBloc: context.read<CartBloc>(),
+      layoutCubit: context.read<AppLayoutCubit>(),
     );
     super.initState();
   }
@@ -139,6 +141,9 @@ class _MainScreenDriverState extends State<MainScreenDriver> {
         },
         child: Builder(
           builder: (context) {
+            context.select<MainScreenCubit, MainScreenLayout>(
+              (cubit) => cubit.state.layout,
+            );
             if (defaultTargetPlatform == TargetPlatform.iOS) {
               // cupertino
             }
