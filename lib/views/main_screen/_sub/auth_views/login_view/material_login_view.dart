@@ -1,8 +1,10 @@
 import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
+import 'package:crabpay/views/main_screen/_sub/auth_views/login_view/driver/login_view_cubit.dart';
 import 'package:material_ui/material_ui.dart';
 
 class MaterialLoginView extends StatelessWidget {
+  final LoginViewLayout layout;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final String? emailError;
@@ -16,6 +18,7 @@ class MaterialLoginView extends StatelessWidget {
 
   const MaterialLoginView({
     super.key,
+    required this.layout,
     required this.emailController,
     required this.passwordController,
     this.emailError,
@@ -30,128 +33,170 @@ class MaterialLoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final BorderRadius inputBorderRadius = BorderRadius.all(
+      Radius.circular(layout.inputCornerRadius),
+    );
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {
-            onBackButtonPressed();
-          },
-          icon: Icon(Icons.arrow_back),
+          onPressed: onBackButtonPressed,
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Column(
-          crossAxisAlignment: .stretch,
-          children: [
-            Text(
-              context.l10n.pleaseSignIn,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w900,
-                color: context.appColorScheme.primary,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              context.l10n.authorizationWillBeHappeningHere,
-              textAlign: TextAlign.left,
-            ),
-            SizedBox(height: 40),
-            TextField(
-              controller: emailController,
-              keyboardType: .emailAddress,
-              onChanged: (_) => onCorrectingCredentials(),
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
+      body: SingleChildScrollView(
+        padding: layout.contentPadding,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: layout.contentWidth),
+            child: Column(
+              crossAxisAlignment: .stretch,
+              children: [
+                Text(
+                  context.l10n.pleaseSignIn,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: layout.titleFontSize,
+                    fontWeight: FontWeight.w900,
+                    color: context.appColorScheme.primary,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(100)),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
+                SizedBox(height: layout.titleSpacing),
+                Text(
+                  context.l10n.authorizationWillBeHappeningHere,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: layout.subtitleFontSize),
+                ),
+                SizedBox(height: layout.sectionSpacing),
+                TextField(
+                  controller: emailController,
+                  keyboardType: .emailAddress,
+                  onChanged: (_) => onCorrectingCredentials(),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
+                      ),
+                      borderRadius: inputBorderRadius,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
+                      ),
+                      borderRadius: inputBorderRadius,
+                    ),
+                    labelText: context.l10n.email,
+                    labelStyle: TextStyle(fontSize: layout.subtitleFontSize),
+                    filled: true,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(100)),
                 ),
-                labelText: context.l10n.email,
-                filled: true,
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              onChanged: (_) => onCorrectingCredentials(),
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
+                SizedBox(height: layout.fieldSpacing),
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  onChanged: (_) => onCorrectingCredentials(),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
+                      ),
+                      borderRadius: inputBorderRadius,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
+                      ),
+                      borderRadius: inputBorderRadius,
+                    ),
+                    labelText: context.l10n.password,
+                    labelStyle: TextStyle(fontSize: layout.subtitleFontSize),
+                    filled: true,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(100)),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: onForgotPassword,
+                    style: TextButton.styleFrom(
+                      minimumSize: Size(layout.minTapTarget, layout.minTapTarget),
+                    ),
+                    child: Text(
+                      context.l10n.forgotPassword,
+                      style: TextStyle(fontSize: layout.linkFontSize),
+                    ),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(100)),
                 ),
-                labelText: context.l10n.password,
-                filled: true,
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  onForgotPassword();
-                },
-                child: Text(context.l10n.forgotPassword),
-              ),
-            ),
-            SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: isSubmitting ? null : onSignIn,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                backgroundColor: context.appColorScheme.primary,
-                foregroundColor: context.appColorScheme.onPrimary,
-              ),
-              child: isSubmitting
-                  ? const CircularProgressIndicator()
-                  : Text(
-                      context.l10n.signIn,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                SizedBox(height: layout.sectionSpacing),
+                ElevatedButton(
+                  onPressed: isSubmitting ? null : onSignIn,
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, layout.buttonMinHeight),
+                    padding: layout.buttonPadding,
+                    backgroundColor: context.appColorScheme.primary,
+                    foregroundColor: context.appColorScheme.onPrimary,
+                  ),
+                  child: isSubmitting
+                      ? SizedBox(
+                          width: layout.loadingIndicatorSize,
+                          height: layout.loadingIndicatorSize,
+                          child: CircularProgressIndicator(
+                            strokeWidth: layout.loadingIndicatorStrokeWidth,
+                          ),
+                        )
+                      : Text(
+                          context.l10n.signIn,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: layout.buttonFontSize,
+                          ),
+                        ),
+                ),
+                SizedBox(height: layout.dividerSectionSpacing),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: layout.dividerThickness,
+                        color: context.appColorScheme.outline,
                       ),
                     ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(child: Divider(color: context.appColorScheme.outline)),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(context.l10n.dontHaveAnAccount),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: layout.dividerLabelMaxWidth),
+                      child: Padding(
+                        padding: layout.dividerTextPadding,
+                        child: Text(
+                          context.l10n.dontHaveAnAccount,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: layout.dividerLabelFontSize),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: layout.dividerThickness,
+                        color: context.appColorScheme.outline,
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(child: Divider(color: context.appColorScheme.outline)),
+                SizedBox(height: layout.fieldSpacing),
+                ElevatedButton(
+                  onPressed: onSignUp,
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, layout.buttonMinHeight),
+                    padding: layout.buttonPadding,
+                  ),
+                  child: Text(
+                    context.l10n.signUp,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: layout.buttonFontSize,
+                    ),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: onSignUp,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: Text(
-                context.l10n.signUp,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

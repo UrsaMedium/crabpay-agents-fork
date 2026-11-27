@@ -1,11 +1,10 @@
 import 'package:crabpay/core/extensions/l10n_extension.dart';
-import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_bloc.dart';
-import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_states.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
+import 'package:crabpay/views/main_screen/_sub/auth_views/register_view/driver/register_view_cubit.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialRegisterView extends StatelessWidget {
+  final RegisterViewLayout layout;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final String? emailError;
@@ -14,8 +13,10 @@ class MaterialRegisterView extends StatelessWidget {
   final VoidCallback onRegistering;
   final VoidCallback onBackButtonPressed;
   final VoidCallback onCorrectingCredentials;
+
   const MaterialRegisterView({
     super.key,
+    required this.layout,
     required this.emailController,
     required this.passwordController,
     this.emailError,
@@ -28,37 +29,41 @@ class MaterialRegisterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final BorderRadius inputBorderRadius = BorderRadius.all(
+      Radius.circular(layout.inputCornerRadius),
+    );
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {
-            onBackButtonPressed();
-          },
-          icon: Icon(Icons.arrow_back),
+          onPressed: onBackButtonPressed,
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Column(
-          crossAxisAlignment: .stretch,
-          children: [
-            Text(
-              context.l10n.createAccount,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w900,
-                color: context.appColorScheme.primaryFixedDim,
-              ),
-            ),
-            Container(height: 10),
-            Text(
-              context.l10n.createAnAccountToShop,
-            ),
-            Container(height: 40),
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                return TextField(
+      body: SingleChildScrollView(
+        padding: layout.contentPadding,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: layout.contentWidth),
+            child: Column(
+              crossAxisAlignment: .stretch,
+              children: [
+                Text(
+                  context.l10n.createAccount,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: layout.titleFontSize,
+                    fontWeight: FontWeight.w900,
+                    color: context.appColorScheme.primaryFixedDim,
+                  ),
+                ),
+                SizedBox(height: layout.titleSpacing),
+                Text(
+                  context.l10n.createAnAccountToShop,
+                  style: TextStyle(fontSize: layout.subtitleFontSize),
+                ),
+                SizedBox(height: layout.sectionSpacing),
+                TextField(
                   controller: emailController,
                   autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
@@ -68,24 +73,21 @@ class MaterialRegisterView extends StatelessWidget {
                       borderSide: BorderSide(
                         color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                      borderRadius: inputBorderRadius,
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: emailError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                      borderRadius: inputBorderRadius,
                     ),
                     label: Text(context.l10n.email),
+                    labelStyle: TextStyle(fontSize: layout.subtitleFontSize),
                     filled: true,
                   ),
-                );
-              },
-            ),
-            Container(height: 16),
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                return TextField(
+                ),
+                SizedBox(height: layout.fieldSpacing),
+                TextField(
                   controller: passwordController,
                   autocorrect: false,
                   obscureText: true,
@@ -95,68 +97,82 @@ class MaterialRegisterView extends StatelessWidget {
                       borderSide: BorderSide(
                         color: passwordError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                      borderRadius: inputBorderRadius,
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: passwordError != null ? context.appColorScheme.error : context.appColorScheme.primaryFixed,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                      borderRadius: inputBorderRadius,
                     ),
                     label: Text(context.l10n.password),
+                    labelStyle: TextStyle(fontSize: layout.subtitleFontSize),
                     filled: true,
                   ),
-                );
-              },
-            ),
-            Container(height: 64),
-            ElevatedButton(
-              onPressed: () {
-                onRegistering();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.appColorScheme.primary,
-                foregroundColor: context.appColorScheme.onPrimary,
-                minimumSize: Size(double.infinity, 50),
-              ),
-              child: Text(
-                context.l10n.submit,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-            Container(height: 11),
-            Row(
-              children: [
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: context.appColorScheme.outline,
+                ),
+                SizedBox(height: layout.submitTopSpacing),
+                ElevatedButton(
+                  onPressed: onRegistering,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.appColorScheme.primary,
+                    foregroundColor: context.appColorScheme.onPrimary,
+                    minimumSize: Size(double.infinity, layout.buttonMinHeight),
+                    padding: layout.buttonPadding,
+                  ),
+                  child: Text(
+                    context.l10n.submit,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: layout.buttonFontSize,
+                    ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(context.l10n.youHaveOneAlreadyThen),
+                SizedBox(height: layout.dividerSpacing),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: layout.dividerThickness,
+                        color: context.appColorScheme.outline,
+                      ),
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: layout.dividerLabelMaxWidth),
+                      child: Padding(
+                        padding: layout.dividerTextPadding,
+                        child: Text(
+                          context.l10n.youHaveOneAlreadyThen,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: layout.dividerLabelFontSize),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: layout.dividerThickness,
+                        color: context.appColorScheme.outline,
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: context.appColorScheme.outline,
+                SizedBox(height: layout.dividerSpacing),
+                ElevatedButton(
+                  onPressed: onBackButtonPressed,
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, layout.buttonMinHeight),
+                    padding: layout.buttonPadding,
+                  ),
+                  child: Text(
+                    context.l10n.signIn,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: layout.buttonFontSize,
+                    ),
                   ),
                 ),
               ],
             ),
-            Container(height: 11),
-            ElevatedButton(
-              onPressed: () => onBackButtonPressed(),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
-              ),
-              child: Text(
-                context.l10n.signIn,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

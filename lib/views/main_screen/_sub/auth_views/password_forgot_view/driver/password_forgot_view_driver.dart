@@ -4,6 +4,8 @@ import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_states.dart';
 import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/utilities.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
+import 'package:crabpay/views/main_screen/_sub/auth_views/password_forgot_view/driver/password_forgot_view_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/auth_views/password_forgot_view/material_password_forgot_view.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +21,7 @@ class PasswordForgotViewDriver extends StatefulWidget {
 
 class _PasswordForgotViewDriverState extends State<PasswordForgotViewDriver> {
   late final TextEditingController _emailControler;
+  late final PasswordForgotViewCubit _passwordForgotViewCubit;
 
   @override
   void initState() {
@@ -26,19 +29,23 @@ class _PasswordForgotViewDriverState extends State<PasswordForgotViewDriver> {
       message: 'PasswordForgotViewDriver initState',
     );
     _emailControler = TextEditingController();
+    _passwordForgotViewCubit = PasswordForgotViewCubit(
+      layoutCubit: context.read<AppLayoutCubit>(),
+    );
     super.initState();
   }
 
   @override
   void dispose() {
+    _passwordForgotViewCubit.close();
     _emailControler.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => PasswordForgotViewCubit(),
+    return BlocProvider.value(
+      value: _passwordForgotViewCubit,
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, authState) {
           getIt<InnerLoggerHandler>().logBreadcrumb(
@@ -47,8 +54,18 @@ class _PasswordForgotViewDriverState extends State<PasswordForgotViewDriver> {
           );
           //a state to know that the reset password email has benn sent
         },
-        child: BlocBuilder<PasswordForgotViewCubit, PasswordForgotViewState>(
-          builder: (context, viewState) {
+        child: Builder(
+          builder: (context) {
+            final layout = context.select<PasswordForgotViewCubit, PasswordForgotViewLayout>(
+              (cubit) => cubit.state.layout,
+            );
+            final isSubmitting = context.select<PasswordForgotViewCubit, bool>(
+              (cubit) => cubit.state.isSubmitting,
+            );
+            final emailError = context.select<PasswordForgotViewCubit, String?>(
+              (cubit) => cubit.state.emailError,
+            );
+
             void onSendResetLinkPressed() {
               getIt<InnerLoggerHandler>().logBreadcrumb(
                 message: 'PasswordForgotViewDriver onSendResetLinkPressed',
@@ -79,9 +96,10 @@ class _PasswordForgotViewDriverState extends State<PasswordForgotViewDriver> {
             }
 
             return MaterialPasswordForgotView(
+              layout: layout,
               emailControler: _emailControler,
-              isSubmitting: viewState.isSubmitting,
-              emailError: viewState.emailError,
+              isSubmitting: isSubmitting,
+              emailError: emailError,
               onBackButtonPressed: onBackButtonPressed,
               onCorrectingCredentials: onCorrectingCredentials,
               onSendResetLinkPressed: onSendResetLinkPressed,
@@ -90,37 +108,5 @@ class _PasswordForgotViewDriverState extends State<PasswordForgotViewDriver> {
         ),
       ),
     );
-  }
-}
-
-class PasswordForgotViewState {
-  final String? emailError;
-  final bool isSubmitting;
-
-  const PasswordForgotViewState({this.emailError, this.isSubmitting = false});
-}
-
-class PasswordForgotViewCubit extends Cubit<PasswordForgotViewState> {
-  PasswordForgotViewCubit() : super(const PasswordForgotViewState());
-
-  void validateAndSubmit({
-    required String email,
-    required Function(String email) onValid,
-  }) {
-    String? emailErr;
-
-    if (email.isEmpty || !email.contains('@')) {
-      emailErr = 'Email is not valid';
-    }
-    if (emailErr != null) {
-      emit(PasswordForgotViewState(emailError: emailErr));
-    } else {
-      emit(const PasswordForgotViewState(isSubmitting: true));
-      onValid(email);
-    }
-  }
-
-  void clearErrors() {
-    emit(const PasswordForgotViewState(emailError: null, isSubmitting: false));
   }
 }

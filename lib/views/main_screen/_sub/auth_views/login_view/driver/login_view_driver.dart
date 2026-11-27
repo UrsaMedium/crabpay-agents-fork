@@ -5,6 +5,8 @@ import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/
 import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
+import 'package:crabpay/views/main_screen/_sub/auth_views/login_view/driver/login_view_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/auth_views/login_view/material_login_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -22,6 +24,7 @@ class LoginViewDriver extends StatefulWidget {
 class _LoginViewDriverState extends State<LoginViewDriver> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  late final LoginViewCubit _loginViewCubit;
 
   @override
   void initState() {
@@ -30,11 +33,15 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
     );
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _loginViewCubit = LoginViewCubit(
+      layoutCubit: context.read<AppLayoutCubit>(),
+    );
     super.initState();
   }
 
   @override
   void dispose() {
+    _loginViewCubit.close();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -54,8 +61,8 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
         }
         !Navigator.of(context).canPop() ? context.go(AppRoutes.home.path) : context.pop();
       },
-      child: BlocProvider(
-        create: (_) => LoginViewCubit(),
+      child: BlocProvider.value(
+        value: _loginViewCubit,
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, authState) {
             getIt<InnerLoggerHandler>().logBreadcrumb(
@@ -78,8 +85,21 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
               }
             }
           },
-          child: BlocBuilder<LoginViewCubit, LoginViewState>(
-            builder: (context, viewState) {
+          child: Builder(
+            builder: (context) {
+              final layout = context.select<LoginViewCubit, LoginViewLayout>(
+                (cubit) => cubit.state.layout,
+              );
+              final isSubmitting = context.select<LoginViewCubit, bool>(
+                (cubit) => cubit.state.isSubmitting,
+              );
+              final emailError = context.select<LoginViewCubit, String?>(
+                (cubit) => cubit.state.emailError,
+              );
+              final passwordError = context.select<LoginViewCubit, String?>(
+                (cubit) => cubit.state.passwordError,
+              );
+
               void onSignInPressed() {
                 getIt<InnerLoggerHandler>().logBreadcrumb(
                   message: 'LoginViewDriver onSignInPressed',
@@ -136,78 +156,21 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
               }
 
               return MaterialLoginView(
+                layout: layout,
                 emailController: _emailController,
                 passwordController: _passwordController,
-                isSubmitting: viewState.isSubmitting,
+                isSubmitting: isSubmitting,
                 onForgotPassword: onForgotPasswordPressed,
                 onSignIn: onSignInPressed,
                 onSignUp: onSignUpPressed,
-                passwordError: viewState.passwordError,
-                emailError: viewState.emailError,
+                passwordError: passwordError,
+                emailError: emailError,
                 onBackButtonPressed: onBackButtonPressed,
                 onCorrectingCredentials: onCorrectingCredentials,
               );
             },
           ),
         ),
-      ),
-    );
-  }
-}
-
-class LoginViewState {
-  final String? emailError;
-  final String? passwordError;
-  final bool isSubmitting;
-
-  const LoginViewState({
-    this.emailError,
-    this.passwordError,
-    this.isSubmitting = false,
-  });
-}
-
-class LoginViewCubit extends Cubit<LoginViewState> {
-  LoginViewCubit() : super(const LoginViewState());
-
-  void validateAndSubmit({
-    required String email,
-    required String password,
-    required Function(String email, String password) onValid,
-  }) {
-    String? emailErr;
-    String? passwordErr;
-
-    if (email.isEmpty || !email.contains('@')) {
-      emailErr = 'Email is not alid';
-    }
-    if (password.isEmpty || password.length < 6) {
-      passwordErr = 'Password is not valid';
-    }
-    if (emailErr != null || passwordErr != null) {
-      emit(LoginViewState(emailError: emailErr, passwordError: passwordErr));
-    } else {
-      emit(const LoginViewState(isSubmitting: true));
-      onValid(email, password);
-    }
-  }
-
-  void setErrors({String? emailError, String? passwordError}) {
-    emit(
-      LoginViewState(
-        emailError: emailError,
-        passwordError: passwordError,
-        isSubmitting: false,
-      ),
-    );
-  }
-
-  void clearErrors() {
-    emit(
-      const LoginViewState(
-        emailError: null,
-        passwordError: null,
-        isSubmitting: false,
       ),
     );
   }

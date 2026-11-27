@@ -4,6 +4,8 @@ import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/
 import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
+import 'package:crabpay/views/main_screen/_sub/auth_views/register_view/driver/register_view_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/auth_views/register_view/material_register_view.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +23,7 @@ class RegisterViewDriver extends StatefulWidget {
 class _RegisterViewDriverState extends State<RegisterViewDriver> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  late final RegisterViewCubit _registerViewCubit;
 
   @override
   void initState() {
@@ -29,11 +32,15 @@ class _RegisterViewDriverState extends State<RegisterViewDriver> {
     );
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _registerViewCubit = RegisterViewCubit(
+      layoutCubit: context.read<AppLayoutCubit>(),
+    );
     super.initState();
   }
 
   @override
   void dispose() {
+    _registerViewCubit.close();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -41,8 +48,8 @@ class _RegisterViewDriverState extends State<RegisterViewDriver> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => RegisterViewCubit(),
+    return BlocProvider.value(
+      value: _registerViewCubit,
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, authState) {
           getIt<InnerLoggerHandler>().logBreadcrumb(
@@ -63,8 +70,18 @@ class _RegisterViewDriverState extends State<RegisterViewDriver> {
             );
           }
         },
-        child: BlocBuilder<RegisterViewCubit, RegisterViewState>(
-          builder: (context, viewState) {
+        child: Builder(
+          builder: (context) {
+            final layout = context.select<RegisterViewCubit, RegisterViewLayout>(
+              (cubit) => cubit.state.layout,
+            );
+            final isSubmitting = context.select<RegisterViewCubit, bool>(
+              (cubit) => cubit.state.isSubmitting,
+            );
+            final emailError = context.select<RegisterViewCubit, String?>(
+              (cubit) => cubit.state.emailError,
+            );
+
             void onRegistering() {
               getIt<InnerLoggerHandler>().logBreadcrumb(
                 message: 'RegisterViewDriver onRegistering',
@@ -101,75 +118,18 @@ class _RegisterViewDriverState extends State<RegisterViewDriver> {
             }
 
             return MaterialRegisterView(
+              layout: layout,
               emailController: _emailController,
               passwordController: _passwordController,
-              isSubmitting: viewState.isSubmitting,
-              emailError: viewState.emailError,
-              passwordError: viewState.emailError,
+              isSubmitting: isSubmitting,
+              emailError: emailError,
+              passwordError: emailError,
               onBackButtonPressed: onBackButtonPressed,
               onCorrectingCredentials: onCorrectingCredentials,
               onRegistering: onRegistering,
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class RegisterViewState {
-  final String? emailError;
-  final String? passwordError;
-  final bool isSubmitting;
-
-  const RegisterViewState({
-    this.emailError,
-    this.passwordError,
-    this.isSubmitting = false,
-  });
-}
-
-class RegisterViewCubit extends Cubit<RegisterViewState> {
-  RegisterViewCubit() : super(const RegisterViewState());
-
-  void validateAndSubmit({
-    required String email,
-    required String password,
-    required Function(String email, String password) onValid,
-  }) {
-    String? emailErr;
-    String? passwordErr;
-
-    if (email.isEmpty || !email.contains('@')) {
-      emailErr = 'Email is not alid';
-    }
-    if (password.isEmpty || password.length < 6) {
-      passwordErr = 'Password is not valid';
-    }
-    if (emailErr != null || passwordErr != null) {
-      emit(RegisterViewState(emailError: emailErr, passwordError: passwordErr));
-    } else {
-      emit(const RegisterViewState(isSubmitting: true));
-      onValid(email, password);
-    }
-  }
-
-  void setErrors({String? emailError, String? passwordError}) {
-    emit(
-      RegisterViewState(
-        emailError: emailError,
-        passwordError: passwordError,
-        isSubmitting: false,
-      ),
-    );
-  }
-
-  void clearErrors() {
-    emit(
-      const RegisterViewState(
-        emailError: null,
-        passwordError: null,
-        isSubmitting: false,
       ),
     );
   }
