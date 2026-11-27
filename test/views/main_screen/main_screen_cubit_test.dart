@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_bloc.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_events.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc.dart';
@@ -14,7 +16,7 @@ import '../../helpers/test_fixtures.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  ({AuthBloc authBloc, CartBloc cartBloc, MainScreenCubit cubit}) buildParts() {
+  ({AuthBloc authBloc, CartBloc cartBloc, MainScreenCubit cubit, AppLayoutCubit layoutCubit}) buildParts() {
     final authInterface = MockAuthInnerInterface();
     when(() => authInterface.userStream).thenAnswer((_) => Stream.empty());
     final authBloc = AuthBloc(authInterface);
@@ -41,7 +43,7 @@ void main() {
     addTearDown(cartBloc.close);
     addTearDown(layoutCubit.close);
     addTearDown(cubit.close);
-    return (authBloc: authBloc, cartBloc: cartBloc, cubit: cubit);
+    return (authBloc: authBloc, cartBloc: cartBloc, cubit: cubit, layoutCubit: layoutCubit);
   }
 
   group('MainScreenCubit', () {
@@ -53,6 +55,32 @@ void main() {
 
       parts.cubit.setSyncByNavBarState(true);
       expect(parts.cubit.state.isSyncingByNavBarTap, true);
+    });
+
+    test('derives scaled bar sizes and paddings from the app layout', () async {
+      const AppLayoutConfig config = AppLayoutConfig();
+      final parts = buildParts();
+      final initial = parts.cubit.state.layout;
+
+      expect(initial.appBarHeight, closeTo(512 * config.appBarHeightCoeff, 1e-9));
+      expect(initial.appBarPadding.top, closeTo(512 * config.appBarTopPaddingCoeff, 1e-9));
+      expect(initial.appBarCornerRadius, closeTo(initial.appBarHeight / 2, 1e-9));
+      expect(initial.appBarPreferredHeight, greaterThanOrEqualTo(initial.appBarHeight));
+      expect(initial.navBarHeight, closeTo(512 * config.navBarHeightCoeff, 1e-9));
+      expect(initial.navBarBottomMargin, closeTo(512 * config.navBarBottomPaddingCoeff, 1e-9));
+
+      parts.layoutCubit.updateMetrics(rawWidth: 360, topPadding: 24, bottomPadding: 34);
+      await pumpEventQueue();
+
+      final updated = parts.cubit.state.layout;
+      expect(updated.topPadding, 24.0);
+      expect(updated.appBarHeight, closeTo(360 * config.appBarHeightCoeff, 1e-9));
+      expect(updated.appBarPadding.top, closeTo(24 + 360 * config.appBarTopPaddingCoeff, 1e-9));
+      expect(updated.appBarPreferredHeight, closeTo(updated.appBarPadding.top + updated.appBarHeight - 24, 1e-9));
+      expect(updated.navBarHeight, closeTo(360 * config.navBarHeightCoeff, 1e-9));
+      expect(updated.navBarBottomMargin, closeTo(34 + 360 * config.navBarBottomPaddingCoeff, 1e-9));
+      expect(updated.navBarScrimHeight, closeTo(updated.navBarBottomMargin + updated.navBarHeight * 0.85, 1e-9));
+      expect(updated.navBarWidth, closeTo(math.min(updated.navBarHeight * 5.5, updated.contentWidth), 1e-9));
     });
 
     test('reacts to AuthBloc emissions', () async {

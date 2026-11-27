@@ -81,11 +81,11 @@ class HomePageLayout extends Equatable {
     return HomePageLayout(
       pagePadding: EdgeInsets.fromLTRB(
         layout.screenEdgePadding,
-        layout.topPadding + layout.screenEdgePadding,
+        layout.pageTopPadding + layout.screenEdgePadding,
         layout.screenEdgePadding,
-        layout.bottomPadding + layout.screenEdgePadding,
+        layout.pageBottomPadding + layout.screenEdgePadding,
       ),
-      topPadding: layout.topPadding,
+      topPadding: layout.pageTopPadding,
       outerWidth: outerWidth,
       outerCornerRadius: math.max(0.0, layout.cornerRadius),
       padding: padding,

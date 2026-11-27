@@ -1,7 +1,9 @@
 import 'package:crabpay/views/custom_ui_elements/utilities/custom_faster_page_scroll_physics.dart';
+import 'package:crabpay/views/main_screen/driver/main_screen_cubit.dart';
 import 'package:crabpay/views/main_screen/view/material/material_app_nav_bar.dart';
 import 'package:crabpay/views/main_screen/view/material/material_main_screen_custom_app_bar.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class MaterialMainScreenView extends StatelessWidget {
@@ -26,8 +28,12 @@ class MaterialMainScreenView extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    final appBarPreferredHeight = context.select<MainScreenCubit, double>(
+      (cubit) => cubit.state.layout.appBarPreferredHeight,
+    );
     return Scaffold(
       appBar: MaterialMainScreenCustomAppBar(
+        height: appBarPreferredHeight,
         onSettingsPressed: onSettingsPressed,
         onOrdersPressed: onOrdersPressed,
         onProfileIconPressed: onProfileIconPressed,

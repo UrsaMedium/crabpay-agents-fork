@@ -56,8 +56,9 @@ class StoreCategoryLayout extends Equatable {
   });
 
   factory StoreCategoryLayout.fromAppLayout(AppLayoutState layout) {
-    final double topPadding = math.max(0.0, layout.topPadding);
-    final double bottomPadding = math.max(0.0, layout.bottomPadding);
+    final double topPadding = math.max(0.0, layout.pageTopPadding);
+    final double bottomPadding = math.max(0.0, layout.pageBottomPadding);
+    final double appBarHeight = math.max(0.0, layout.appBarHeight);
     final double screenEdgePadding = math.max(0.0, layout.screenEdgePadding);
     final double padding = math.max(0.0, layout.standardPadding);
     final double outerWidth = math.max(0.0, layout.width - screenEdgePadding * 2);
@@ -75,7 +76,7 @@ class StoreCategoryLayout extends Equatable {
       ),
       columnHalfGap: padding / 2,
       itemTopSpacing: padding,
-      staggeredFirstItemTopOffset: 60.0,
+      staggeredFirstItemTopOffset: screenEdgePadding + appBarHeight,
       cardWidth: math.max(0.0, (outerWidth - padding) / 2),
       cardCornerRadius: math.max(0.0, layout.cornerRadius),
       searchBarPadding: EdgeInsets.only(top: topPadding + screenEdgePadding, left: screenEdgePadding),

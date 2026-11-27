@@ -130,6 +130,7 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
                 filter: .blur(sigmaX: 12, sigmaY: 12),
                 child: Container(
                   key: _collapsedSearchBarKey,
+                  height: widget.layout.barHeight,
                   color: context.appColorScheme.surfaceContainerHigh.withValues(
                     alpha: highGraphics ? .5 : .97,
                   ),
@@ -162,7 +163,11 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
                           _isUserInputEmpty() ? Icons.search_rounded : Icons.clear_rounded,
                         ),
                         iconSize: widget.layout.searchIconSize,
-                        constraints: BoxConstraints(minWidth: widget.layout.searchIconMinWidth),
+                        padding: EdgeInsets.zero,
+                        constraints: BoxConstraints(
+                          minWidth: widget.layout.searchIconMinWidth,
+                          minHeight: widget.layout.barHeight,
+                        ),
                       ),
                     ],
                   ),

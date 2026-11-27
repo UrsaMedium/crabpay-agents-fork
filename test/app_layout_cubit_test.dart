@@ -40,14 +40,60 @@ void main() {
       expect(AppLayoutState.initial().bottomPadding, 0.0);
     });
 
+    test('derives bar sizes and page paddings from the capped width', () {
+      const AppLayoutConfig config = AppLayoutConfig();
+      final AppLayoutState state = AppLayoutState.fromMetrics(rawWidth: 390, topPadding: 24, bottomPadding: 34, config: config);
+
+      expect(state.appBarHeight, closeTo(390 * config.appBarHeightCoeff, 1e-9));
+      expect(state.appBarTopPadding, closeTo(24 + 390 * config.appBarTopPaddingCoeff, 1e-9));
+      expect(state.navBarHeight, closeTo(390 * config.navBarHeightCoeff, 1e-9));
+      expect(state.navBarBottomPadding, closeTo(34 + 390 * config.navBarBottomPaddingCoeff, 1e-9));
+      expect(state.pageTopPadding, closeTo(state.appBarTopPadding + state.appBarHeight, 1e-9));
+      expect(state.pageBottomPadding, closeTo(state.navBarBottomPadding + state.navBarHeight, 1e-9));
+    });
+
+    test('page safe padding combines edges with bar-aware top and bottom paddings', () {
+      final AppLayoutState state = AppLayoutState.fromMetrics(rawWidth: 390, topPadding: 24, bottomPadding: 34);
+
+      expect(
+        state.pageSafePadding,
+        EdgeInsets.fromLTRB(state.screenEdgePadding, state.pageTopPadding, state.screenEdgePadding, state.pageBottomPadding),
+      );
+    });
+
+    test('clamps negative insets before adding bar offsets', () {
+      const AppLayoutConfig config = AppLayoutConfig();
+      final AppLayoutState state = AppLayoutState.fromMetrics(
+        rawWidth: 1200,
+        topPadding: -10,
+        bottomPadding: -20,
+        config: config,
+      );
+
+      expect(state.appBarTopPadding, closeTo(512 * config.appBarTopPaddingCoeff, 1e-9));
+      expect(state.navBarBottomPadding, closeTo(512 * config.navBarBottomPaddingCoeff, 1e-9));
+    });
+
+    test('initial state includes bar and page paddings', () {
+      const AppLayoutConfig config = AppLayoutConfig();
+      final AppLayoutState state = AppLayoutState.initial(config: config);
+
+      expect(state.appBarHeight, closeTo(config.fallbackWidth * config.appBarHeightCoeff, 1e-9));
+      expect(state.appBarTopPadding, closeTo(config.fallbackWidth * config.appBarTopPaddingCoeff, 1e-9));
+      expect(state.navBarHeight, closeTo(config.fallbackWidth * config.navBarHeightCoeff, 1e-9));
+      expect(state.navBarBottomPadding, closeTo(config.fallbackWidth * config.navBarBottomPaddingCoeff, 1e-9));
+      expect(state.pageTopPadding, closeTo(state.appBarTopPadding + state.appBarHeight, 1e-9));
+      expect(state.pageBottomPadding, closeTo(state.navBarBottomPadding + state.navBarHeight, 1e-9));
+    });
+
     test('clamps widths below the minimum up to minWidth', () {
       const AppLayoutConfig config = AppLayoutConfig();
 
-      expect(config.minWidth, 128.0);
-      expect(AppLayoutState.fromMetrics(rawWidth: 50).width, 128.0);
-      expect(AppLayoutState.fromMetrics(rawWidth: 0).width, 128.0);
-      expect(AppLayoutState.fromMetrics(rawWidth: -10).width, 128.0);
-      expect(AppLayoutState.fromMetrics(rawWidth: 100).standardPadding, closeTo(128 * config.standardPaddingCoeff, 1e-9));
+      expect(config.minWidth, 320.0);
+      expect(AppLayoutState.fromMetrics(rawWidth: 50).width, 320.0);
+      expect(AppLayoutState.fromMetrics(rawWidth: 0).width, 320.0);
+      expect(AppLayoutState.fromMetrics(rawWidth: -10).width, 320.0);
+      expect(AppLayoutState.fromMetrics(rawWidth: 100).standardPadding, closeTo(320 * config.standardPaddingCoeff, 1e-9));
     });
 
     test('inner corner radius stays inside the outer radius', () {
@@ -134,7 +180,7 @@ void main() {
       cubit.updateMetrics(rawWidth: 80);
       await pumpEventQueue();
 
-      expect(cubit.state.width, 128.0);
+      expect(cubit.state.width, 320.0);
       expect(states.length, 1);
 
       cubit.updateMetrics(rawWidth: 100);
@@ -161,6 +207,33 @@ void main() {
 
       expect(cubit.state.width, 512.0);
       expect(cubit.state.bottomPadding, 34.0);
+    });
+
+    test('recalculates bar and page paddings on layout change', () {
+      const AppLayoutConfig config = AppLayoutConfig();
+      double width = 390;
+      double topPadding = 24;
+      double bottomPadding = 34;
+      final AppLayoutCubit cubit = AppLayoutCubit(
+        observeBinding: false,
+        metricsReader: () => (width: width, topPadding: topPadding, bottomPadding: bottomPadding),
+      );
+      addTearDown(cubit.close);
+
+      final double initialPageTop = cubit.state.pageTopPadding;
+      final double initialPageBottom = cubit.state.pageBottomPadding;
+
+      width = 512;
+      topPadding = 0;
+      bottomPadding = 20;
+      cubit.syncFromPlatform();
+
+      expect(cubit.state.pageTopPadding, isNot(initialPageTop));
+      expect(cubit.state.pageBottomPadding, isNot(initialPageBottom));
+      expect(cubit.state.appBarHeight, closeTo(512 * config.appBarHeightCoeff, 1e-9));
+      expect(cubit.state.appBarTopPadding, closeTo(512 * config.appBarTopPaddingCoeff, 1e-9));
+      expect(cubit.state.navBarHeight, closeTo(512 * config.navBarHeightCoeff, 1e-9));
+      expect(cubit.state.navBarBottomPadding, closeTo(20 + 512 * config.navBarBottomPaddingCoeff, 1e-9));
     });
 
     test('stops updating after close', () {

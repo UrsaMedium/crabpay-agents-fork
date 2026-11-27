@@ -32,6 +32,28 @@ class AppLayoutState extends Equatable {
   /// Safe area at the bottom of the screen (home indicator, navigation bar).
   final double bottomPadding;
 
+  /// Height of the in-app top bar, derived from the capped width.
+  final double appBarHeight;
+
+  /// Distance from the top screen edge to the top edge of the in-app bar,
+  /// including the platform safe area.
+  final double appBarTopPadding;
+
+  /// Height of the in-app bottom navigation bar, derived from the capped width.
+  final double navBarHeight;
+
+  /// Distance from the bottom screen edge to the bottom edge of the in-app
+  /// navigation bar, including the platform safe area.
+  final double navBarBottomPadding;
+
+  /// Top padding a page needs so its content clears both the system status bar
+  /// and the in-app top bar.
+  final double pageTopPadding;
+
+  /// Bottom padding a page needs so its content clears both the in-app
+  /// navigation bar and the system navigation bar.
+  final double pageBottomPadding;
+
   const AppLayoutState({
     required this.width,
     required this.standardPadding,
@@ -44,6 +66,12 @@ class AppLayoutState extends Equatable {
     required this.largeFontSize,
     required this.topPadding,
     required this.bottomPadding,
+    required this.appBarHeight,
+    required this.appBarTopPadding,
+    required this.navBarHeight,
+    required this.navBarBottomPadding,
+    required this.pageTopPadding,
+    required this.pageBottomPadding,
   });
 
   /// Builds a state from a raw width and the platform safe area insets.
@@ -57,6 +85,13 @@ class AppLayoutState extends Equatable {
     AppLayoutConfig config = const AppLayoutConfig(),
   }) {
     final double safeWidth = rawWidth.isFinite ? rawWidth.clamp(config.minWidth, config.maxWidth).toDouble() : config.minWidth;
+    final double safeTopPadding = topPadding > 0 ? topPadding : 0.0;
+    final double safeBottomPadding = bottomPadding > 0 ? bottomPadding : 0.0;
+
+    final double appBarHeight = safeWidth * config.appBarHeightCoeff;
+    final double appBarTopPadding = safeTopPadding + safeWidth * config.appBarTopPaddingCoeff;
+    final double navBarHeight = safeWidth * config.navBarHeightCoeff;
+    final double navBarBottomPadding = safeBottomPadding + safeWidth * config.navBarBottomPaddingCoeff;
 
     return AppLayoutState(
       width: safeWidth,
@@ -68,8 +103,14 @@ class AppLayoutState extends Equatable {
       mediumFontSize: safeWidth * config.mediumFontCoeff,
       bigFontSize: safeWidth * config.bigFontCoeff,
       largeFontSize: safeWidth * config.largeFontCoeff,
-      topPadding: topPadding > 0 ? topPadding : 0.0,
-      bottomPadding: bottomPadding > 0 ? bottomPadding : 0.0,
+      topPadding: safeTopPadding,
+      bottomPadding: safeBottomPadding,
+      appBarHeight: appBarHeight,
+      appBarTopPadding: appBarTopPadding,
+      navBarHeight: navBarHeight,
+      navBarBottomPadding: navBarBottomPadding,
+      pageTopPadding: appBarTopPadding + appBarHeight,
+      pageBottomPadding: navBarBottomPadding + navBarHeight,
     );
   }
 
@@ -85,6 +126,12 @@ class AppLayoutState extends Equatable {
   /// Screen edge padding combined with the platform safe area insets.
   EdgeInsets get screenSafePadding {
     return EdgeInsets.fromLTRB(screenEdgePadding, topPadding, screenEdgePadding, bottomPadding);
+  }
+
+  /// Screen edge padding combined with the in-app bar and platform safe area
+  /// insets, so page content never slides under the bars.
+  EdgeInsets get pageSafePadding {
+    return EdgeInsets.fromLTRB(screenEdgePadding, pageTopPadding, screenEdgePadding, pageBottomPadding);
   }
 
   BorderRadius get borderRadius => BorderRadius.circular(cornerRadius);
@@ -109,5 +156,11 @@ class AppLayoutState extends Equatable {
     largeFontSize,
     topPadding,
     bottomPadding,
+    appBarHeight,
+    appBarTopPadding,
+    navBarHeight,
+    navBarBottomPadding,
+    pageTopPadding,
+    pageBottomPadding,
   ];
 }

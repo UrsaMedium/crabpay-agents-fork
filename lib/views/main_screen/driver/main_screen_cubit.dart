@@ -34,12 +34,19 @@ class MainScreenLayout extends Equatable {
   /// Height of the gradient scrim behind the app bar.
   final double appBarScrimHeight;
 
+  /// Height the [Scaffold] must reserve for the app bar, excluding the top
+  /// system inset, so a scaled bar is never clipped.
+  final double appBarPreferredHeight;
+
   /// Inset of the app bar title from the bar's left edge.
   final EdgeInsets appBarTitlePadding;
 
   /// Gap between the last app bar action and the bar's right edge.
   final double appBarTrailingGap;
   final double appBarTitleFontSize;
+
+  /// Size of the app bar action icons, scaled with the bar height.
+  final double appBarIconSize;
 
   /// Width of the floating bottom navigation bar.
   final double navBarWidth;
@@ -72,9 +79,11 @@ class MainScreenLayout extends Equatable {
     required this.appBarCornerRadius,
     required this.appBarPadding,
     required this.appBarScrimHeight,
+    required this.appBarPreferredHeight,
     required this.appBarTitlePadding,
     required this.appBarTrailingGap,
     required this.appBarTitleFontSize,
+    required this.appBarIconSize,
     required this.navBarWidth,
     required this.navBarHeight,
     required this.navBarCornerRadius,
@@ -95,10 +104,13 @@ class MainScreenLayout extends Equatable {
 
     final double contentWidth = math.max(0.0, layout.width - screenEdgePadding * 2);
     final double appBarWidth = math.max(0.0, layout.width - standardPadding * 2);
-    final double appBarHeight = 48.0;
-    final double navBarWidth = math.min(308.0, contentWidth);
-    final double navBarHeight = 56.0;
-    final double navBarIndicatorInset = 4.0;
+    final double appBarHeight = math.max(0.0, layout.appBarHeight);
+    final double appBarTopPadding = math.max(0.0, layout.appBarTopPadding);
+    final double appBarScrimHeight = appBarTopPadding * 2;
+    final double navBarHeight = math.max(0.0, layout.navBarHeight);
+    final double navBarBottomMargin = math.max(0.0, layout.navBarBottomPadding);
+    final double navBarWidth = math.min(navBarHeight * 5.5, contentWidth);
+    final double navBarIndicatorInset = (navBarHeight * 0.07).clamp(3.0, 6.0).toDouble();
 
     return MainScreenLayout(
       topPadding: topPadding,
@@ -107,20 +119,22 @@ class MainScreenLayout extends Equatable {
       appBarWidth: appBarWidth,
       appBarHeight: appBarHeight,
       appBarCornerRadius: appBarHeight / 2,
-      appBarPadding: EdgeInsets.only(top: topPadding + 2, left: standardPadding, right: standardPadding),
-      appBarScrimHeight: topPadding * 2 + 4,
+      appBarPadding: EdgeInsets.only(top: appBarTopPadding, left: standardPadding, right: standardPadding),
+      appBarScrimHeight: appBarScrimHeight,
+      appBarPreferredHeight: math.max(0.0, math.max(layout.pageTopPadding, appBarScrimHeight) - topPadding),
       appBarTitlePadding: EdgeInsets.only(left: screenEdgePadding),
       appBarTrailingGap: standardPadding,
       appBarTitleFontSize: layout.largeFontSize.clamp(18.0, 26.0).toDouble(),
+      appBarIconSize: (appBarHeight * 0.5).clamp(20.0, 28.0).toDouble(),
       navBarWidth: navBarWidth,
       navBarHeight: navBarHeight,
       navBarCornerRadius: navBarHeight / 2,
-      navBarBottomMargin: bottomPadding + standardPadding,
-      navBarScrimHeight: 54.0 + bottomPadding,
+      navBarBottomMargin: navBarBottomMargin,
+      navBarScrimHeight: navBarBottomMargin + navBarHeight * 0.85,
       navBarIndicatorInset: navBarIndicatorInset,
       navBarIndicatorCornerRadius: math.max(0.0, navBarHeight / 2 - navBarIndicatorInset),
       navBarItemWidth: navBarWidth / 4,
-      navBarItemIconSize: 28.0,
+      navBarItemIconSize: (navBarHeight * 0.5).clamp(22.0, 32.0).toDouble(),
       navBarContentTopPadding: 3.0,
     );
   }
@@ -135,9 +149,11 @@ class MainScreenLayout extends Equatable {
     appBarCornerRadius,
     appBarPadding,
     appBarScrimHeight,
+    appBarPreferredHeight,
     appBarTitlePadding,
     appBarTrailingGap,
     appBarTitleFontSize,
+    appBarIconSize,
     navBarWidth,
     navBarHeight,
     navBarCornerRadius,

@@ -11,7 +11,9 @@ class MaterialHomePageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final layout = context.read<HomePageCubit>().state.layout;
+    final layout = context.select<HomePageCubit, HomePageLayout>(
+      (cubit) => cubit.state.layout,
+    );
 
     return RefreshIndicator(
       edgeOffset: layout.topPadding,

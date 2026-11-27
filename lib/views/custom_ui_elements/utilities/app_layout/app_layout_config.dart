@@ -29,6 +29,18 @@ class AppLayoutConfig {
   final double bigFontCoeff;
   final double largeFontCoeff;
 
+  /// Height of the in-app top bar.
+  final double appBarHeightCoeff;
+
+  /// Gap between the top system inset and the in-app top bar.
+  final double appBarTopPaddingCoeff;
+
+  /// Height of the in-app bottom navigation bar.
+  final double navBarHeightCoeff;
+
+  /// Gap between the in-app bottom navigation bar and the bottom system inset.
+  final double navBarBottomPaddingCoeff;
+
   const AppLayoutConfig({
     this.minWidth = 320.0,
     this.maxWidth = 512.0,
@@ -41,5 +53,9 @@ class AppLayoutConfig {
     this.mediumFontCoeff = 0.036,
     this.bigFontCoeff = 0.045,
     this.largeFontCoeff = 0.056,
+    this.appBarHeightCoeff = 0.123,
+    this.appBarTopPaddingCoeff = 0.005,
+    this.navBarHeightCoeff = 0.144,
+    this.navBarBottomPaddingCoeff = 0.02,
   });
 }

@@ -139,21 +139,45 @@ class MaterialMainScreenCustomAppBar extends StatelessWidget implements Preferre
                             IconButton(
                               onPressed: onSettingsPressed,
                               icon: Icon(Icons.settings),
+                              iconSize: layout.appBarIconSize,
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(
+                                minWidth: layout.appBarHeight,
+                                minHeight: layout.appBarHeight,
+                              ),
                             ),
                             if (isLoggedIn)
                               IconButton(
                                 onPressed: onOrdersPressed,
                                 icon: Icon(Icons.cases_rounded),
+                                iconSize: layout.appBarIconSize,
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(
+                                  minWidth: layout.appBarHeight,
+                                  minHeight: layout.appBarHeight,
+                                ),
                               ),
                             isLoggedIn
                                 ? IconButton(
                                     onPressed: onProfileIconPressed,
                                     icon: Icon(Icons.account_circle_rounded),
+                                    iconSize: layout.appBarIconSize,
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(
+                                      minWidth: layout.appBarHeight,
+                                      minHeight: layout.appBarHeight,
+                                    ),
                                   )
                                 : IconButton(
                                     key: profileIconButtonKey,
                                     onPressed: onProfileIconPressed,
                                     icon: Icon(Icons.account_circle_outlined),
+                                    iconSize: layout.appBarIconSize,
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(
+                                      minWidth: layout.appBarHeight,
+                                      minHeight: layout.appBarHeight,
+                                    ),
                                   ),
                             SizedBox(width: layout.appBarTrailingGap),
                           ],

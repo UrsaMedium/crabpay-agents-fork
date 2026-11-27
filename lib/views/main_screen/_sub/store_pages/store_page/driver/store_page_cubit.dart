@@ -78,8 +78,9 @@ class StorePageLayout extends Equatable {
   });
 
   factory StorePageLayout.fromAppLayout(AppLayoutState layout) {
-    final double topPadding = math.max(0.0, layout.topPadding);
-    final double bottomPadding = math.max(0.0, layout.bottomPadding);
+    final double topPadding = math.max(0.0, layout.pageTopPadding);
+    final double bottomPadding = math.max(0.0, layout.pageBottomPadding);
+    final double appBarHeight = math.max(0.0, layout.appBarHeight);
     final double screenEdgePadding = math.max(0.0, layout.screenEdgePadding);
     final double padding = math.max(0.0, layout.standardPadding);
     final double outerWidth = math.max(0.0, layout.width - screenEdgePadding * 2);
@@ -93,8 +94,8 @@ class StorePageLayout extends Equatable {
       outerCornerRadius: outerCornerRadius,
       padding: padding,
       listHorizontalPadding: EdgeInsets.symmetric(horizontal: screenEdgePadding),
-      listTopSpacerHeight: topPadding + 100.0,
-      listBottomSpacerHeight: bottomPadding + 72.0,
+      listTopSpacerHeight: topPadding + appBarHeight + padding * 2,
+      listBottomSpacerHeight: bottomPadding + padding,
       searchBarPadding: EdgeInsets.only(top: topPadding + padding, left: screenEdgePadding),
       categoryCardMargin: EdgeInsets.only(bottom: screenEdgePadding * 2),
       categoryHeaderPadding: EdgeInsets.only(left: screenEdgePadding, right: screenEdgePadding, top: padding),
