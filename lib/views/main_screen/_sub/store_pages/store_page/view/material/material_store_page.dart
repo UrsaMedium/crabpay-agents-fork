@@ -22,42 +22,43 @@ class MaterialStorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final layout = context.select<StorePageCubit, StorePageLayout>(
+      (cubit) => cubit.state.layout,
+    );
     return Center(
       child: SizedBox(
-        width: context.read<StorePageCubit>().state.containerWidth,
+        width: layout.pageWidth,
         child: Scaffold(
           body: Stack(
             alignment: .topRight,
             children: [
               RefreshIndicator(
-                edgeOffset: MediaQuery.paddingOf(context).top,
+                edgeOffset: layout.topPadding,
                 onRefresh: reFresher,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: layout.listHorizontalPadding,
                   child: CustomScrollView(
                     slivers: [
-                      SliverPadding(
-                        padding: .only(
-                          top: 44,
-                          bottom: MediaQuery.paddingOf(context).bottom + 56,
-                        ),
+                      SliverToBoxAdapter(
+                        child: SizedBox(height: layout.listTopSpacerHeight),
                       ),
                       SliverList.builder(
                         itemCount: 2,
                         itemBuilder: (context, index) => _CategoryCard(
                           index: index,
+                          layout: layout,
                           onCategoryViewOpen: (tag) => onCategoryViewOpen(tag),
                         ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: SizedBox(height: layout.listBottomSpacerHeight),
                       ),
                     ],
                   ),
                 ),
               ),
               Padding(
-                padding: .only(
-                  top: MediaQuery.paddingOf(context).top + 8,
-                  left: 16,
-                ),
+                padding: layout.searchBarPadding,
                 child: MaterialStoreSearchBarDriver(
                   products: context.read<DatabaseBloc>().state.products ?? [],
                   onSearchSubmitedCallBack: (prdcts) => onSearchSubmitedCallBack(prdcts),
@@ -74,7 +75,8 @@ class MaterialStorePage extends StatelessWidget {
 class _CategoryCard extends StatelessWidget {
   final Function(String) onCategoryViewOpen;
   final int index;
-  const _CategoryCard({required this.index, required this.onCategoryViewOpen});
+  final StorePageLayout layout;
+  const _CategoryCard({required this.index, required this.layout, required this.onCategoryViewOpen});
 
   @override
   Widget build(BuildContext context) {
@@ -92,21 +94,21 @@ class _CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => onCategoryViewOpen(subTag),
       child: Card(
-        margin: .only(bottom: 32),
-        shape: RoundedRectangleBorder(borderRadius: .circular(context.read<StorePageCubit>().state.outerCornerRadius)),
+        margin: layout.categoryCardMargin,
+        shape: RoundedRectangleBorder(borderRadius: .circular(layout.outerCornerRadius)),
         surfaceTintColor: context.appColorScheme.primary,
         color: context.appColorScheme.surfaceContainerHigh,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+              padding: layout.categoryHeaderPadding,
               child: Row(
                 children: [
                   Text(
                     index == 0 ? context.l10n.mobileGames : context.l10n.services,
                     style: TextStyle(
                       color: context.appColorScheme.secondary,
-                      fontSize: 20,
+                      fontSize: layout.categoryTitleFontSize,
                       fontWeight: .bold,
                     ),
                   ),
@@ -115,13 +117,10 @@ class _CategoryCard extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: context.read<StorePageCubit>().state.containerWidth * 1.6 / 8,
-              width: MediaQuery.widthOf(context) - 32,
+              height: layout.categoryCarouselHeight,
+              width: layout.outerWidth,
               child: Padding(
-                padding: .symmetric(
-                  vertical: context.read<StorePageCubit>().state.outerCornerRadius / 3,
-                  horizontal: context.read<StorePageCubit>().state.outerCornerRadius / 3,
-                ),
+                padding: layout.categoryCarouselPadding,
                 child: Stack(
                   alignment: .bottomEnd,
                   children: [
@@ -131,17 +130,14 @@ class _CategoryCard extends StatelessWidget {
                       itemBuilder: (context, index) => ProductCardSmallDriver(
                         product: products[index],
                         tag: subTag,
-                        width: context.read<StorePageCubit>().state.containerWidth / 8,
+                        width: layout.categoryProductWidth,
                         // cornerRadius: 4,
                         padding: 0,
-                        margin: 2,
+                        margin: layout.categoryProductMargin,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 2,
-                      ),
+                      padding: layout.categoryMoreButtonOuterPadding,
                       child: Row(
                         children: [
                           Spacer(),
@@ -150,7 +146,7 @@ class _CategoryCard extends StatelessWidget {
                             createRectTween: (begin, end) => MaterialRectArcTween(begin: begin, end: end),
                             child: Material(
                               color: Colors.transparent,
-                              borderRadius: .circular(24),
+                              borderRadius: .circular(layout.categoryMoreButtonCornerRadius),
                               clipBehavior: .antiAlias,
                               child: BackdropFilter(
                                 enabled: highGraphics,
@@ -164,14 +160,11 @@ class _CategoryCard extends StatelessWidget {
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 8,
-                                      ),
+                                      padding: layout.categoryMoreButtonPadding,
                                       child: Text(
                                         context.l10n.more,
                                         style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: layout.categoryMoreButtonFontSize,
                                           color: context.appColorScheme.onSecondaryContainer,
                                         ),
                                       ),

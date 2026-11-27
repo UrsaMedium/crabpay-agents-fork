@@ -1,11 +1,140 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_state.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+/// Every layout value the store page needs, derived once per layout sync so the
+/// views can render them without any arithmetic.
+@immutable
+class StorePageLayout extends Equatable {
+  /// Platform safe area at the top of the screen.
+  final double topPadding;
+
+  /// Platform safe area at the bottom of the screen.
+  final double bottomPadding;
+
+  /// Full page width, capped by the app layout.
+  final double pageWidth;
+
+  /// Width of the centered content column.
+  final double outerWidth;
+  final double outerCornerRadius;
+
+  /// Inner content padding.
+  final double padding;
+
+  /// Horizontal padding of the product list.
+  final EdgeInsets listHorizontalPadding;
+
+  /// Empty space above the first card so it clears the app bar and search bar.
+  final double listTopSpacerHeight;
+
+  /// Empty space below the last card so it clears the bottom nav bar.
+  final double listBottomSpacerHeight;
+
+  /// Placement of the floating search bar.
+  final EdgeInsets searchBarPadding;
+
+  final EdgeInsets categoryCardMargin;
+  final EdgeInsets categoryHeaderPadding;
+  final double categoryTitleFontSize;
+  final double categoryCarouselHeight;
+  final EdgeInsets categoryCarouselPadding;
+  final double categoryProductWidth;
+  final double categoryProductMargin;
+  final EdgeInsets categoryMoreButtonOuterPadding;
+  final EdgeInsets categoryMoreButtonPadding;
+  final double categoryMoreButtonCornerRadius;
+  final double categoryMoreButtonFontSize;
+
+  const StorePageLayout({
+    required this.topPadding,
+    required this.bottomPadding,
+    required this.pageWidth,
+    required this.outerWidth,
+    required this.outerCornerRadius,
+    required this.padding,
+    required this.listHorizontalPadding,
+    required this.listTopSpacerHeight,
+    required this.listBottomSpacerHeight,
+    required this.searchBarPadding,
+    required this.categoryCardMargin,
+    required this.categoryHeaderPadding,
+    required this.categoryTitleFontSize,
+    required this.categoryCarouselHeight,
+    required this.categoryCarouselPadding,
+    required this.categoryProductWidth,
+    required this.categoryProductMargin,
+    required this.categoryMoreButtonOuterPadding,
+    required this.categoryMoreButtonPadding,
+    required this.categoryMoreButtonCornerRadius,
+    required this.categoryMoreButtonFontSize,
+  });
+
+  factory StorePageLayout.fromAppLayout(AppLayoutState layout) {
+    final double topPadding = math.max(0.0, layout.topPadding);
+    final double bottomPadding = math.max(0.0, layout.bottomPadding);
+    final double screenEdgePadding = math.max(0.0, layout.screenEdgePadding);
+    final double padding = math.max(0.0, layout.standardPadding);
+    final double outerWidth = math.max(0.0, layout.width - screenEdgePadding * 2);
+    final double outerCornerRadius = math.max(0.0, layout.cornerRadius);
+
+    return StorePageLayout(
+      topPadding: topPadding,
+      bottomPadding: bottomPadding,
+      pageWidth: math.max(0.0, layout.width),
+      outerWidth: outerWidth,
+      outerCornerRadius: outerCornerRadius,
+      padding: padding,
+      listHorizontalPadding: EdgeInsets.symmetric(horizontal: screenEdgePadding),
+      listTopSpacerHeight: topPadding + 100.0,
+      listBottomSpacerHeight: bottomPadding + 72.0,
+      searchBarPadding: EdgeInsets.only(top: topPadding + padding, left: screenEdgePadding),
+      categoryCardMargin: EdgeInsets.only(bottom: screenEdgePadding * 2),
+      categoryHeaderPadding: EdgeInsets.only(left: screenEdgePadding, right: screenEdgePadding, top: padding),
+      categoryTitleFontSize: layout.bigFontSize.clamp(16.0, 22.0).toDouble(),
+      categoryCarouselHeight: outerWidth * 1.6 / 8,
+      categoryCarouselPadding: EdgeInsets.all(outerCornerRadius / 3),
+      categoryProductWidth: outerWidth / 8,
+      categoryProductMargin: 2.0,
+      categoryMoreButtonOuterPadding: EdgeInsets.symmetric(horizontal: padding, vertical: 2.0),
+      categoryMoreButtonPadding: EdgeInsets.symmetric(horizontal: screenEdgePadding, vertical: padding),
+      categoryMoreButtonCornerRadius: 24.0,
+      categoryMoreButtonFontSize: layout.mediumFontSize.clamp(14.0, 18.0).toDouble(),
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    topPadding,
+    bottomPadding,
+    pageWidth,
+    outerWidth,
+    outerCornerRadius,
+    padding,
+    listHorizontalPadding,
+    listTopSpacerHeight,
+    listBottomSpacerHeight,
+    searchBarPadding,
+    categoryCardMargin,
+    categoryHeaderPadding,
+    categoryTitleFontSize,
+    categoryCarouselHeight,
+    categoryCarouselPadding,
+    categoryProductWidth,
+    categoryProductMargin,
+    categoryMoreButtonOuterPadding,
+    categoryMoreButtonPadding,
+    categoryMoreButtonCornerRadius,
+    categoryMoreButtonFontSize,
+  ];
+}
 
 @immutable
 class StorePageState extends Equatable {
@@ -14,9 +143,7 @@ class StorePageState extends Equatable {
   final List<Product>? filterdProductList;
   final List<Product>? products;
   final List<Product>? productsToShow;
-  final double outerCornerRadius;
-  final double containerWidth;
-  final double containerPadding;
+  final StorePageLayout layout;
 
   const StorePageState({
     this.filterdProductList,
@@ -24,10 +151,13 @@ class StorePageState extends Equatable {
     this.productsToShow,
     this.isHeroFlies = false,
     this.whoFlies,
-    this.outerCornerRadius = 16,
-    this.containerWidth = 600,
-    this.containerPadding = 8,
+    required this.layout,
   });
+
+  /// Builds the state with every derived layout value from [layout].
+  factory StorePageState.fromLayout(AppLayoutState layout) => StorePageState(
+    layout: StorePageLayout.fromAppLayout(layout),
+  );
 
   StorePageState copyWith({
     List<Product>? filterdProductList,
@@ -35,9 +165,7 @@ class StorePageState extends Equatable {
     List<Product>? productsToShow,
     bool? isHeroFlies,
     String? whoFlies,
-    double? outerCornerRadius,
-    double? containerWidth,
-    double? containerPadding,
+    StorePageLayout? layout,
   }) {
     return StorePageState(
       filterdProductList: filterdProductList ?? this.filterdProductList,
@@ -49,9 +177,7 @@ class StorePageState extends Equatable {
           : whoFlies.isEmpty
           ? null
           : whoFlies,
-      containerWidth: containerWidth ?? this.containerWidth,
-      outerCornerRadius: outerCornerRadius ?? this.outerCornerRadius,
-      containerPadding: containerPadding ?? this.containerPadding,
+      layout: layout ?? this.layout,
     );
   }
 
@@ -62,16 +188,19 @@ class StorePageState extends Equatable {
     productsToShow,
     isHeroFlies,
     whoFlies,
-    outerCornerRadius,
-    containerWidth,
-    containerPadding,
+    layout,
   ];
 }
 
 class StorePageCubit extends Cubit<StorePageState> {
   final DatabaseBloc _dbBloc;
+  final AppLayoutCubit _appLayoutCubit;
   late final StreamSubscription _dbSubscription;
-  StorePageCubit({required DatabaseBloc dbBLoc}) : _dbBloc = dbBLoc, super(StorePageState()) {
+  late final StreamSubscription _layoutSubscription;
+  StorePageCubit({required DatabaseBloc dbBLoc, required AppLayoutCubit layoutCubit})
+    : _dbBloc = dbBLoc,
+      _appLayoutCubit = layoutCubit,
+      super(StorePageState.fromLayout(layoutCubit.state)) {
     final prdtcs = dbBLoc.state.products;
     emit(state.copyWith(products: prdtcs, productsToShow: prdtcs));
     _dbSubscription = _dbBloc.stream.listen((dbState) {
@@ -84,7 +213,14 @@ class StorePageCubit extends Cubit<StorePageState> {
         );
       }
     });
+    _layoutSubscription = _appLayoutCubit.stream.listen(
+      (layoutState) => _syncLayout(layoutState),
+    );
   }
+
+  void _syncLayout(AppLayoutState layout) => emit(
+    state.copyWith(layout: StorePageLayout.fromAppLayout(layout)),
+  );
 
   void setFilteredList(List<Product> filteredList) {
     if (filteredList.isEmpty) {
@@ -102,20 +238,10 @@ class StorePageCubit extends Cubit<StorePageState> {
     emit(state.copyWith(isHeroFlies: false, whoFlies: ''));
   }
 
-  void setLayouts({required double containerWidth}) {
-    double width = containerWidth < 600 ? containerWidth : 600;
-    emit(
-      state.copyWith(
-        containerWidth: width,
-        outerCornerRadius: width * .05,
-        containerPadding: width * .02,
-      ),
-    );
-  }
-
   @override
   Future<void> close() {
     _dbSubscription.cancel();
+    _layoutSubscription.cancel();
     return super.close();
   }
 }

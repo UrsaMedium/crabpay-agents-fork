@@ -5,6 +5,7 @@ import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_mo
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_event.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_state.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/driver/store_page_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/view/material/material_store_page.dart';
 import 'package:flutter/widgets.dart';
@@ -27,16 +28,17 @@ class _StorePageDriverState extends State<StorePageDriver> with AutomaticKeepAli
 
   @override
   void initState() {
-    _storePageCubit = StorePageCubit(dbBLoc: context.read<DatabaseBloc>());
+    _storePageCubit = StorePageCubit(
+      dbBLoc: context.read<DatabaseBloc>(),
+      layoutCubit: context.read<AppLayoutCubit>(),
+    );
     super.initState();
   }
 
   @override
-  void didChangeDependencies() {
-    _storePageCubit.setLayouts(
-      containerWidth: MediaQuery.widthOf(context) - 32,
-    );
-    super.didChangeDependencies();
+  void dispose() {
+    _storePageCubit.close();
+    super.dispose();
   }
 
   Future<void> _reFresher(BuildContext context) async {
@@ -72,23 +74,14 @@ class _StorePageDriverState extends State<StorePageDriver> with AutomaticKeepAli
         value: _storePageCubit,
         child: Builder(
           builder: (context) {
+            context.select<StorePageCubit, StorePageLayout>(
+              (cubit) => cubit.state.layout,
+            );
             return MaterialStorePage(
               reFresher: () => _reFresher(context),
               onCategoryViewOpen: (tag) => _onCategoryViewOpen(context, tag),
               onSearchSubmitedCallBack: (p0) => _onSearchSubmitedCallBack(p0),
             );
-            // if (newPage) {
-            //   return MaterialStorePage(
-            //     reFresher: () => _reFresher(context),
-            //     onCategoryViewOpen: (tag) => _onCategoryViewOpen(context, tag),
-            //     onSearchSubmitedCallBack: (p0) => _onSearchSubmitedCallBack(p0),
-            //   );
-            // }
-
-            // return MaterialStorePageOG(
-            //   reFresher: () => _reFresher(context),
-            //   onSearchSubmitedCallBack: _onSearchSubmitedCallBack,
-            // );
           },
         ),
       ),

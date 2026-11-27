@@ -2,12 +2,14 @@ import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_mo
 import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
 import 'package:crabpay/core/global_graphic_driver.dart';
+import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/_sub/store_page_search/driver/store_search_bar_cubit.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialStoreSearchBarView extends StatefulWidget {
   final TextEditingController controller;
   final List<Product> products;
+  final StoreSearchBarLayout layout;
   final bool isSearchOpen;
   final VoidCallback onOpenSearch;
   final VoidCallback onClear;
@@ -18,6 +20,7 @@ class MaterialStoreSearchBarView extends StatefulWidget {
     super.key,
     required this.controller,
     required this.products,
+    required this.layout,
     required this.isSearchOpen,
     required this.onOpenSearch,
     required this.onClear,
@@ -113,13 +116,13 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
       _extractPositions();
     });
     return Padding(
-      padding: EdgeInsets.only(right: 16),
+      padding: EdgeInsets.only(right: widget.layout.collapsedRightPadding),
       child: GestureDetector(
         onTap: widget.onOpenSearch,
         child: Stack(
           children: [
             Material(
-              borderRadius: .circular(30),
+              borderRadius: .circular(widget.layout.barCornerRadius),
               clipBehavior: .antiAlias,
               color: Colors.transparent,
               child: BackdropFilter(
@@ -134,11 +137,11 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
                     mainAxisSize: .min,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 2.0),
+                        padding: EdgeInsets.only(right: widget.layout.collapsedTextRightPadding),
                         child: Container(
-                          margin: .only(left: 16),
+                          margin: .only(left: widget.layout.collapsedTextLeftMargin),
                           constraints: BoxConstraints(
-                            maxWidth: MediaQuery.widthOf(context) / 2 - 12 - 98,
+                            maxWidth: widget.layout.collapsedTextMaxWidth,
                           ),
                           child: Text(
                             maxLines: 1,
@@ -158,8 +161,8 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
                         icon: Icon(
                           _isUserInputEmpty() ? Icons.search_rounded : Icons.clear_rounded,
                         ),
-                        iconSize: 30,
-                        constraints: const BoxConstraints(minWidth: 32),
+                        iconSize: widget.layout.searchIconSize,
+                        constraints: BoxConstraints(minWidth: widget.layout.searchIconMinWidth),
                       ),
                     ],
                   ),
@@ -184,7 +187,7 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
                     width: _collapsedSearchBarSize!.width,
                     height: _collapsedSearchBarSize!.height,
                     decoration: BoxDecoration(
-                      borderRadius: .circular(30),
+                      borderRadius: .circular(widget.layout.barCornerRadius),
                       border: .all(color: Colors.white),
                     ),
                   ),
@@ -199,10 +202,10 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
   Widget _expandedSearchBar(BuildContext context) {
     double transparenvyLevel = .96;
     return Padding(
-      padding: const EdgeInsets.only(right: 32),
+      padding: EdgeInsets.only(right: widget.layout.expandedRightPadding),
       child: Container(
-        width: MediaQuery.sizeOf(context).width - 64,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
+        width: widget.layout.expandedWidth,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(widget.layout.barCornerRadius)),
         child: SearchAnchor.bar(
           searchController: _materialSearchController,
           suggestionsBuilder: (context, controller) {
@@ -238,8 +241,8 @@ class _MaterialStoreSearchBarViewState extends State<MaterialStoreSearchBarView>
           ),
           viewBackgroundColor: context.appColorScheme.surfaceContainerHigh.withValues(alpha: transparenvyLevel),
           viewConstraints: BoxConstraints(
-            maxWidth: MediaQuery.sizeOf(context).width - 64,
-            maxHeight: 314,
+            maxWidth: widget.layout.expandedWidth,
+            maxHeight: widget.layout.suggestionsMaxHeight,
           ),
         ),
       ),

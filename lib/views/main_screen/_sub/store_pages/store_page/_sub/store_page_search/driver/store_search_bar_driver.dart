@@ -1,9 +1,12 @@
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
 import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/utilities.dart';
+import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
+import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/_sub/store_page_search/driver/store_search_bar_cubit.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/_sub/store_page_search/material_store_search_bar_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_detection/keyboard_detection.dart';
 
 class MaterialStoreSearchBarDriver extends StatefulWidget {
@@ -22,6 +25,7 @@ class MaterialStoreSearchBarDriver extends StatefulWidget {
 class _MaterialStoreSearchBarDriverState extends State<MaterialStoreSearchBarDriver> {
   late KeyboardDetectionController _keyboardDetectionController;
   late final TextEditingController _universalController;
+  late final StoreSearchBarCubit _searchBarCubit;
   KeyboardState _keyboardState = KeyboardState.hidden;
   bool _keyBoardEventCanBeTriggered = false;
   bool _isSearchOpen = false;
@@ -29,6 +33,7 @@ class _MaterialStoreSearchBarDriverState extends State<MaterialStoreSearchBarDri
   @override
   void initState() {
     _universalController = TextEditingController();
+    _searchBarCubit = StoreSearchBarCubit(layoutCubit: context.read<AppLayoutCubit>());
     _keyboardDetectionController = KeyboardDetectionController(
       onChanged: (state) => _keyboardState = state,
     );
@@ -50,6 +55,7 @@ class _MaterialStoreSearchBarDriverState extends State<MaterialStoreSearchBarDri
   @override
   void dispose() {
     _universalController.dispose();
+    _searchBarCubit.close();
     super.dispose();
   }
 
@@ -105,16 +111,27 @@ class _MaterialStoreSearchBarDriverState extends State<MaterialStoreSearchBarDri
       //  Return CupertinoStoreSearchBarView(...)
     }
 
-    return KeyboardDetection(
-      controller: _keyboardDetectionController,
-      child: MaterialStoreSearchBarView(
-        controller: _universalController,
-        products: widget.products,
-        isSearchOpen: _isSearchOpen,
-        onOpenSearch: _onOpenSearch,
-        onClear: _onClear,
-        onSubmitted: _onSubmitted,
-        onProductSelected: (product, tag) => _onProductSelected(context, product, tag),
+    return BlocProvider.value(
+      value: _searchBarCubit,
+      child: Builder(
+        builder: (context) {
+          final layout = context.select<StoreSearchBarCubit, StoreSearchBarLayout>(
+            (cubit) => cubit.state.layout,
+          );
+          return KeyboardDetection(
+            controller: _keyboardDetectionController,
+            child: MaterialStoreSearchBarView(
+              controller: _universalController,
+              products: widget.products,
+              layout: layout,
+              isSearchOpen: _isSearchOpen,
+              onOpenSearch: _onOpenSearch,
+              onClear: _onClear,
+              onSubmitted: _onSubmitted,
+              onProductSelected: (product, tag) => _onProductSelected(context, product, tag),
+            ),
+          );
+        },
       ),
     );
   }
