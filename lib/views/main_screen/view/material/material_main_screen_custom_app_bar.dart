@@ -103,7 +103,7 @@ class MaterialMainScreenCustomAppBar extends StatelessWidget implements Preferre
                       ),
                     ),
                   ),
-                  !connectionStatus
+                  connectionStatus
                       ? Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: layout.appBarTrailingGap),
