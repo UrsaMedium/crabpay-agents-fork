@@ -141,9 +141,6 @@ class _MainScreenDriverState extends State<MainScreenDriver> {
         },
         child: Builder(
           builder: (context) {
-            context.select<MainScreenCubit, MainScreenLayout>(
-              (cubit) => cubit.state.layout,
-            );
             if (defaultTargetPlatform == TargetPlatform.iOS) {
               // cupertino
             }
