@@ -2,8 +2,6 @@ import 'package:crabpay/core/backend/admin/admin_database/admin_db_inner_circle/
 import 'package:crabpay/core/backend/admin/admin_database/admin_db_inner_circle/admin_database_bloc/admin_database_event.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_fields_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
-import 'package:crabpay/core/backend/logger/logger_outer_handler/outer_logger_handler.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/views/main_screen/_sub/admin_views/add_complete_product_and_field_data/bloc/admin_event.dart';
 import 'package:crabpay/views/main_screen/_sub/admin_views/add_complete_product_and_field_data/bloc/admin_state.dart';
 import 'package:crabpay/views/main_screen/_sub/admin_views/add_complete_product_and_field_data/s3_price_space_filling/data_and_widgets_preperation.dart';
@@ -61,10 +59,6 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     });
 
     on<AdminEventPushProductEmidiatly>((event, emit) {
-      getIt<OuterLoggerHandler>().logBreadcrumb(
-        message: 'AdminEventPushProductEmidiatly: pushing product',
-        data: {'product': event.appProduct, 'state': state},
-      );
       try {
         event.context.read<DatabaseBlocAdmin>().add(
           DatabaseEventAddProductAdmin(product: event.appProduct),
@@ -106,16 +100,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
             DatabaseEventAddProductFieldAdmin(productField: fieldToPush),
           );
         }
-        getIt<OuterLoggerHandler>().logBreadcrumb(
-          message: 'AdminEventPushesData: pushed product and fields',
-          data: {'product': productToPush, 'fields': state.appProductFields},
-        );
         event.context.go(AppRoutes.home.path);
       } catch (e) {
-        getIt<OuterLoggerHandler>().logBreadcrumb(
-          message: 'AdminEventPushesData: error pushing product and fields',
-          data: {'error': e.toString()},
-        );
         Fluttertoast.showToast(msg: 'boo');
       }
     });

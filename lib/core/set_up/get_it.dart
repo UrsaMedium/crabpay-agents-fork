@@ -13,14 +13,11 @@ import 'package:crabpay/core/backend/database/general_db/db_inner_circle/inner_d
 import 'package:crabpay/core/backend/database/general_db/db_outer_circle/outer_database_handler_with_supabase.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/inner_cart_handler.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_outer_circle/outer_cart_handler_with_supabase.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
-import 'package:crabpay/core/backend/logger/logger_outer_handler/outer_logger_handler.dart';
 import 'package:crabpay/core/backend/pyament_services/payment_service.dart';
 
 import '../utilities.dart';
 
 void setupDependencies() {
-  getIt.registerSingleton<InnerLoggerHandler>(OuterLoggerHandler());
   getIt.registerSingleton<AuthInnerInterface>(SupabaseOuterAuthInterface());
   getIt.registerSingleton<AppLifecycleService>(AppLifecycleService());
   getIt.registerSingleton<InnerConnectionMonitor>(

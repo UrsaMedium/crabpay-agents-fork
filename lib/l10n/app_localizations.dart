@@ -663,12 +663,6 @@ abstract class AppLocalizations {
   /// **'Answer to users'**
   String get answerToUsers;
 
-  /// No description provided for @testLogger.
-  ///
-  /// In en, this message translates to:
-  /// **'Test logger'**
-  String get testLogger;
-
   /// No description provided for @hey.
   ///
   /// In en, this message translates to:

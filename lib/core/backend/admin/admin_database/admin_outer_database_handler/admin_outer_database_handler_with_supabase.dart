@@ -3,9 +3,7 @@ import 'package:crabpay/core/backend/admin/admin_database/admin_db_inner_circle/
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/currencies_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_fields_model.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/backend/supabase/supabase_graphql_client.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:retry/retry.dart';
@@ -15,14 +13,11 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   final GraphQLClient _client;
   final RetryOptions retryer;
 
-  AdminOuterDatabaseHandlerWithSupabase({GraphQLClient? client, RetryOptions? retryOptions}) : _client = client ?? SupabaseGraphQLClient.client, retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500));
+  AdminOuterDatabaseHandlerWithSupabase({GraphQLClient? client, RetryOptions? retryOptions})
+    : _client = client ?? SupabaseGraphQLClient.client,
+      retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500));
 
   Future<QueryResult> _mutateAndCheck(MutationOptions options) async {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'Running Mutate And Check',
-      category: 'Database',
-      data: {'options': options},
-    );
     return await retryer.retry(() async {
       final result = await _client.mutate(options);
 
@@ -39,11 +34,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> addProductAdmin({required Product product}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Add Product',
-        category: 'Database',
-        data: {'product': product},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($id: UUID, $name: String!, $description: String!, $imageUrl: String!, $currencies: String!) {
@@ -62,10 +52,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Add Product',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToAddTheProduct');
     }
   }
@@ -73,11 +59,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> deleteProductAdmin({required Product product}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Delete Product',
-        category: 'Database',
-        data: {'product': product},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($id: UUID!) {
@@ -88,10 +69,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Delete Product',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToDeleteTheProduct');
     }
   }
@@ -99,11 +76,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> updateProductAdmin({required Product product}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Update Product',
-        category: 'Database',
-        data: {'product': product},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($id: UUID!, $set: productUpdateInput!) {
@@ -121,10 +93,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Update Product',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       rethrow;
     }
   }
@@ -134,11 +102,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> addProductFieldAdmin({required ProductField field}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Add Product Field',
-        category: 'Database',
-        data: {'field': field},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($productId: UUID!, $order: Int!, $fieldName: String!, $isPriceImage: Boolean!, $handler: String!, $priceImages: JSON, $expectedData: [String!]) {
@@ -162,10 +125,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Add Product Field',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToAddTheField');
       rethrow;
     }
@@ -174,11 +133,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> deleteProductFieldAdmin({required ProductField field}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Delete Product Field',
-        category: 'Database',
-        data: {'field': field},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($id: UUID!) {
@@ -189,10 +143,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Delete Product Field',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToDeleteTheField');
       rethrow;
     }
@@ -201,11 +151,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> updateProductFieldAdmin({required ProductField field}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Update Product Field',
-        category: 'Database',
-        data: {'field': field},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($id: UUID!, $set: productFieldUpdateInput!) {
@@ -226,10 +171,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Update Product Field',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       rethrow;
     }
   }
@@ -239,11 +180,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> addCurrenciesAdmin({required Currencies currencies}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Add urrencies',
-        category: 'Database',
-        data: {'currencies': currencies},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($name: String!, $mainCurrency: String!, $rub: Float!, $usd: Float!) {
@@ -261,10 +197,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Add Currencies',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToAddTheCurrencies');
       rethrow;
     }
@@ -273,11 +205,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> deleteCurrenciesAdmin({required Currencies currencies}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Delete Currencies',
-        category: 'Database',
-        data: {'currencies': currencies},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($id: UUID!) { deleteFromcurrenciesCollection(filter: { id: { eq: $id } }) { affectedCount } }
@@ -286,10 +213,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Delete Currencies',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToDeleteTheCurrencies');
       rethrow;
     }
@@ -300,11 +223,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> addFeaturedProductAdmin({required String productId}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Add Featured Product',
-        category: 'Database',
-        data: {'productId': productId},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(
           r''' mutation($fId: UUID!) { insertIntofeaturedProductCollection(objects: [{ featuredProductId: $fId }]) { affectedCount } } ''',
@@ -313,10 +231,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Add Featured Product',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToAddFeaturedProduct');
       rethrow;
     }
@@ -325,11 +239,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
   @override
   Future<void> deleteFeaturedProductAdmin({required String productId}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Delete Featured Product',
-        category: 'Database',
-        data: {'productId': productId},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(
           r''' mutation($fId: UUID!) { deleteFromfeaturedProductCollection(filter: { featuredProductId: { eq: $fId } }) { affectedCount } } ''',
@@ -338,10 +247,6 @@ class AdminOuterDatabaseHandlerWithSupabase implements AdminInnerDatabaseHandler
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Delete Featured Product',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToDeleteFeaturedProduct');
       rethrow;
     }

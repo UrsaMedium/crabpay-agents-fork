@@ -5,9 +5,7 @@ import 'package:crabpay/core/backend/admin/admin_database/admin_db_inner_circle/
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_event.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,9 +36,6 @@ class _DeleteInstancesFromDbViewState extends State<DeleteInstancesFromDbView> {
   @override
   void initState() {
     context.read<DatabaseBloc>().add(DatabaseEventFetchAllProducts());
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'DeleteInstancesFromDbView initState',
-    );
     super.initState();
   }
 
@@ -65,10 +60,6 @@ class _DeleteInstancesFromDbViewState extends State<DeleteInstancesFromDbView> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        getIt<InnerLoggerHandler>().logBreadcrumb(
-          message: 'DeleteInstancesFromDbView onPopInvokedWithResult',
-          data: {'didPop': didPop, 'result': result},
-        );
         if (didPop) {
           return;
         }
@@ -78,9 +69,6 @@ class _DeleteInstancesFromDbViewState extends State<DeleteInstancesFromDbView> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              getIt<InnerLoggerHandler>().logBreadcrumb(
-                message: 'DeleteInstancesFromDbView onBackButtonPressed',
-              );
               if (GoRouter.of(context).canPop()) {
                 context.pop();
               } else {
@@ -125,12 +113,6 @@ class _DeleteInstancesFromDbViewState extends State<DeleteInstancesFromDbView> {
                       ),
                       IconButton(
                         onPressed: () {
-                          getIt<InnerLoggerHandler>().logBreadcrumb(
-                            message: 'DeleteInstancesFromDbView onDeleteButtonPressed',
-                            data: {
-                              'choosenProduct': _choosenProduct?.toString(),
-                            },
-                          );
                           _choosenProduct != null
                               ? context.read<DatabaseBlocAdmin>().add(
                                   DatabaseEventDeleteProductAdmin(

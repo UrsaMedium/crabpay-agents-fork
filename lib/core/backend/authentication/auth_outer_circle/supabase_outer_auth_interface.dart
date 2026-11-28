@@ -1,9 +1,7 @@
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_user.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_exceptions.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_inner_interface.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/backend/supabase/supabase_conf.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:retry/retry.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart'; // For debugPrint
@@ -12,7 +10,9 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
   final SupabaseClient? _supabaseClient;
   final RetryOptions retryer;
 
-  SupabaseOuterAuthInterface({SupabaseClient? supabaseClient, RetryOptions? retryOptions}) : _supabaseClient = supabaseClient, retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500));
+  SupabaseOuterAuthInterface({SupabaseClient? supabaseClient, RetryOptions? retryOptions})
+    : _supabaseClient = supabaseClient,
+      retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500));
 
   SupabaseClient get _supabase => _supabaseClient ?? Supabase.instance.client;
   @override
@@ -21,11 +21,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
     required String password,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'exe: createUser',
-        category: 'Auth Service',
-        data: {'email': email, 'password': password},
-      );
       var currentUser = _supabase.auth.currentUser;
 
       if (currentUser == null) {
@@ -65,17 +60,9 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
 
       throw NoUserSignInException();
     } on AuthException catch (e) {
-      // getIt<InnerLoggerHandler>().recordException(
-      //   error: 'failed exe: createUser',
-      //   stackTrace: StackTrace.fromString(e.toString()),
-      // );
       debugPrint('Supabase AuthException: ${e.message}');
       rethrow;
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: createUser',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Generic Registration Error: $e');
       throw GenericAuthException();
     }
@@ -83,10 +70,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
 
   @override
   Future<AppAuthUser?> getUser() async {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'exe: getUser',
-      category: 'Auth Service',
-    );
     final user = _supabase.auth.currentUser;
     if (user != null) {
       return _mapToInnerCircle(user);
@@ -97,10 +80,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
   @override
   Future<AppAuthUser?> signInAnonymously() async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'exe: signInAnonymously',
-        category: 'Auth Service',
-      );
       final response = await retryer.retry(
         () => _supabase.auth.signInAnonymously(),
       );
@@ -115,10 +94,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
       debugPrint('Supabase Anon SignIn Exception: ${e.message}');
       throw _handleAuthException(e);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: signInAnonymously',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Wow, Some Anon SignIn Error: $e');
       throw GenericAuthException();
     }
@@ -130,11 +105,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
     required String password,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'exe: logIn',
-        category: 'Auth Service',
-        data: {'email': email, 'password': password},
-      );
       final response = await retryer.retry(
         () => _supabase.auth.signInWithPassword(email: email, password: password),
       );
@@ -147,10 +117,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
       }
       throw NoUserSignInException();
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: logIn',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Login Error: $e');
       rethrow;
     }
@@ -165,10 +131,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
   @override
   Future<void> initialize() async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'exe: initialize',
-        category: 'Auth Service',
-      );
       await retryer.retry(
         () => Supabase.initialize(
           url: supabaseAccessConf['url']!,
@@ -176,10 +138,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
         ),
       );
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: initialize',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Supabase init caught: $e');
       rethrow;
     }
@@ -187,26 +145,12 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
 
   @override
   Future<void> sendPasswordReset({required String toEmail}) async {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'exe: sendPasswordReset',
-      category: 'Auth Service',
-      data: {'toEmail': toEmail},
-    );
     await retryer.retry(() => _supabase.auth.resetPasswordForEmail(toEmail));
   }
 
   AppAuthUser _mapToInnerCircle(User user) {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'exe: _mapToInnerCircle',
-      category: 'Auth Service',
-      data: {'user': user},
-    );
     final bool isAdminFlag = user.appMetadata['role'] == 'admin';
     final bool isVerified = user.emailConfirmedAt != null || (user.userMetadata?['email_verified'] == true);
-    getIt<InnerLoggerHandler>().setDiagnosticUser(
-      id: user.id,
-      email: user.email,
-    );
     return AppAuthUser(
       id: user.id,
       email: user.email,
@@ -230,10 +174,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
 
   @override
   Stream<AppAuthUser> get userStream {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'exe: userStream',
-      category: 'Auth Service',
-    );
     return _supabase.auth.onAuthStateChange.asyncMap((authState) async {
       final event = authState.event;
       final supabaseUser = authState.session?.user;
@@ -252,10 +192,6 @@ class SupabaseOuterAuthInterface implements AuthInnerInterface {
             return _mapToInnerCircle(anonResult.user!);
           }
         } catch (e) {
-          getIt<InnerLoggerHandler>().recordException(
-            error: 'failed exe: userStream',
-            stackTrace: StackTrace.fromString(e.toString()),
-          );
           debugPrint('Failed to auto-sign in anonymously on stream: $e');
         }
         return AppAuthUser.empty;

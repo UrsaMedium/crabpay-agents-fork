@@ -2,9 +2,7 @@ import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_bloc.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_events.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_states.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,10 +15,6 @@ Future<bool?> showOnUnauthBuyToRegister(BuildContext context) {
     builder: (context) {
       return BlocListener<AuthBloc, AuthState>(
         listener: (context, authState) {
-          getIt<InnerLoggerHandler>().logBreadcrumb(
-            message: 'RegisterViewDriver AuthState change',
-            data: {'authState': authState},
-          );
           if (authState is AuthStateLoggedIn && !authState.currentUser.isAnonymous) {
             return Navigator.pop(context, true);
           }
@@ -97,10 +91,6 @@ Future<bool?> showOnUnauthBuyToRegister(BuildContext context) {
               width: 100.0,
               child: TextButton(
                 onPressed: () {
-                  getIt<InnerLoggerHandler>().logBreadcrumb(
-                    message: 'pop up registering',
-                    data: {'email': email.text, 'password': password.text},
-                  );
                   context.read<AuthBloc>().add(
                     AuthEventRegister(
                       email: email.text,

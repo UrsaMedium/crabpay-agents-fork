@@ -2,8 +2,6 @@ import 'package:crabpay/core/extensions/l10n_extension.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_bloc.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_events.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_states.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/_sub/auth_views/login_view/driver/login_view_cubit.dart';
@@ -28,9 +26,6 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
 
   @override
   void initState() {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'LoginViewDriver initState',
-    );
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _loginViewCubit = LoginViewCubit(
@@ -52,10 +47,6 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        getIt<InnerLoggerHandler>().logBreadcrumb(
-          message: 'LoginViewDriver onPopInvokedWithResult',
-          data: {'didPop': didPop, 'result': result},
-        );
         if (didPop) {
           return;
         }
@@ -65,10 +56,6 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
         value: _loginViewCubit,
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, authState) {
-            getIt<InnerLoggerHandler>().logBreadcrumb(
-              message: 'LoginViewDriver AuthState change',
-              data: {'authState': authState},
-            );
             if (authState is AuthStateLoggedIn) {
               context.push(AppRoutes.home.path);
             }
@@ -101,13 +88,6 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
               );
 
               void onSignInPressed() {
-                getIt<InnerLoggerHandler>().logBreadcrumb(
-                  message: 'LoginViewDriver onSignInPressed',
-                  data: {
-                    'email': _emailController.text,
-                    'password': _passwordController.text,
-                  },
-                );
                 context.read<LoginViewCubit>().validateAndSubmit(
                   email: _emailController.text,
                   password: _passwordController.text,
@@ -120,33 +100,21 @@ class _LoginViewDriverState extends State<LoginViewDriver> {
               }
 
               void onBackButtonPressed() {
-                getIt<InnerLoggerHandler>().logBreadcrumb(
-                  message: 'LoginViewDriver onBackButtonPressed',
-                );
                 if (GoRouter.of(context).canPop()) {
                   context.pop();
                 }
               }
 
               void onCorrectingCredentials() {
-                getIt<InnerLoggerHandler>().logBreadcrumb(
-                  message: 'LoginViewDriver onCorrectingCredentials',
-                );
                 context.read<LoginViewCubit>().clearErrors();
               }
 
               void onSignUpPressed() {
-                getIt<InnerLoggerHandler>().logBreadcrumb(
-                  message: 'LoginViewDriver onSignUpPressed',
-                );
                 context.read<LoginViewCubit>().clearErrors();
                 context.pushNamed(AppRoutes.register.name);
               }
 
               void onForgotPasswordPressed() {
-                getIt<InnerLoggerHandler>().logBreadcrumb(
-                  message: 'LoginViewDriver onForgotPasswordPressed',
-                );
                 context.read<LoginViewCubit>().clearErrors();
                 context.pushNamed(AppRoutes.resetPassword.name);
               }

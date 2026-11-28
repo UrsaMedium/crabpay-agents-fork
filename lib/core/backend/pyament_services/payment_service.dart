@@ -6,7 +6,9 @@ class PaymentOuterHandler {
   final String _vpsPaymentUrl;
   final http.Client? _httpClient;
 
-  PaymentOuterHandler({http.Client? httpClient, String? paymentUrl}) : _httpClient = httpClient, _vpsPaymentUrl = paymentUrl ?? linkToThePaymentServer;
+  PaymentOuterHandler({http.Client? httpClient, String? paymentUrl})
+    : _httpClient = httpClient,
+      _vpsPaymentUrl = paymentUrl ?? linkToThePaymentServer;
 
   Future<http.Response> _post(Uri url, {required Map<String, String> headers, required String body}) {
     final client = _httpClient;

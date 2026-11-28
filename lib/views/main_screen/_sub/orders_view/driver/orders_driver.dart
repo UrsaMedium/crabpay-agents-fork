@@ -5,7 +5,6 @@ import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/car
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/cart_bloc/cart_bloc.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_bloc.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/views/main_screen/_sub/orders_view/driver/crab_order_model.dart';
 import 'package:crabpay/views/main_screen/_sub/orders_view/view/material/order_card/material_order_details.dart';
 import 'package:crabpay/views/main_screen/_sub/orders_view/view/material/search/custom_syncfusion_date_range_dialog.dart';
@@ -17,7 +16,6 @@ import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/main_screen/_sub/orders_view/view/material/search/material_searched_orders_page.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
 
@@ -169,9 +167,6 @@ class _OrdersViewDriverState extends State<OrdersViewDriver> {
   }
 
   void _onBackButtonPressed(BuildContext context) {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'CasesViewDriver _onBackButtonPressed',
-    );
     context.read<CartBloc>().add(CartEventFlushOrders());
     if (context.canPop()) {
       context.pop();
@@ -202,10 +197,6 @@ class _OrdersViewDriverState extends State<OrdersViewDriver> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        getIt<InnerLoggerHandler>().logBreadcrumb(
-          message: 'LoginViewDriver onPopInvokedWithResult',
-          data: {'didPop': didPop, 'result': result},
-        );
         if (didPop) {
           return;
         }

@@ -3,9 +3,7 @@ import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_mo
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/inner_database_handler.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_fields_model.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/backend/supabase/supabase_graphql_client.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:retry/retry.dart';
@@ -15,14 +13,11 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
   final GraphQLClient _client;
   final RetryOptions retryer;
 
-  OuterDatabaseHandlerWithSupabase({GraphQLClient? client, RetryOptions? retryOptions}) : _client = client ?? SupabaseGraphQLClient.client, retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500));
+  OuterDatabaseHandlerWithSupabase({GraphQLClient? client, RetryOptions? retryOptions})
+    : _client = client ?? SupabaseGraphQLClient.client,
+      retryer = retryOptions ?? const RetryOptions(maxAttempts: 3, delayFactor: Duration(milliseconds: 500));
 
   Future<QueryResult> _mutateAndCheck(MutationOptions options) async {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'Running Mutate And Check',
-      category: 'Database',
-      data: {'options': options},
-    );
     return await retryer.retry(() async {
       final result = await _client.mutate(options);
 
@@ -39,10 +34,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
   @override
   Future<List<Product>?> fetchAllProducts() async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetch All Products',
-        category: 'Database',
-      );
       final QueryOptions options = QueryOptions(
         document: gql(r'''
           query {
@@ -72,10 +63,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
         );
       }).toList();
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Fetch All Products',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Failed to fetch: $e');
       Fluttertoast.showToast(msg: 'failedToFetchProducts');
       return null;
@@ -89,11 +76,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
     required String productId,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetch Product Fields',
-        category: 'Database',
-        data: {'productId': productId},
-      );
       final QueryOptions options = QueryOptions(
         document: gql(r'''
           query($productId: UUID!) {
@@ -119,7 +101,9 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
         if (node['priceImages'] != null) {
           final dynamic rawImages = node['priceImages'];
           // Safely handles both Stringified JSON and mapped JSON from the server
-          final Map<String, dynamic> decodedImages = rawImages is String ? jsonDecode(rawImages) : Map<String, dynamic>.from(rawImages);
+          final Map<String, dynamic> decodedImages = rawImages is String
+              ? jsonDecode(rawImages)
+              : Map<String, dynamic>.from(rawImages);
           priceImagesMap = decodedImages.map(
             (k, v) => MapEntry(k, (v as num).toDouble()),
           );
@@ -142,10 +126,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
         );
       }).toList();
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Fetch Product Fields',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToFetchFields');
       rethrow;
     }
@@ -156,10 +136,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
   @override
   Future<List<Currencies>?> fetchAllCurencies() async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetch All Curencies',
-        category: 'Database',
-      );
       final QueryOptions options = QueryOptions(
         document: gql(r'''
           query {
@@ -182,10 +158,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
         );
       }).toList();
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Fetch All Curencies',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToFetchCurrencies');
       rethrow;
     }
@@ -196,10 +168,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
   @override
   Future<List<String>> fetchAllFeaturedProducts() async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetch All Featured Products',
-        category: 'Database',
-      );
       final QueryOptions options = QueryOptions(
         document: gql(
           r''' query { featuredProductCollection { edges { node { featuredProductId } } } } ''',
@@ -210,10 +178,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
       final nodes = result.data?['featuredProductCollection']['edges'] as List? ?? [];
       return nodes.map((e) => e['node']['featuredProductId'] as String).toList();
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Fetch All Featured Products',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToFetchFeaturedProducts');
       rethrow;
     }
@@ -225,11 +189,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
     required String productId,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Add User Preference',
-        category: 'Database',
-        data: {'productId': productId, 'userId': userId},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(
           r''' mutation($uId: String!, $pId: UUID!) { insertIntouserPreferenceCollection(objects: [{ userId: $uId, favoriteProductId: $pId }]) { affectedCount } } ''',
@@ -238,10 +197,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Add User Preference',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToAddUserPreference');
       rethrow;
     }
@@ -250,11 +205,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
   @override
   Future<List<String>> fetchUserPreferences({required String userId}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetch User Preferences',
-        category: 'Database',
-        data: {'userId': userId},
-      );
       final QueryOptions options = QueryOptions(
         document: gql(
           r''' query($uId: String!) { userPreferenceCollection(filter: { userId: { eq: $uId } }) { edges { node { favoriteProductId } } } } ''',
@@ -266,10 +216,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
       final nodes = result.data?['userPreferenceCollection']['edges'] as List? ?? [];
       return nodes.map((e) => e['node']['favoriteProductId'] as String).toList();
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Fetch User Preferences',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToFetchUserPreference');
       rethrow;
     }
@@ -281,11 +227,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
     required String productId,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Delete User Preference',
-        category: 'Database',
-        data: {'userId': userId, 'productId': productId},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(
           r''' mutation($uId: String!, $pId: UUID!) { deleteFromuserPreferenceCollection(filter: { userId: { eq: $uId }, favoriteProductId: { eq: $pId } }) { affectedCount } } ''',
@@ -294,10 +235,6 @@ class OuterDatabaseHandlerWithSupabase implements InnerDatabaseHandler {
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed To Delete User Preference',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToDeleteUserPreference');
       rethrow;
     }

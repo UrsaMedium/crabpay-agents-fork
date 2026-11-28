@@ -19,8 +19,8 @@ class MaterialCrabPayApp extends StatelessWidget {
             showPerformanceOverlay: false,
             debugShowCheckedModeBanner: false,
             title: 'CrabPay Demo',
-             theme: AppTheme.light(lightDynamic),
-             darkTheme: AppTheme.dark(darkDynamic),
+            theme: AppTheme.light(lightDynamic),
+            darkTheme: AppTheme.dark(darkDynamic),
             routerConfig: routerConfig,
             locale: const Locale('ru'),
             localizationsDelegates: const [

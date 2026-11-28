@@ -1,8 +1,6 @@
 import 'package:crabpay/core/backend/chat_service/chat_inner_circle/data_models/support_thread_model.dart';
 import 'package:crabpay/core/backend/chat_service/chat_inner_circle/data_models/chat_message_model.dart';
 import 'package:crabpay/core/backend/admin/admin_chat_service/admin_chat_inner_circle/admin_inner_chat_handler.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/foundation.dart';
@@ -21,11 +19,6 @@ class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
     required String userId,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Get Or Create Thread',
-        category: 'Chat Service',
-        data: {'userId': userId},
-      );
       return await retryer.retry(() async {
         final existing = await _client.from('support_threads').select().eq('user_id', userId).maybeSingle();
 
@@ -46,10 +39,6 @@ class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
         );
       });
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: getOrCreateThread',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Failed to get or create support thread: $e');
       Fluttertoast.showToast(msg: 'failedToGetOrCreate');
       rethrow;
@@ -59,21 +48,12 @@ class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
   @override
   Future<void> markMessagesAsReadAdmin({required String threadId}) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'exe: Mark Messages As Read',
-        category: 'Chat Service',
-        data: {'threadId': threadId},
-      );
       // Mark all messages in this thread NOT sent by the current user as read
       final currentUserId = _client.auth.currentUser?.id;
       if (currentUserId == null) return;
 
       await _client.from('chat_messages').update({'is_read': true}).eq('thread_id', threadId).neq('sender_id', currentUserId);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: markMessagesAsRead',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Failed to mark messages as read: $e');
       rethrow;
     }
@@ -86,11 +66,6 @@ class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
     required String content,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'exe: Send Message',
-        category: 'Chat Service',
-        data: {'threadId': threadId, 'senderId': senderId, 'content': content},
-      );
       await retryer.retry(() async {
         await _client.from('chat_messages').insert({
           'thread_id': threadId,
@@ -99,10 +74,6 @@ class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
         });
       });
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: sendMessage',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Failed to send message: $e');
       Fluttertoast.showToast(msg: 'failedToSendMessagePlease');
       rethrow;
@@ -113,49 +84,32 @@ class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
   Stream<List<ChatMessage>> subscribeToMessagesAdmin({
     required String threadId,
   }) {
-    try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'exe: Subscribe To Messages',
-        category: 'Chat Service',
-        data: {'threadId': threadId},
-      );
-      return _client
-          .from('chat_messages')
-          .stream(primaryKey: ['id'])
-          .eq('thread_id', threadId)
-          .order('created_at', ascending: true)
-          .map((
-            List<Map<String, dynamic>> data,
-          ) {
-            return data
-                .map(
-                  (json) => ChatMessage(
-                    id: json['id'] as String,
-                    threadId: json['thread_id'] as String,
-                    senderId: json['sender_id'] as String,
-                    content: json['content'] as String,
-                    isRead: json['is_read'] as bool? ?? false,
-                    createdAt: DateTime.parse(json['created_at'] as String),
-                  ),
-                )
-                .toList();
-          });
-    } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: subscribeToMessages',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
-      rethrow;
-    }
+    return _client
+        .from('chat_messages')
+        .stream(primaryKey: ['id'])
+        .eq('thread_id', threadId)
+        .order('created_at', ascending: true)
+        .map((
+          List<Map<String, dynamic>> data,
+        ) {
+          return data
+              .map(
+                (json) => ChatMessage(
+                  id: json['id'] as String,
+                  threadId: json['thread_id'] as String,
+                  senderId: json['sender_id'] as String,
+                  content: json['content'] as String,
+                  isRead: json['is_read'] as bool? ?? false,
+                  createdAt: DateTime.parse(json['created_at'] as String),
+                ),
+              )
+              .toList();
+        });
   }
 
   @override
   Future<List<SupportThread>> getAllThreadsAdmin() async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'exe: Get All Threads',
-        category: 'Chat Service',
-      );
       final fetchedAllThreads = await retryer.retry(() {
         return _client.from('support_threads').select();
       });
@@ -171,10 +125,6 @@ class AdminOuterChatHandlerWithSupabase implements AdminInnerChatHandler {
       }
       return allThreads;
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'failed exe: getAllThreads',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       debugPrint('Failed to fetch all threads: $e');
       Fluttertoast.showToast(msg: 'failedToFetchAllThreads');
       rethrow;

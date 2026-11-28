@@ -4,9 +4,7 @@ import 'package:crabpay/core/backend/admin/admin_database/admin_db_inner_circle/
 import 'package:crabpay/core/backend/admin/admin_database/admin_db_inner_circle/admin_database_bloc/admin_database_state.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_fields_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/custom_ui_elements/dialogs/on_database_item_delete_dialog.dart';
 import 'package:flutter/material.dart';
@@ -37,16 +35,10 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
   void initState() {
     if (widget.fieldId == null || widget.productId == null) {
       Fluttertoast.showToast(msg: context.l10n.failedToPassFieldData);
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'UpdateFieldAdminPanelView: initState: failed to pass field data: fieldId: ${widget.fieldId} , productId: ${widget.productId}',
-      );
       context.pop();
     }
     _currentField = context.read<DatabaseBloc>().state.cachedProductFields![widget.productId]?.firstWhere(
       (element) => element.id == widget.fieldId,
-    );
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'UpdateFieldAdminPanelView: initState: _currentField: $_currentField',
     );
     super.initState();
   }
@@ -56,9 +48,6 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        getIt<InnerLoggerHandler>().logBreadcrumb(
-          message: 'UpdateFieldAdminPanelView: onPopInvokedWithResult: didPop: $didPop, result: $result',
-        );
         if (didPop) return;
         !Navigator.of(context).canPop() ? context.go(AppRoutes.support.path) : context.pop();
       },
@@ -66,9 +55,6 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              getIt<InnerLoggerHandler>().logBreadcrumb(
-                message: 'UpdateFieldAdminPanelView: onBackButtonPressed',
-              );
               if (GoRouter.of(context).canPop()) {
                 context.pop();
               } else {
@@ -91,13 +77,6 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                         IconButton(
                           iconSize: 32,
                           onPressed: () async {
-                            getIt<InnerLoggerHandler>().logBreadcrumb(
-                              message: 'UpdateFieldAdminPanelView: onDeleteButtonPressed',
-                              data: {
-                                'currentField': _currentField,
-                                'beingLoaded': beingLoaded,
-                              },
-                            );
                             if (beingLoaded) {
                               Fluttertoast.showToast(
                                 msg: context.l10n.pleaseWait,
@@ -200,16 +179,11 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                         builder: (context, state) {
                           return ElevatedButton(
                             onPressed: () {
-                              getIt<InnerLoggerHandler>().logBreadcrumb(
-                                message: 'UpdateFieldAdminPanelView: onUpdateButtonPressed',
-                                data: {
-                                  'currentField': _currentField,
-                                  'beingLoaded': state.states == DatabaseStatesAdmin.dbLoading,
-                                },
-                              );
                               if (state.states != DatabaseStatesAdmin.dbLoading) {
                                 final order = int.tryParse(_fieldOrder.text.trim()) ?? _currentField!.order;
-                                final fieldName = _fieldName.text.trim() != '' ? _fieldName.text.trim() : _currentField!.fieldName;
+                                final fieldName = _fieldName.text.trim() != ''
+                                    ? _fieldName.text.trim()
+                                    : _currentField!.fieldName;
 
                                 final newField = ProductField(
                                   id: _currentField!.id,
@@ -218,12 +192,17 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                                   fieldName: fieldName,
                                   handler: _currentField!.handler,
                                   isPriceImage: _currentField!.isPriceImage,
-                                  priceImages: _currentField!.handler == 'InputField' && _currentField!.isPriceImage && _fieldName.text.trim() != ''
+                                  priceImages:
+                                      _currentField!.handler == 'InputField' &&
+                                          _currentField!.isPriceImage &&
+                                          _fieldName.text.trim() != ''
                                       ? {
                                           fieldName: _currentField!.priceImages!.values.first,
                                         }
                                       : _currentField!.priceImages,
-                                  expectedData: _currentField!.handler == 'InputField' ? [_currentField!.fieldName] : _currentField!.expectedData,
+                                  expectedData: _currentField!.handler == 'InputField'
+                                      ? [_currentField!.fieldName]
+                                      : _currentField!.expectedData,
                                 );
                                 context.read<DatabaseBlocAdmin>().add(
                                   DatabaseEventUpdateProductFieldAdmin(
@@ -238,7 +217,9 @@ class _UpdateFieldAdminPanelViewState extends State<UpdateFieldAdminPanelView> {
                                 Fluttertoast.showToast(msg: 'Failed');
                               }
                             },
-                            child: state.states != DatabaseStatesAdmin.dbLoading ? Text(context.l10n.updateTheField) : CircularProgressIndicator(),
+                            child: state.states != DatabaseStatesAdmin.dbLoading
+                                ? Text(context.l10n.updateTheField)
+                                : CircularProgressIndicator(),
                           );
                         },
                       ),

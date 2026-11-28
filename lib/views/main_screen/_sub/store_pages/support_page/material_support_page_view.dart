@@ -233,7 +233,9 @@ class MaterialSupportPageView extends StatelessWidget {
                                               : isSendingMessage
                                               ? null
                                               : onSendPressed,
-                                          icon: isSendingMessage ? CircularProgressIndicator() : Icon(Icons.send, size: layout.actionIconSize),
+                                          icon: isSendingMessage
+                                              ? CircularProgressIndicator()
+                                              : Icon(Icons.send, size: layout.actionIconSize),
                                         );
                                       },
                                     ),

@@ -3,9 +3,6 @@ import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_user.
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_event.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
-import 'package:crabpay/core/backend/logger/logger_outer_handler/outer_logger_handler.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,10 +23,6 @@ class _AdminToolsViewState extends State<AdminToolsView> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        getIt<InnerLoggerHandler>().logBreadcrumb(
-          message: 'AdminToolsView back button pressed, navigating to /ask or popping the current route',
-          data: {'didPop': didPop, 'result': result},
-        );
         if (didPop) return;
         !Navigator.of(context).canPop() ? context.go(AppRoutes.home.path) : context.pop();
       },
@@ -37,9 +30,6 @@ class _AdminToolsViewState extends State<AdminToolsView> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              getIt<OuterLoggerHandler>().logBreadcrumb(
-                message: 'AdminToolsView onBackButtonPressed',
-              );
               if (context.canPop()) {
                 context.pop();
               }
@@ -55,9 +45,6 @@ class _AdminToolsViewState extends State<AdminToolsView> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      getIt<OuterLoggerHandler>().logBreadcrumb(
-                        message: 'AdminToolsView fetch data button pressed',
-                      );
                       context.read<DatabaseBloc>().add(
                         DatabaseEventFetchAllProducts(),
                       );
@@ -79,18 +66,6 @@ class _AdminToolsViewState extends State<AdminToolsView> {
                   ElevatedButton(
                     onPressed: () => context.pushNamed(AppRoutes.chooseThread.name),
                     child: Text(context.l10n.answerToUsers),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      final loggerService = OuterLoggerHandler();
-                      loggerService.logBreadcrumb(
-                        message: 'User tapped the test crash button',
-                        category: 'test',
-                      );
-
-                      throw Exception('GlitchTip Integration Test Crash!');
-                    },
-                    child: Text(context.l10n.testLogger),
                   ),
                 ],
               ),

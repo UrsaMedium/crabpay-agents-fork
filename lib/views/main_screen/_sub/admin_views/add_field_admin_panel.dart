@@ -5,9 +5,7 @@ import 'package:crabpay/core/backend/admin/admin_database/admin_db_inner_circle/
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_fields_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_event.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/views/main_screen/_sub/admin_views/add_complete_product_and_field_data/s2_add_fields_views/field_constructor_bottom_sheet.dart';
 import 'package:crabpay/views/main_screen/_sub/admin_views/add_complete_product_and_field_data/s2_add_fields_views/s2_add_product_fields_view.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
@@ -35,9 +33,6 @@ class _AddFieldAdminPanelViewState extends State<AddFieldAdminPanelView> {
       context.pop();
     }
     final originalFieldsList = context.read<DatabaseBloc>().state.cachedProductFields?[widget.productId];
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'AddFieldAdminPanelView: initState: originalFieldsList: $originalFieldsList',
-    );
     if (originalFieldsList != null) {
       for (var field in originalFieldsList) {
         _fieldNames.add(field.fieldName);
@@ -54,9 +49,6 @@ class _AddFieldAdminPanelViewState extends State<AddFieldAdminPanelView> {
 
   void _deleteField(ProductField fieldToDelte) {
     setState(() {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'AddFieldAdminPanelView: _deleteField: fieldToDelte: $fieldToDelte',
-      );
       _fieldNames.remove(fieldToDelte.fieldName);
       _fieldWidgetsMap.remove(fieldToDelte);
     });
@@ -112,10 +104,6 @@ class _AddFieldAdminPanelViewState extends State<AddFieldAdminPanelView> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        getIt<InnerLoggerHandler>().logBreadcrumb(
-          message: 'AddFieldAdminPanelView onPopInvokedWithResult',
-          data: {'didPop': didPop, 'result': result},
-        );
         if (didPop) return;
         !Navigator.of(context).canPop() ? context.go(AppRoutes.support.path) : context.pop();
       },
@@ -210,9 +198,6 @@ class _AddFieldAdminPanelViewState extends State<AddFieldAdminPanelView> {
                                         onPressed: () {
                                           final collectFields = _collectFields();
                                           if (collectFields != null) {
-                                            getIt<InnerLoggerHandler>().logBreadcrumb(
-                                              message: 'AddFieldAdminPanelView: onPressed: collectFields: $collectFields',
-                                            );
                                             Fluttertoast.showToast(
                                               msg: context.l10n.boop,
                                             );

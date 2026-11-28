@@ -7,9 +7,7 @@ import 'package:crabpay/core/backend/connection_monitoring/inner_monitor/inner_c
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/data_models/cart_item_model.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/data_models/pending_order_model.dart';
 import 'package:crabpay/core/backend/database/product_cart/cart_inner_circle/inner_cart_handler.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/backend/supabase/supabase_graphql_client.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -149,11 +147,7 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
             final rawCount = rows.first['userCartItemCount'];
             return (rawCount as num?)?.toInt() ?? 0;
           })
-          .handleError((Object error, StackTrace stackTrace) {
-            getIt<InnerLoggerHandler>().recordException(
-              error: 'Runtime WebSocket Error in userCartItemAmountStream: $error',
-              stackTrace: stackTrace,
-            );
+          .handleError((Object error, _) {
             _userCartItemAmountController.addError(error);
           })
           .listen(
@@ -200,68 +194,52 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
   }
 
   List<CartItem> _dataCasting(List<dynamic> edges) {
-    try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Data casting',
-        category: 'Cart Items',
-        data: {'edges': edges},
+    return edges.map((edge) {
+      final item = edge['node'];
+      final dynamic rawPurchaseData = item['purchaseData'] ?? {};
+      final dynamic rawCreatedAt = item['createdAt'];
+      final dynamic rawStatusChangedAt = item['statusChangedAt'];
+
+      DateTime? paredCreatedAt;
+      DateTime? parsedStatusChangedAt;
+
+      if (rawCreatedAt != null && rawCreatedAt is String && rawCreatedAt.isNotEmpty) {
+        paredCreatedAt = DateTime.parse(rawCreatedAt).toLocal();
+      }
+
+      if (rawStatusChangedAt != null && rawStatusChangedAt is String && rawStatusChangedAt.isNotEmpty) {
+        parsedStatusChangedAt = DateTime.parse(rawStatusChangedAt).toLocal();
+      }
+
+      final Map<String, dynamic> decodedPurchaseData = rawPurchaseData is String
+          ? jsonDecode(rawPurchaseData)
+          : Map<String, dynamic>.from(rawPurchaseData);
+
+      final Map<String, String> finalPurchaseData = decodedPurchaseData.map(
+        (k, v) => MapEntry(k, v.toString()),
       );
-      return edges.map((edge) {
-        final item = edge['node'];
-        final dynamic rawPurchaseData = item['purchaseData'] ?? {};
-        final dynamic rawCreatedAt = item['createdAt'];
-        final dynamic rawStatusChangedAt = item['statusChangedAt'];
-
-        DateTime? paredCreatedAt;
-        DateTime? parsedStatusChangedAt;
-
-        if (rawCreatedAt != null && rawCreatedAt is String && rawCreatedAt.isNotEmpty) {
-          paredCreatedAt = DateTime.parse(rawCreatedAt).toLocal();
-        }
-
-        if (rawStatusChangedAt != null && rawStatusChangedAt is String && rawStatusChangedAt.isNotEmpty) {
-          parsedStatusChangedAt = DateTime.parse(rawStatusChangedAt).toLocal();
-        }
-
-        final Map<String, dynamic> decodedPurchaseData = rawPurchaseData is String ? jsonDecode(rawPurchaseData) : Map<String, dynamic>.from(rawPurchaseData);
-
-        final Map<String, String> finalPurchaseData = decodedPurchaseData.map(
-          (k, v) => MapEntry(k, v.toString()),
-        );
-        return CartItem(
-          id: item['id'],
-          userId: item['userId'],
-          userName: item['userName'],
-          productId: item['productId'],
-          productName: item['productName'],
-          purchaseData: finalPurchaseData,
-          currency: item['currency'],
-          checkoutPrice: (item['checkoutPrice'] as num).toDouble(),
-          status: item['status'],
-          comment: item['comment'],
-          paymentId: item['paymentId'],
-          paymentLink: item['paymentLink'],
-          createdAt: paredCreatedAt ?? DateTime(0),
-          statusChangedAt: parsedStatusChangedAt,
-        );
-      }).toList();
-    } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed datacasting',
-        stackTrace: StackTrace.fromString(e.toString()),
+      return CartItem(
+        id: item['id'],
+        userId: item['userId'],
+        userName: item['userName'],
+        productId: item['productId'],
+        productName: item['productName'],
+        purchaseData: finalPurchaseData,
+        currency: item['currency'],
+        checkoutPrice: (item['checkoutPrice'] as num).toDouble(),
+        status: item['status'],
+        comment: item['comment'],
+        paymentId: item['paymentId'],
+        paymentLink: item['paymentLink'],
+        createdAt: paredCreatedAt ?? DateTime(0),
+        statusChangedAt: parsedStatusChangedAt,
       );
-      rethrow;
-    }
+    }).toList();
   }
 
   @override
   Future<List<CartItem>> fetchCartItemsToBuy(String userId) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetching cart items',
-        category: 'Cart Items',
-        data: {'userId': userId},
-      );
       final QueryOptions options = QueryOptions(
         document: gql(r'''
           query($userId: String!) {
@@ -289,10 +267,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
       final nodes = result.data?['cartItemCollection']['edges'] as List? ?? [];
       return _dataCasting(nodes);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to fetch cart items',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToFetchCartItems');
       rethrow;
     }
@@ -304,12 +278,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     String? pageToken,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetching paginated unique payment IDs',
-        category: 'Order History',
-        data: {'userId': userId, 'pageToken': pageToken},
-      );
-
       final QueryOptions options = QueryOptions(
         document: gql(r'''
           query($userId: String!, $afterCursor: Cursor) {
@@ -345,7 +313,11 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
       final pageInfo = collection['pageInfo'] ?? {};
       final edges = collection['edges'] as List? ?? [];
 
-      final List<String> paymentIds = edges.map((edge) => edge['node']['paymentId'] as String?).where((id) => id != null && id.isNotEmpty).cast<String>().toList();
+      final List<String> paymentIds = edges
+          .map((edge) => edge['node']['paymentId'] as String?)
+          .where((id) => id != null && id.isNotEmpty)
+          .cast<String>()
+          .toList();
 
       return PaginatedResult<String>(
         objects: paymentIds,
@@ -353,10 +325,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
         nextPageToken: pageInfo['endCursor'] as String?,
       );
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to fetch unique payment IDs',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToLoadOrderHistory');
       rethrow;
     }
@@ -371,18 +339,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     String? orderId,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetching filtered unique payment IDs',
-        category: 'Order History',
-        data: {
-          'userId': userId,
-          'pageToken': pageToken,
-          'fromDate': fromDate?.toIso8601String(),
-          'toDate': toDate?.toIso8601String(),
-          'orderId': orderId,
-        },
-      );
-
       int currentOffset = 0;
       if (pageToken != null && pageToken.isNotEmpty) {
         currentOffset = int.tryParse(pageToken) ?? 0;
@@ -455,7 +411,11 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
       final collection = result.data?['userUniquePaymentCollection'] ?? {};
       final edges = collection['edges'] as List? ?? [];
 
-      final List<String> paymentIds = edges.map((edge) => edge['node']['paymentId'] as String?).where((id) => id != null && id.isNotEmpty).cast<String>().toList();
+      final List<String> paymentIds = edges
+          .map((edge) => edge['node']['paymentId'] as String?)
+          .where((id) => id != null && id.isNotEmpty)
+          .cast<String>()
+          .toList();
 
       // 6. Calculate manual pagination bounds based on offset length
       final bool hasMore = edges.length == 4;
@@ -467,10 +427,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
         nextPageToken: nextToken,
       );
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to fetch filtered unique payment IDs',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToFilterOrderHistory');
       rethrow;
     }
@@ -482,12 +438,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     String? pageToken,
   }) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetching paginated unique payment IDs',
-        category: 'Order History',
-        data: {'userId': userId, 'pageToken': pageToken},
-      );
-
       final QueryOptions options = QueryOptions(
         document: gql(r'''
           query($userId: String!, $afterCursor: Cursor) {
@@ -523,7 +473,11 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
       final pageInfo = collection['pageInfo'] ?? {};
       final edges = collection['edges'] as List? ?? [];
 
-      final List<String> paymentIds = edges.map((edge) => edge['node']['paymentId'] as String?).where((id) => id != null && id.isNotEmpty).cast<String>().toList();
+      final List<String> paymentIds = edges
+          .map((edge) => edge['node']['paymentId'] as String?)
+          .where((id) => id != null && id.isNotEmpty)
+          .cast<String>()
+          .toList();
 
       return PaginatedResult<String>(
         objects: paymentIds,
@@ -531,10 +485,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
         nextPageToken: pageInfo['endCursor'] as String?,
       );
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to fetch unique payment IDs',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToLoadOrderHistory');
       rethrow;
     }
@@ -546,11 +496,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     String orderId,
   ) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Fetching Items Of Order',
-        category: 'Cart Items',
-        data: {'userId': userId, 'orderId': orderId},
-      );
       final QueryOptions options = QueryOptions(
         document: gql(r'''
           query($userId: String!, $orderId: String!) {
@@ -592,10 +537,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
       final nodes = result.data?['cartItemCollection']['edges'] as List? ?? [];
       return _dataCasting(nodes);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to fetch cart items',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToFetchCartItems');
       rethrow;
     }
@@ -604,11 +545,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
   @override
   Future<void> deleteCartItem(String cartItemId) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Deleting na item',
-        category: 'Cart Items',
-        data: {'cartItemId': cartItemId},
-      );
       final MutationOptions options = MutationOptions(
         document: gql(r'''
           mutation($id: UUID!) { deleteFromcartItemCollection(filter: { id: { eq: $id } }) { affectedCount } }
@@ -617,10 +553,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to delete cart items',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToDeleteTheCart');
       rethrow;
     }
@@ -652,10 +584,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
       );
       await _mutateAndCheck(options);
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to add cart items',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       Fluttertoast.showToast(msg: 'failedToAddTheCart');
       rethrow;
     }
@@ -667,11 +595,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     AppAuthUser? user,
   ) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Updating cart item',
-        category: 'Cart Items',
-        data: {'user': user, 'cartItems': cartItems},
-      );
       if (user == null) {
         for (var item in cartItems) {
           final MutationOptions options = MutationOptions(
@@ -693,10 +616,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
         }
       }
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to update cart items',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       rethrow;
     }
   }
@@ -704,11 +623,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
   @override
   Future<int> getProductCartItemAmount(String userId, String productId) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Getting Product Cart Item Amount',
-        category: 'Cart Items',
-        data: {'userId': userId, 'productId': productId},
-      );
       final QueryOptions options = QueryOptions(
         document: gql(r'''
           query($uId: String!, $pId: UUID!) {
@@ -736,10 +650,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
 
       return nodes.first['node']['productCartItemCount'] ?? 0;
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to get product cart items amount',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       rethrow;
     }
   }
@@ -750,11 +660,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
     String productId,
   ) async {
     try {
-      getIt<InnerLoggerHandler>().logBreadcrumb(
-        message: 'Deleting Last Added Product Cart Item',
-        category: 'Cart Items',
-        data: {'userId': userId, 'productId': productId},
-      );
       final QueryOptions fetchOptions = QueryOptions(
         document: gql(r'''
           query($uId: String!, $pId: UUID!) {
@@ -794,10 +699,6 @@ class OuterCartHandlerWithSupabase implements InnerCartHandler {
 
       return rowsDeleted > 0;
     } catch (e) {
-      getIt<InnerLoggerHandler>().recordException(
-        error: 'Failed to delete last added cart items',
-        stackTrace: StackTrace.fromString(e.toString()),
-      );
       rethrow;
     }
   }

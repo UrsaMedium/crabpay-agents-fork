@@ -302,9 +302,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get answerToUsers => 'Ответить пользователям';
 
   @override
-  String get testLogger => 'Тестовый логгер';
-
-  @override
   String get hey => 'Привет :)';
 
   @override

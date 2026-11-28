@@ -110,7 +110,6 @@
   "deleteInstancesFromDb": "Удалить записи из БД",
   "addFeaturedProduct": "Добавить рекомендуемый товар",
   "answerToUsers": "Ответить пользователям",
-  "testLogger": "Тестовый логгер",
   "hey": "Привет :)",
   "userInfoDebug": "Id: {id}\nemail: {email}\nver: {isEmailVerified}\nanon: {isAnonymous}\nadmin: {isAdmin}\nlimbo: {isLimbo}",
   "@userInfoDebug": {

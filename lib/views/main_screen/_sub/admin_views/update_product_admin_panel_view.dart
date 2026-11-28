@@ -5,9 +5,7 @@ import 'package:crabpay/core/backend/admin/admin_database/admin_db_inner_circle/
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_bloc.dart';
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/database_bloc/database_event.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/custom_ui_elements/dialogs/on_database_item_delete_dialog.dart';
 import 'package:flutter/material.dart';
@@ -39,9 +37,6 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
 
   @override
   void initState() {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'UpdateProductAdminPanelView initState',
-    );
     _products = context.read<DatabaseBloc>().state.products;
     if (widget.productId != null && _products != null) {
       _selectedProduct = _products!.firstWhere(
@@ -63,9 +58,6 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
   }
 
   void _resetPage() {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'UpdateProductAdminPanelView _resetPage',
-    );
     _productDropDownMenuController.clear();
     _imageNameController.clear();
     _productNameController.clear();
@@ -95,10 +87,6 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        getIt<InnerLoggerHandler>().logBreadcrumb(
-          message: 'UpdateProductAdminPanelView onPopInvokedWithResult',
-          data: {'didPop': didPop, 'result': result},
-        );
         if (didPop) return;
         !Navigator.of(context).canPop() ? context.go(AppRoutes.support.path) : context.pop();
       },
@@ -106,9 +94,6 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              getIt<InnerLoggerHandler>().logBreadcrumb(
-                message: 'UpdateProductAdminPanelView onBackButtonPressed',
-              );
               if (GoRouter.of(context).canPop()) {
                 context.pop();
               } else {
@@ -131,10 +116,6 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
                         iconSize: 32,
                         onPressed: _selectedProduct != null
                             ? () async {
-                                getIt<InnerLoggerHandler>().logBreadcrumb(
-                                  message: 'UpdateProductAdminPanelView onDeleteButtonPressed',
-                                  data: {'selectedProduct': _selectedProduct},
-                                );
                                 if (beingLoaded) {
                                   Fluttertoast.showToast(
                                     msg: context.l10n.pleaseWait,
@@ -318,15 +299,6 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
                   child: ElevatedButton(
                     onPressed: _selectedProduct != null && state.states != DatabaseStatesAdmin.dbLoading
                         ? () {
-                            getIt<InnerLoggerHandler>().logBreadcrumb(
-                              message: 'UpdateProductAdminPanelView onPushChangesButtonPressed',
-                              data: {
-                                'selectedProduct': _selectedProduct,
-                                'productName': _productName,
-                                'imageName': _imageName,
-                                'descriptionText': _descriptionText,
-                              },
-                            );
                             _ignoreStates = false;
                             final updatedProduct = Product(
                               id: _selectedProduct!.id,
@@ -343,7 +315,9 @@ class _UpdateProductAdminPanelViewState extends State<UpdateProductAdminPanelVie
                             );
                           }
                         : null,
-                    child: state.states == DatabaseStatesAdmin.dbLoading ? CircularProgressIndicator() : Text(context.l10n.pushTheChanges),
+                    child: state.states == DatabaseStatesAdmin.dbLoading
+                        ? CircularProgressIndicator()
+                        : Text(context.l10n.pushTheChanges),
                   ),
                 ),
               ],

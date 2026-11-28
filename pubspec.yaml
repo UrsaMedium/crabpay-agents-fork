@@ -54,7 +54,6 @@ dependencies:
   http: ^1.6.0
   supabase_flutter: ^2.16.0
   graphql_flutter: ^5.3.0
-  sentry_flutter: ^10.0.0
   get_it: ^9.2.1
   material_color_utilities: ^0.13.0
   flutter_bloc: ^9.1.1
@@ -71,7 +70,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  sentry_dart_plugin: ^3.4.0
   bloc_test: ^10.0.1
   mocktail: ^1.0.5
 
@@ -119,8 +117,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-sentry:
-  # This tells the plugin to upload the mapping files automatically
-  upload_debug_symbols: true
-  upload_source_maps: true
-  upload_sources: true

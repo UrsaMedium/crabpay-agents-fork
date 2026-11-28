@@ -208,8 +208,6 @@
   "@addFeaturedProduct": {},
   "answerToUsers": "Answer to users",
   "@answerToUsers": {},
-  "testLogger": "Test logger",
-  "@testLogger": {},
   "hey": "Hey :)",
   "@hey": {},
   "userInfoDebug": "Id: {id}\nemail: {email}\nver: {isEmailVerified}\nanon: {isAnonymous}\nadmin: {isAdmin}\nlimbo: {isLimbo}",

@@ -69,7 +69,8 @@ class ConnectionMonitorToSupabaseAtRegred implements InnerConnectionMonitor {
   Stream<ServerConnectionStatus> get statusStream => _connectionController.stream;
 
   @override
-  ServerConnectionStatus get currentStatus => _client.realtime.isConnected ? ServerConnectionStatus.online : ServerConnectionStatus.offline;
+  ServerConnectionStatus get currentStatus =>
+      _client.realtime.isConnected ? ServerConnectionStatus.online : ServerConnectionStatus.offline;
 
   @override
   void dispose() {

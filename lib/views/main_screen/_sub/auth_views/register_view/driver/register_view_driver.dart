@@ -1,8 +1,6 @@
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_bloc.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_events.dart';
 import 'package:crabpay/core/backend/authentication/auth_inner_circle/auth_bloc/auth_states.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/core/app_routes/app_routes.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/_sub/auth_views/register_view/driver/register_view_cubit.dart';
@@ -27,9 +25,6 @@ class _RegisterViewDriverState extends State<RegisterViewDriver> {
 
   @override
   void initState() {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'RegisterViewDriver initState',
-    );
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _registerViewCubit = RegisterViewCubit(
@@ -52,10 +47,6 @@ class _RegisterViewDriverState extends State<RegisterViewDriver> {
       value: _registerViewCubit,
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, authState) {
-          getIt<InnerLoggerHandler>().logBreadcrumb(
-            message: 'RegisterViewDriver AuthState change',
-            data: {'authState': authState},
-          );
           if (authState is AuthStateLoggedIn) {
             context.go(AppRoutes.home.path);
           }
@@ -83,13 +74,6 @@ class _RegisterViewDriverState extends State<RegisterViewDriver> {
             );
 
             void onRegistering() {
-              getIt<InnerLoggerHandler>().logBreadcrumb(
-                message: 'RegisterViewDriver onRegistering',
-                data: {
-                  'email': _emailController.text,
-                  'password': _passwordController.text,
-                },
-              );
               context.read<RegisterViewCubit>().validateAndSubmit(
                 email: _emailController.text,
                 password: _passwordController.text,
@@ -102,18 +86,12 @@ class _RegisterViewDriverState extends State<RegisterViewDriver> {
             }
 
             void onBackButtonPressed() {
-              getIt<InnerLoggerHandler>().logBreadcrumb(
-                message: 'RegisterViewDriver onBackButtonPressed',
-              );
               if (GoRouter.of(context).canPop()) {
                 context.pop();
               }
             }
 
             void onCorrectingCredentials() {
-              getIt<InnerLoggerHandler>().logBreadcrumb(
-                message: 'RegisterViewDriver onCorrectingCredentials',
-              );
               context.read<RegisterViewCubit>().clearErrors();
             }
 

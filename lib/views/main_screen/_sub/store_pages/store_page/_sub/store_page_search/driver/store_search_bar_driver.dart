@@ -1,5 +1,4 @@
 import 'package:crabpay/core/backend/database/general_db/db_inner_circle/data_models/product_model.dart';
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/core/utilities.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/app_layout/app_layout.dart';
 import 'package:crabpay/views/main_screen/_sub/store_pages/store_page/_sub/store_page_search/driver/store_search_bar_cubit.dart';
@@ -60,9 +59,6 @@ class _MaterialStoreSearchBarDriverState extends State<MaterialStoreSearchBarDri
   }
 
   void _onOpenSearch() {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'StoreSearchBarDriver _onOpenSearch',
-    );
     _keyBoardEventCanBeTriggered = true;
     setState(() {
       _isSearchOpen = true;
@@ -70,9 +66,6 @@ class _MaterialStoreSearchBarDriverState extends State<MaterialStoreSearchBarDri
   }
 
   void _onClear() {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'StoreSearchBarDriver _onClear',
-    );
     setState(() {
       _universalController.clear();
       widget.onSearchSubmitedCallBack([]);

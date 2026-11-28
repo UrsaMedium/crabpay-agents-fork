@@ -1,8 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:crabpay/core/backend/logger/logger_inner_handler/inner_logger_handler.dart';
 import 'package:crabpay/views/custom_ui_elements/utilities/ui_utilities.dart';
-import 'package:crabpay/core/utilities.dart';
 import 'package:material_ui/material_ui.dart';
 
 class GlobalLoadingScreen {
@@ -13,9 +11,6 @@ class GlobalLoadingScreen {
   final ValueNotifier<bool> _isLoading = ValueNotifier<bool>(false);
 
   void show() {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'GlobalLoadingScreen show',
-    );
     developer.log('loading is called');
     if (_isLoading.value) return;
 
@@ -23,9 +18,6 @@ class GlobalLoadingScreen {
   }
 
   void hide() {
-    getIt<InnerLoggerHandler>().logBreadcrumb(
-      message: 'GlobalLoadingScreen hide',
-    );
     developer.log('hiding is called');
     if (!_isLoading.value) return;
 

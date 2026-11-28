@@ -302,9 +302,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get answerToUsers => 'Answer to users';
 
   @override
-  String get testLogger => 'Test logger';
-
-  @override
   String get hey => 'Hey :)';
 
   @override
