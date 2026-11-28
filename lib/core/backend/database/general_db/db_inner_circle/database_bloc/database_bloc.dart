@@ -278,7 +278,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       developer.log('---');
       try {
         CachedNetworkImageProvider? cachedNetworkImageProvider = CachedNetworkImageProvider(
-          'https://regred-rainbowbridge.ru/crabpay/images/products/${event.product.image}.png',
+          'https://deviantakuma.com/crabpay/images/products/${event.product.image}.png',
         );
         final futureOfColor = MaterialColorExtractor.extractColorScheme(
           imageProvider: cachedNetworkImageProvider,

@@ -99,7 +99,7 @@ class _MaterialProductCard extends StatelessWidget {
                     borderRadius: .circular(cornerRadius - 4),
                     clipBehavior: .antiAlias,
                     child: CachedNetworkImage(
-                      imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/$imageUrl.png',
+                      imageUrl: 'https://deviantakuma.com/crabpay/images/products/$imageUrl.png',
                       width: width - 8,
                       height: width - 8,
                       fit: .cover,

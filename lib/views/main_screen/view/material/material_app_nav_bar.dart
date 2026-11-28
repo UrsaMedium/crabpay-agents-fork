@@ -29,7 +29,10 @@ class MaterialAppNavBar extends StatelessWidget {
               gradient: LinearGradient(
                 begin: .bottomCenter,
                 end: .topCenter,
-                colors: [Colors.black, Colors.transparent],
+                colors: [
+                  context.appColorScheme.surfaceContainerLowest,
+                  context.appColorScheme.surfaceContainerLowest.withValues(alpha: 0),
+                ],
               ),
             ),
           ),

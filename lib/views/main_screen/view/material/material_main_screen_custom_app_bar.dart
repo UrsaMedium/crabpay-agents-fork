@@ -38,11 +38,14 @@ class MaterialMainScreenCustomAppBar extends StatelessWidget implements Preferre
       children: [
         Container(
           height: layout.appBarScrimHeight,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: .topCenter,
               end: .bottomCenter,
-              colors: [Colors.black, Colors.transparent],
+              colors: [
+                context.appColorScheme.surfaceContainerLowest,
+                context.appColorScheme.surfaceContainerLowest.withValues(alpha: 0),
+              ],
             ),
           ),
         ),
@@ -103,7 +106,7 @@ class MaterialMainScreenCustomAppBar extends StatelessWidget implements Preferre
                       ),
                     ),
                   ),
-                  connectionStatus
+                  !connectionStatus
                       ? Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: layout.appBarTrailingGap),

@@ -314,7 +314,7 @@ class _OrderDetails extends StatelessWidget {
                                   clipBehavior: .antiAlias,
                                   child: CachedNetworkImage(
                                     imageUrl:
-                                        'https://regred-rainbowbridge.ru/crabpay/images/products/${(products.firstWhere((element) => element.id == order.cartItems[index].productId)).image}.png',
+                                        'https://deviantakuma.com/crabpay/images/products/${(products.firstWhere((element) => element.id == order.cartItems[index].productId)).image}.png',
                                     fit: .cover,
                                     errorWidget: (context, error, stackTrace) => Container(
                                       color: context.appColorScheme.onInverseSurface,

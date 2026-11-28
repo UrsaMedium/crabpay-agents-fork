@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 HttpLink createSupabaseGraphQLConfig() {
   return HttpLink(
-    'https://supabase.regred-rainbowbridge.ru/graphql/v1',
+    'https://supabase.deviantakuma.com/graphql/v1',
     defaultHeaders: {
       // 1. Fetch directly from your config map
       'apiKey': supabaseAccessConf['publishableKey']!,

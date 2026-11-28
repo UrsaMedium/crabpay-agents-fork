@@ -148,7 +148,7 @@ class _MaterialCustomWidgetRowOfImages extends StatelessWidget {
           decoration: BoxDecoration(borderRadius: .circular(4)),
           clipBehavior: .antiAlias,
           child: CachedNetworkImage(
-            imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/$image.png',
+            imageUrl: 'https://deviantakuma.com/crabpay/images/products/$image.png',
             fit: .cover,
             errorWidget: (context, error, stackTrace) => Container(
               color: context.appColorScheme.onInverseSurface,

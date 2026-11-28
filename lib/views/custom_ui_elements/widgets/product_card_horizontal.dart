@@ -106,7 +106,7 @@ class _MaterialProductCardHorizontal extends StatelessWidget {
                     ),
                     clipBehavior: .antiAlias,
                     child: CachedNetworkImage(
-                      imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/$imageUrl.png',
+                      imageUrl: 'https://deviantakuma.com/crabpay/images/products/$imageUrl.png',
                       width: height * (1 - _paddingCoef * 2),
                       height: height * (1 - _paddingCoef * 2),
                       fit: .cover,

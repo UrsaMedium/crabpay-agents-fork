@@ -165,7 +165,7 @@ class MaterialOrderDetails extends StatelessWidget {
                                   clipBehavior: .antiAlias,
                                   child: CachedNetworkImage(
                                     imageUrl:
-                                        'https://regred-rainbowbridge.ru/crabpay/images/products/${order.itemsToImagesMap.values.toList()[index]}.png',
+                                        'https://deviantakuma.com/crabpay/images/products/${order.itemsToImagesMap.values.toList()[index]}.png',
                                     fit: .cover,
                                     errorWidget: (context, error, stackTrace) => Container(
                                       color: context.appColorScheme.onInverseSurface,

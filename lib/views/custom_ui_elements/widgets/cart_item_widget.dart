@@ -138,7 +138,7 @@ class MaterialCartItemWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(imageCornerRadius),
                         ),
                         child: CachedNetworkImage(
-                          imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/${product.image}.png',
+                          imageUrl: 'https://deviantakuma.com/crabpay/images/products/${product.image}.png',
                           fit: .cover,
                           height: imageSize,
                           width: imageSize,

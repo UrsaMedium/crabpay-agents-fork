@@ -104,7 +104,7 @@ class MaterialProductView extends StatelessWidget {
                               height: isPageReady ? descPosition! + 24 : MediaQuery.widthOf(context),
                               child: CachedNetworkImage(
                                 imageUrl:
-                                    'https://regred-rainbowbridge.ru/crabpay/images/products/${context.read<ProductViewCubit>().state.product!.image}.png',
+                                    'https://deviantakuma.com/crabpay/images/products/${context.read<ProductViewCubit>().state.product!.image}.png',
                                 fit: BoxFit.cover,
                                 errorWidget: (context, error, stackTrace) => Container(
                                   color: context.appColorScheme.onInverseSurface,

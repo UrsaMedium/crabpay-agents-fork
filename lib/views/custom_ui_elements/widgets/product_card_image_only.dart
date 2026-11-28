@@ -43,7 +43,7 @@ class ProductCardImageOnly extends StatelessWidget {
           tag: heroTag,
           createRectTween: (begin, end) => MaterialRectArcTween(begin: begin, end: end),
           child: CachedNetworkImage(
-            imageUrl: 'https://regred-rainbowbridge.ru/crabpay/images/products/${product.image}.png',
+            imageUrl: 'https://deviantakuma.com/crabpay/images/products/${product.image}.png',
             fit: .cover,
             errorWidget: (context, error, stackTrace) => Container(
               color: context.appColorScheme.onInverseSurface,
